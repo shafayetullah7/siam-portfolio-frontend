@@ -1,0 +1,48 @@
+/**
+ * SIAM primitive tokens — see docs/design-tokens.md
+ * Consumed by Tailwind @theme inline in app.css
+ */
+
+:root {
+  /* Neutrals */
+  --siam-canvas: #f7f6f2;
+  --siam-surface: #ffffff;
+  --siam-surface-muted: #f0efe9;
+  --siam-ink: #141413;
+  --siam-ink-muted: #5e5e58;
+  --siam-ink-subtle: #787873;
+  --siam-border: #e3e2dc;
+  --siam-border-strong: #c9c8c0;
+
+  /* Brand teal */
+  --siam-primary: #0b6b5f;
+  --siam-primary-hover: #095a50;
+  --siam-primary-foreground: #ffffff;
+  --siam-link: #085c52;
+  --siam-link-hover: #064a42;
+  --siam-focus: #0b6b5f;
+
+  /* Accent surfaces */
+  --siam-accent-research: #0b6b5f;
+  --siam-accent-project: #f2d4b8;
+  --siam-accent-writing: #d5e8e1;
+  --siam-accent-project-ink: #3d3028;
+  --siam-accent-writing-ink: #1e3d34;
+
+  /* Feedback */
+  --siam-success: #1f6b50;
+  --siam-warning: #9a6700;
+  --siam-error: #b42318;
+  --siam-error-surface: #fef3f2;
+
+  /* Layout */
+  --siam-content-width: 72rem;
+  --siam-prose-width: 42rem;
+  --siam-radius-sm: 6px;
+  --siam-radius-md: 10px;
+  --siam-radius-lg: 14px;
+  --siam-shadow-card: 0 4px 24px rgb(20 20 19 / 0.06);
+  --siam-shadow-card-hover: 0 8px 32px rgb(20 20 19 / 0.08);
+
+  color-scheme: light;
+}

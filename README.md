@@ -1,4 +1,16 @@
-# SolidStart
+# siam-frontend
+
+SolidStart app for the public portfolio and `/admin` CMS.
+
+**Theme:** [../docs/design-tokens.md](../docs/design-tokens.md) — primitives in `src/styles/tokens.css`, Tailwind utilities in `src/app.css` (`bg-canvas`, `text-primary`, `bg-accent-project`, etc.).
+
+**Tailwind v4:** [docs/tailwind.md](./docs/tailwind.md) — conventions, v3 pitfalls, and what not to do.
+
+**Solid / SolidStart:** [docs/solid-solidstart.md](./docs/solid-solidstart.md) (SIAM guide) · [docs/solid-solidstart-reference.md](./docs/solid-solidstart-reference.md) (extended).
+
+---
+
+## SolidStart
 
 Everything you need to build a Solid project, powered by [`solid-start`](https://start.solidjs.com);
 
