@@ -9,7 +9,9 @@
 **Extended reference:** [solid-solidstart-reference.md](./solid-solidstart-reference.md) (full tables, rubric, worked examples).  
 **Cursor rule:** `.cursor/rules/siam-frontend-solid.mdc`
 
-**Official docs:** [Solid](https://docs.solidjs.com/) · [Solid Start v2](https://docs.solidjs.com/solid-start/v2) · [Router data APIs](https://docs.solidjs.com/solid-router/data-fetching/queries)
+**Official docs:** [Solid](https://docs.solidjs.com/) · [Solid Start v2](https://docs.solidjs.com/solid-start/v2) · [Router queries](https://docs.solidjs.com/solid-router/data-fetching/queries)
+
+**Doc verification:** Sections 6–8 below were checked against Solid Start v2 [data fetching](https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching), [data mutation](https://docs.solidjs.com/solid-start/v2/building-your-application/data-mutation), [routing](https://docs.solidjs.com/solid-start/v2/building-your-application/routing), [vite.config](https://docs.solidjs.com/solid-start/v2/reference/entrypoints/vite-config), and [`createAsync`](https://docs.solidjs.com/solid-router/reference/data-apis/create-async) (see [§16](#16-doc-verification-summary)).
 
 ---
 
@@ -72,7 +74,7 @@ createEffect(() => console.log("total", total()));
 
 **Passing UI:**
 
-- **Component reference** — child instantiates: `icon: Component` → `<Dynamic component={props.icon} />` or `<props.icon />`.
+- **Component reference** — child instantiates: `icon: Component` → `<props.icon class="size-4" />` (see [design-tokens § Icons](../../docs/design-tokens.md#icons): import from `~/icons` barrel only).
 - **JSX slot** — caller owns tree: `props.children`.
 - **Render prop** — deferred / parameterized: `renderItem: (x) => JSX.Element`.
 
@@ -148,69 +150,99 @@ import { For, Show } from "solid-js";
 
 ## 6. Data fetching (SolidStart 2 + official router)
 
+Matches [Solid Start — Data fetching](https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching): `query` defines cached loading; `createAsync` reads it in the route; optional `"use server"` inside the query body for server-only code (e.g. `useSession`, secrets).
+
 **Decision:**
 
 | Need | Default in SIAM |
 |------|------------------|
-| SSR route data, preload, cache | `query` + `createAsync` + route `preload` |
-| Low-level async with manual refetch | `createResource` |
-| Public read via REST | `query` wrapping `fetch` to `/api/v1/public/...` |
-| Admin read/write | `fetch` with `credentials: 'include'` + `X-XSRF-TOKEN` on mutations ([admin-auth](../../siam-api/docs/admin-auth.md)) |
-| Client-only widget | `onMount` + resource or signal — CHOICE |
+| SSR route data, preload, cache | `query` + `createAsync` + optional `route.preload` |
+| Large nested models | `createAsyncStore` + `query` ([router README](https://github.com/solidjs/solid-router)) — CHOICE |
+| Low-level async / non-query cache | `createResource` — **do not** pass `query` as `createResource` fetcher (invalidates wrong) |
+| Public HTTP API | `query` + `fetch` to `/api/v1/public/...` — `"use server"` optional if fetch is safe on server only |
+| Admin reads | `query` with `"use server"` proxying to `siam-api`, or client `fetch` with cookies — pick per SSR need |
+| Client-only widget | `onMount` + resource — CHOICE |
+
+**Official patterns:**
 
 ```tsx
 import { createAsync, query, type RouteDefinition } from "@solidjs/router";
-import { For, Suspense } from "solid-js";
+import { ErrorBoundary, For, Suspense } from "solid-js";
 
-type Item = { id: string; name: string };
+// Public list — no "use server" if using public fetch (runs per Start/router rules)
+const getPosts = query(async () => {
+  const res = await fetch("https://example.com/api/posts");
+  return res.json() as Promise<Array<{ id: number; title: string }>>;
+}, "posts");
 
-const getItems = query(async (): Promise<Item[]> => {
-  "use server";
-  // Server-only: DB or internal service — auth here.
-  return [];
-}, "items");
-
-export const route = {
-  preload: () => getItems(),
-} satisfies RouteDefinition;
-
-export default function ItemsPage() {
-  const items = createAsync(() => getItems());
-  return (
-    <Suspense fallback={<p>Loading…</p>}>
-      <For each={items()}>{(item) => <p>{item.name}</p>}</For>
-    </Suspense>
-  );
+export default function PostsPage() {
+  const posts = createAsync(() => getPosts());
+  return <For each={posts()}>{(post) => <li>{post.title}</li>}</For>;
 }
 ```
 
-**Rules:**
+```tsx
+// Param + preload + server-only (docs pattern)
+const getPost = query(async (id: string) => {
+  "use server";
+  const res = await fetch(`https://example.com/api/posts/${id}`);
+  return res.json();
+}, "post");
 
-- Define `query` **outside** the component; call inside `createAsync(() => getX(...))` with **reactive** params (`params.id`, not a one-time snapshot).
+export const route = {
+  preload: ({ params }) => getPost(params.id),
+} satisfies RouteDefinition;
+
+export default function PostPage(props: { params: { id: string } }) {
+  const post = createAsync(() => getPost(props.params.id));
+  return <pre>{JSON.stringify(post(), null, 2)}</pre>;
+}
+```
+
+**Rules (docs + router README):**
+
+- Every `query` needs a **string key** as the second argument (`"posts"`, `"post"`).
+- Define `query` outside the component; use `createAsync(() => getX(...))` so **sync reactive reads** inside the arrow re-run the async work (e.g. `props.params.id`, `searchParams.q`).
+- `createAsync` accessor may be **`undefined`** until resolved — use `post()?.title` or wrap with `Suspense` / `ErrorBoundary` ([createAsync examples](https://docs.solidjs.com/solid-router/reference/data-apis/create-async)).
+- `route.preload` receives `{ params, location }` — call `getPost(params.id)` to warm cache before render.
+- Cache invalidation: `revalidate`, `query.key`, `query.keyFor(id)` — pair with mutations (§7).
 - Avoid preload + `onMount` fetch + store copy for the same data.
-- Handle empty, error, 401/404; never leak secrets in serialized responses.
+
+### 6b. Filtering, search params, and pagination
+
+Matches [useSearchParams](https://github.com/solidjs/solid-router#usesearchparams) (installed `@solidjs/router` README):
+
+- `const [searchParams, setSearchParams] = useSearchParams()` — **proxy**: read `searchParams.page`, `searchParams.q` (strings) to subscribe; do not snapshot into a plain object once.
+- **URL-driven filters (P05/P17):** update with `setSearchParams({ year: "2024", q: "transformer" })`; merge/remove via `''` / `undefined` / `null`.
+- **Server-backed list:** `createAsync(() => listPublications({ q: searchParams.q, year: searchParams.year }))` where `listPublications` is a `query` taking filter args (reactive when searchParams fields are read inside `createAsync` callback).
+- **Client-only filter** on already-loaded data: `createMemo(() => items()?.filter(...))` — CHOICE for small lists only; SIAM search/publications use **API/SQL** for scale ([project-decisions](../../docs/project-decisions.md)).
+- **Debounced search:** local signal for input + `createEffect` or explicit submit button that calls `setSearchParams` — do not hammer `setSearchParams` on every keypress unless intended.
 
 ---
 
 ## 7. Mutations & forms
 
-Use router **`action`**, **`useSubmission`** / **`useSubmissions`** when using form actions — not Next Server Actions.
+Matches [Solid Start — Data mutation](https://docs.solidjs.com/solid-start/v2/building-your-application/data-mutation): `action` + `"use server"` when needed; forms use **`method="post"`** (actions are POST-only per router README).
 
 ```tsx
+import { Show } from "solid-js";
 import { action, useSubmission } from "@solidjs/router";
 
-const saveItem = action(async (formData: FormData) => {
+const saveProfile = action(async (formData: FormData) => {
   "use server";
-  const title = String(formData.get("title") ?? "").trim();
-  if (!title) throw new Error("Title required");
+  const displayName = formData.get("displayName")?.toString();
+  if (!displayName) throw new Error("Display name is required.");
   return { ok: true };
-}, "saveItem");
+}, "saveProfile");
 
-function ItemForm() {
-  const submission = useSubmission(saveItem);
+export default function ProfilePage() {
+  const submission = useSubmission(saveProfile);
   return (
-    <form action={saveItem} method="post">
-      <input name="title" required />
+    <form action={saveProfile} method="post">
+      <Show when={submission.error}>
+        <p>{submission.error?.message}</p>
+      </Show>
+      <input name="displayName" />
       <button type="submit" disabled={submission.pending}>
         {submission.pending ? "Saving…" : "Save"}
       </button>
@@ -219,7 +251,14 @@ function ItemForm() {
 }
 ```
 
-Admin CMS: validate on server; CSRF on POST/PUT/PATCH/DELETE to `siam-api`.
+**Also in official docs:**
+
+- **`action.with(arg)`** — prefill leading args (e.g. `archiveProject.with(props.params.id)`).
+- **`useSubmissions`** — when multiple concurrent submissions matter.
+- **Revalidation** — after mutation, use `revalidate(query.key)` / `query.keyFor(id)` or `redirect(..., { revalidate: … })` from `@solidjs/router` so route `query` data refreshes ([router README](https://github.com/solidjs/solid-router)).
+- Keep **read (`query`) and write (`action`)** in the same route module when they share data (Start mutation doc).
+
+**SIAM admin:** use `adminClient` from `~/lib/api` — see [frontend-developer-guide.md](./frontend-developer-guide.md) (auth state, CSRF, **401 → forceLogout**). API contract: [admin-auth](../../siam-api/docs/admin-auth.md).
 
 ---
 
@@ -230,7 +269,7 @@ Admin CMS: validate on server; CSRF on POST/PUT/PATCH/DELETE to `siam-api`.
 | Files | `src/routes/` — `index.tsx`, `[id].tsx`, `[[optional]].tsx`, `[...404].tsx` |
 | App shell | `app.tsx`: `Router` + `FileRoutes`; `root` = Nav + `Suspense` + children |
 | Links | `<A href="…">` from `@solidjs/router` |
-| Params / search | `useParams`, `useSearchParams`, `useLocation` — **reactive**; don’t destructure once |
+| Params / search | `useParams()`; `useSearchParams()` tuple — **proxy**, read properties to subscribe; route pages may use `props.params` in `createAsync(() => get(props.params.id))` per [routing doc](https://docs.solidjs.com/solid-start/v2/building-your-application/routing) |
 | Layouts | Not Next `layout.tsx` — use nested routes + `<Outlet>` per Start docs |
 | API routes | HTTP method exports on route modules — not `NextResponse` |
 
@@ -240,7 +279,7 @@ Path alias: `~/` → `src/`.
 
 ## 9. Loading, Suspense, errors (keep separate)
 
-1. Navigation pending (`useIsRouting` where available)  
+1. Navigation pending — `useIsRouting()` signal ([router README](https://github.com/solidjs/solid-router#useisrouting))  
 2. Route query load / revalidation  
 3. `<Suspense>` around async reads  
 4. Action `submission.pending`  
@@ -328,9 +367,32 @@ export default defineConfig({
 
 ---
 
+## 16. Doc verification summary
+
+| Topic | SIAM guide | Official docs | Status |
+|--------|------------|---------------|--------|
+| `query` + string key + `createAsync` | §6 | Start data fetching | Aligned |
+| `"use server"` inside query/action body | §6–7 | Start fetching/mutation | Aligned — not Next RSC |
+| `route.preload` + `RouteDefinition` | §6 | Start fetching + routing | Aligned |
+| `action` + `method="post"` + `useSubmission` | §7 | Start mutation | Aligned |
+| `submission.pending` / `submission.error` | §7 | Start mutation | Aligned |
+| `action.with`, `revalidate`, `keyFor` | §7 | Router README | Added |
+| `useSearchParams` for filters | §6b | Router README | Added |
+| `createAsync` + `Suspense` / `ErrorBoundary` | §6 | createAsync reference | Aligned (recommended) |
+| `query` inside `createResource` fetcher | §6 | Router README | Documented as wrong |
+| `FileRoutes` from `@solidjs/start/router` | §8, `app.tsx` | Start routing | Aligned |
+| `solidStart()` + `nitro()` in `vite.config.ts` | §11 | Start vite-config | Aligned (+ `tailwindcss()` plugin) |
+| Catch-all routes | `[...slug]` in docs | Project has `[...404].tsx` | Verify path at build time; prefer doc naming for new routes |
+
+If installed typings disagree with docs, **typings + lockfile win**.
+
+---
+
 ## References
 
 - [solid-solidstart-reference.md](./solid-solidstart-reference.md) — full extended guide  
 - [Solid Start v2 — data fetching](https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching)  
 - [Solid Start v2 — data mutation](https://docs.solidjs.com/solid-start/v2/building-your-application/data-mutation)  
-- [createAsync](https://docs.solidjs.com/solid-router/reference/data-apis/create-async)
+- [Solid Start v2 — routing](https://docs.solidjs.com/solid-start/v2/building-your-application/routing)  
+- [createAsync](https://docs.solidjs.com/solid-router/reference/data-apis/create-async)  
+- [@solidjs/router README](https://github.com/solidjs/solid-router) (queries, revalidate, hooks)
