@@ -2,7 +2,7 @@ import { A } from "@solidjs/router";
 
 export default function About() {
   return (
-    <main class="siam-container py-12">
+    <main id="main" class="siam-container py-12">
       <h1 class="text-h1 text-3xl font-bold tracking-tight sm:text-4xl">About</h1>
       <p class="siam-prose mt-4 text-ink-muted">
         Placeholder route — uses SIAM theme tokens from{" "}

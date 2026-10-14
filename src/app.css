@@ -59,6 +59,15 @@
     @apply text-link underline-offset-2 hover:text-link-hover hover:underline;
   }
 
+  code,
+  pre {
+    @apply font-mono text-[0.9em];
+  }
+
+  pre {
+    @apply overflow-x-auto rounded-md border border-border bg-surface-muted p-4;
+  }
+
   :focus-visible {
     outline: 2px solid var(--siam-focus);
     outline-offset: 2px;
@@ -103,5 +112,58 @@
 
   .siam-card-interactive:hover {
     @apply shadow-card-hover;
+  }
+
+  .siam-skip-link {
+    @apply fixed left-4 top-4 z-50 -translate-y-16 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground no-underline transition-transform focus:translate-y-0;
+  }
+
+  .siam-input,
+  .siam-textarea {
+    @apply w-full min-h-11 rounded-md border border-border bg-surface px-3 py-2 text-ink placeholder:text-ink-subtle focus-visible:border-primary;
+  }
+
+  .siam-textarea {
+    @apply min-h-24 resize-y;
+  }
+
+  .siam-chip {
+    @apply inline-flex items-center rounded-sm border border-border bg-surface px-2 py-0.5 text-xs font-medium text-ink-muted;
+  }
+
+  .siam-tag {
+    @apply inline-flex items-center rounded-sm border border-border px-2 py-0.5 text-sm text-ink;
+  }
+
+  .siam-citation {
+    @apply border-l-2 border-border pl-4 text-sm italic text-ink-muted;
+  }
+
+  .siam-alert-error {
+    @apply rounded-md border border-error/30 bg-error-surface px-4 py-3 text-sm text-error;
+  }
+
+  .siam-alert-success {
+    @apply rounded-md border border-success/30 bg-surface px-4 py-3 text-sm text-success;
+  }
+
+  .siam-table {
+    @apply w-full border-collapse text-left text-sm;
+  }
+
+  .siam-table th {
+    @apply border-b border-border-strong px-3 py-2 font-semibold text-ink;
+  }
+
+  .siam-table td {
+    @apply border-b border-border px-3 py-2 text-ink-muted;
+  }
+
+  .siam-empty-state {
+    @apply rounded-lg border border-dashed border-border bg-surface-muted px-6 py-10 text-center;
+  }
+
+  .siam-pub-row {
+    @apply flex flex-col gap-2 border-b border-border py-4 sm:flex-row sm:items-baseline sm:justify-between;
   }
 }

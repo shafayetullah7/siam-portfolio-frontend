@@ -30,14 +30,15 @@ npm init solid@latest my-app
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
 ```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+pnpm install
+cp .env.example .env
+# Terminal 1 — API + Postgres (see siam-api/README.md)
+# Terminal 2:
+pnpm dev
 ```
+
+Vite proxies `/api` → `http://localhost:5000`. Home page shows API health when the API is running.
 
 ## Building
 

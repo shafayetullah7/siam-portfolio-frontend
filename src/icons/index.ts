@@ -3,4 +3,5 @@
  * @see docs/design-tokens.md § Icons
  */
 
-// export { ArrowExternal } from "./ArrowExternal";
+export { ArrowExternal } from "./ArrowExternal";
+export { ChevronRight } from "./ChevronRight";

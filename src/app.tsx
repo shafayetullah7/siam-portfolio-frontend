@@ -1,17 +1,28 @@
-import { Router } from "@solidjs/router";
+import { Router, useLocation } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
 import Nav from "~/components/Nav";
+import SkipLink from "~/components/SkipLink";
 import "./app.css";
+
+function AppShell(props: { children: unknown }) {
+  const location = useLocation();
+  const isAdmin = () => location.pathname.startsWith("/admin");
+
+  return (
+    <>
+      <SkipLink />
+      {!isAdmin() && <Nav />}
+      <Suspense>{props.children}</Suspense>
+    </>
+  );
+}
 
 export default function App() {
   return (
     <Router
       root={props => (
-        <>
-          <Nav />
-          <Suspense>{props.children}</Suspense>
-        </>
+        <AppShell>{props.children}</AppShell>
       )}
     >
       <FileRoutes />

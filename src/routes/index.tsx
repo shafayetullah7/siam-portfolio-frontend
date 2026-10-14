@@ -1,9 +1,11 @@
 import { A } from "@solidjs/router";
+import { Show } from "solid-js";
+import ApiStatus from "~/components/ApiStatus";
 
-/** Theme reference shell — replace with P01 Home in a later phase. */
+/** Theme reference shell — replace with P01 Home in Phase 9. */
 export default function Home() {
   return (
-    <main class="siam-container py-12 sm:py-16">
+    <main id="main" class="siam-container py-12 sm:py-16">
       <p class="siam-label mb-4">Theme preview</p>
       <h1 class="max-w-3xl text-[clamp(2.5rem,5vw,3.5rem)] font-bold leading-[1.1] tracking-tight">
         A curious mind. A builder of{" "}
@@ -31,6 +33,14 @@ export default function Home() {
           <p class="p-4 text-sm font-semibold text-accent-writing-ink">Writing accent</p>
         </div>
       </div>
+      <Show when={import.meta.env.DEV}>
+        <p class="mt-8 text-sm">
+          <A href="/design-preview" class="text-link">
+            Open design preview (dev)
+          </A>
+        </p>
+      </Show>
+      <ApiStatus />
     </main>
   );
 }
