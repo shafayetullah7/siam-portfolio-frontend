@@ -5,6 +5,10 @@ import type {
   HomeProfileLink,
 } from "~/content";
 import { ArrowExternal } from "~/icons";
+import {
+  HOME_SECTION_DOM_IDS,
+  SCROLL_MT_BELOW_PUBLIC_HEADER,
+} from "~/lib/site/homeSectionIds";
 import { formatDisplayDate } from "./formatDisplayDate";
 import LandingContentLink from "./LandingContentLink";
 
@@ -85,7 +89,10 @@ export default function HomeInsightsRegion(props: HomeInsightsRegionProps) {
 
       <div class="flex flex-col gap-8 lg:col-span-5">
         <Show when={hasWorkingOn()}>
-          <section class="flex flex-col gap-3" id="currently-working-on">
+          <section
+            class={`flex flex-col gap-3 ${SCROLL_MT_BELOW_PUBLIC_HEADER}`}
+            id={HOME_SECTION_DOM_IDS.currentlyWorkingOn}
+          >
             <span class="siam-eyebrow text-secondary">05 // DISPATCH</span>
             <h2 class="siam-headline-lg mb-2 font-normal text-brand-deep">Active exploration</h2>
             <div

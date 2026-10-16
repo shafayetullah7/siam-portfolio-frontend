@@ -19,7 +19,7 @@ export default function LandingHomeFooter(props: LandingHomeFooterProps) {
   const footerNav = () => buildFooterNavItems(site());
 
   return (
-    <footer class="mt-16 w-full bg-surface-container-low">
+    <footer class="mt-16 w-full bg-surface-container-low" role="contentinfo">
       <div
         class="mx-auto flex max-w-[var(--siam-content-width-wide)] flex-col gap-8 px-[var(--siam-gutter)] py-12 lg:px-[var(--siam-gutter-desktop)]"
       >

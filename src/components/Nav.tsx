@@ -1,11 +1,13 @@
 import { A, useLocation } from "@solidjs/router";
-import { createSignal, For, Show } from "solid-js";
+import { createEffect, createSignal, For, onCleanup, Show } from "solid-js";
 import {
   buildPrimaryNavItems,
   isPrimaryNavActive,
   type PrimaryNavItem,
 } from "~/lib/site/primaryNav";
 import { usePublicSite } from "~/lib/site/PublicSiteProvider";
+
+const CONTACT_HREF = "/about#contact";
 
 export default function Nav() {
   const location = useLocation();
@@ -15,22 +17,30 @@ export default function Nav() {
   const navItems = () => buildPrimaryNavItems(site());
   const siteName = () => site()?.siteName ?? "SIAM";
 
-  const linkClass = (item: PrimaryNavItem) => {
+  createEffect(() => {
+    location.pathname;
+    setMenuOpen(false);
+  });
+
+  createEffect(() => {
+    if (typeof document === "undefined") return;
+    document.body.style.overflow = menuOpen() ? "hidden" : "";
+    onCleanup(() => {
+      document.body.style.overflow = "";
+    });
+  });
+
+  const linkClass = (item: PrimaryNavItem, block = false) => {
     const active = isPrimaryNavActive(location.pathname, location.hash, item);
     return [
+      block ? "block w-full text-center no-underline" : "",
       "rounded-lg px-3 py-2 text-sm transition-colors",
       active
         ? "bg-secondary-container text-on-secondary-container"
         : "text-on-surface-variant hover:bg-secondary-container hover:text-on-secondary-container",
-    ].join(" ");
-  };
-
-  const mobileLinkClass = (item: PrimaryNavItem) => {
-    const active = isPrimaryNavActive(location.pathname, location.hash, item);
-    return [
-      "block py-2 text-sm no-underline",
-      active ? "text-link" : "text-ink-muted hover:text-ink",
-    ].join(" ");
+    ]
+      .filter(Boolean)
+      .join(" ");
   };
 
   return (
@@ -71,7 +81,7 @@ export default function Nav() {
 
         <div class="flex items-center gap-2">
           <A
-            href="/about#contact"
+            href={CONTACT_HREF}
             class="hidden sm:inline-flex siam-btn-primary px-4 py-2 text-sm no-underline"
           >
             Contact
@@ -102,7 +112,7 @@ export default function Nav() {
                 <li>
                   <A
                     href={item.href}
-                    class={mobileLinkClass(item)}
+                    class={linkClass(item, true)}
                     onClick={() => setMenuOpen(false)}
                   >
                     {item.label}
@@ -110,6 +120,15 @@ export default function Nav() {
                 </li>
               )}
             </For>
+            <li class="mt-2 border-t border-border pt-3">
+              <A
+                href={CONTACT_HREF}
+                class="siam-btn-primary block w-full py-2.5 text-center text-sm no-underline"
+                onClick={() => setMenuOpen(false)}
+              >
+                Contact
+              </A>
+            </li>
           </ul>
         </nav>
       </Show>

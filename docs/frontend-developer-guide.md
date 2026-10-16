@@ -47,7 +47,7 @@ Until CMS homepage (LP7 / Phase 9), `/` is driven by static content, not `getPub
 |--------|----------|
 | Copy & validation | [`src/content/`](../src/content/) — `home.content.ts`, `home.types.ts`, `home.validation.ts`; import via `~/content` |
 | Sections UI | [`src/components/landing/`](../src/components/landing/) |
-| Route | [`src/routes/index.tsx`](../src/routes/index.tsx) — `LandingPage`, meta + `getPublicSite()` for site name |
+| Route | [`src/routes/(public)/index.tsx`](../src/routes/(public)/index.tsx) — `LandingPage`, meta + `getPublicSite()` for site name |
 
 See [landing-page-phases.md](./landing-page-phases.md) and per-phase checklists (`landing-page-lp*-checklist.md`).
 
@@ -57,12 +57,12 @@ See [landing-page-phases.md](./landing-page-phases.md) and per-phase checklists 
 
 ```
 src/
-  app.tsx                 # Router + FileRoutes + global Suspense
+  app.tsx                 # MetaProvider + Router + root ErrorBoundary only (no global Suspense)
   app.css                 # Tailwind + @theme + .siam-* components
   entry-client.tsx
   entry-server.tsx
 
-  routes/                 # File-based pages (public + admin)
+  routes/                 # File-based pages; pathless (public).tsx wraps public URLs; robots/sitemap at routes/ root
   components/             # Shared UI (Nav, cards, forms) — mostly presentational
   icons/                  # One SVG component per file; barrel index.ts
   lib/

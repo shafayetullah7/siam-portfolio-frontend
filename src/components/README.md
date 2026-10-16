@@ -2,13 +2,7 @@
 
 ## Async routes (F3)
 
-**Public SSR routes** use `query` + `createAsync` in [`lib/api/queries/public/`](../lib/api/queries/public/). Loading and errors use the **root** shell in `app.tsx`:
-
-```tsx
-<ErrorBoundary fallback={(err, reset) => <RouteErrorFallback error={err} reset={reset} />}>
-  <Suspense fallback={<PageLoading />}>{children}</Suspense>
-</ErrorBoundary>
-```
+**Public SSR routes** use `query` + `createAsync` in [`lib/api/queries/public/`](../lib/api/queries/public/). Loading and errors use [`AsyncRouteShell`](./AsyncRouteShell.tsx) **inside** [`routes/(public).tsx`](../routes/(public).tsx) `main#main` so Nav/footer stay visible. Root `app.tsx` only has a last-resort `ErrorBoundary` (`variant="standalone"`).
 
 Example route:
 
@@ -42,7 +36,7 @@ revalidate(getPublicSite.key);
 // Future public page by slug: revalidate(getPublicPageBySlug.keyFor(slug));
 ```
 
-**Per-route shell** (optional): `AsyncRouteShell` — same primitives as root.
+**Per-route shell:** `AsyncRouteShell` — used by `(public)` layout and admin `main` (compact `PageLoading`).
 
 ### Admin routes (until later phase)
 
@@ -61,7 +55,7 @@ return (
 
 | Situation | Use |
 |-----------|-----|
-| Public SSR fetch via `createAsync` | Root `Suspense` → `PageLoading`; throw → `RouteErrorFallback` |
+| Public SSR fetch via `createAsync` | `(public)` `AsyncRouteShell` → `PageLoading`; throw → `RouteErrorFallback` (`embedded`, no second `main`) |
 | `ApiError` 404 from public API | `RouteErrorFallback` → branded not-found (`EmptyState`) |
 | Render bugs / dev boundary test | `ErrorBoundary` → `RouteErrorFallback` |
 | Admin `createResource` fetch failure | `HttpErrorNotice` via `ResourceRequest` |
@@ -76,7 +70,7 @@ See [Handle error and loading states](https://docs.solidjs.com/solid-router/data
 
 ## Public chrome (F6)
 
-Public chrome lives in [`routes/(public).tsx`](../routes/(public).tsx): `PublicSiteProvider`, fixed landing-style [`Nav`](./Nav.tsx), single `main#main`, and [`LandingHomeFooter`](./landing/LandingHomeFooter.tsx). [`primaryNav.ts`](../lib/site/primaryNav.ts) builds link lists: **code-owned** hub routes (`/research`, `/publications`, `/projects`), **Focus** (`/#currently-working-on` from home section ids), then CMS items from [`filterPublicNav`](../lib/site/filterPublicNav.ts) (gated by API `sitemapPaths`, deduped against hubs). Header and footers share the same builder; footers omit Focus.
+Wide inner pages use [`PUBLIC_PAGE_WIDE`](./layout/publicPageWidth.ts) (about, catalog hubs, detail stubs). Public chrome lives in [`routes/(public).tsx`](../routes/(public).tsx): `PublicSiteProvider`, fixed landing-style [`Nav`](./Nav.tsx), single `main#main`, and [`LandingHomeFooter`](./landing/LandingHomeFooter.tsx). [`primaryNav.ts`](../lib/site/primaryNav.ts) builds link lists: **code-owned** hub routes (`/research`, `/publications`, `/projects`), **Focus** (`/#currently-working-on` from home section ids), then CMS items from [`filterPublicNav`](../lib/site/filterPublicNav.ts) (gated by API `sitemapPaths`, deduped against hubs). Header and footers share the same builder; footers omit Focus.
 
 ## Manual checklist
 

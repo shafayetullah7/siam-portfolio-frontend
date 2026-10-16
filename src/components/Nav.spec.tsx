@@ -41,4 +41,34 @@ describe("Nav", () => {
       expect(researchLabels).toContain(label);
     }
   });
+
+  it("includes Contact links to about#contact", () => {
+    mockPathname = "/";
+    render(() => <Nav />);
+    const contactLinks = screen
+      .getAllByRole("link", { name: "Contact" })
+      .map((el) => el.getAttribute("href"));
+    expect(contactLinks.length).toBeGreaterThanOrEqual(1);
+    expect(contactLinks.every((href) => href === "/about#contact")).toBe(true);
+  });
+
+  it("locks body scroll when mobile menu is open and restores on close and unmount", () => {
+    mockPathname = "/";
+    document.body.style.overflow = "";
+
+    const { unmount } = render(() => <Nav />);
+    const menuButton = screen.getByRole("button", { name: "Menu" });
+
+    menuButton.click();
+    expect(document.body.style.overflow).toBe("hidden");
+
+    menuButton.click();
+    expect(document.body.style.overflow).toBe("");
+
+    menuButton.click();
+    expect(document.body.style.overflow).toBe("hidden");
+
+    unmount();
+    expect(document.body.style.overflow).toBe("");
+  });
 });

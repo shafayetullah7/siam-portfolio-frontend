@@ -1,6 +1,7 @@
 import { createEffect, Show } from "solid-js";
 import { useLocation, useNavigate, type RouteSectionProps } from "@solidjs/router";
 import { A } from "@solidjs/router";
+import AsyncRouteShell from "~/components/AsyncRouteShell";
 import PageLoading from "~/components/PageLoading";
 import { AdminAuthProvider, useAdminAuth } from "~/lib/auth/AdminAuthProvider";
 import { adminAuthApi } from "~/lib/api/endpoints/admin/auth.api";
@@ -101,7 +102,7 @@ function AdminLayoutContent(props: RouteSectionProps) {
               "flex flex-1 flex-col justify-center": !showChrome(),
             }}
           >
-            {props.children}
+            <AsyncRouteShell compactLoading>{props.children}</AsyncRouteShell>
           </main>
         </>
       }>

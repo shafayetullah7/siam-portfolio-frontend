@@ -3,9 +3,23 @@ import { Show } from "solid-js";
 import EmptyState from "~/components/EmptyState";
 import { getApiErrorMessage, isApiError } from "~/lib/api/errors";
 
-function NotFoundFallback() {
+export type RouteErrorFallbackProps = {
+  error: unknown;
+  reset: () => void;
+  title?: string;
+  /** When inside layout main#main, omit duplicate main landmark */
+  variant?: "embedded" | "standalone";
+};
+
+function shellClass(variant: "embedded" | "standalone") {
+  return variant === "standalone"
+    ? "siam-container py-16 sm:py-24"
+    : "siam-container py-12 sm:py-16";
+}
+
+function NotFoundFallback(props: { variant: "embedded" | "standalone" }) {
   return (
-    <main id="main" class="siam-container py-16 sm:py-24">
+    <div class={shellClass(props.variant)}>
       <EmptyState
         title="Page not found"
         description="The address may be wrong, or the page may have moved."
@@ -15,20 +29,17 @@ function NotFoundFallback() {
           <A href="/about" class="siam-btn-secondary no-underline">About</A>
         </div>
       </EmptyState>
-    </main>
+    </div>
   );
 }
 
-export default function RouteErrorFallback(props: {
-  error: unknown;
-  reset: () => void;
-  title?: string;
-}) {
+export default function RouteErrorFallback(props: RouteErrorFallbackProps) {
+  const variant = () => props.variant ?? "embedded";
   const isNotFound = () => isApiError(props.error) && props.error.status === 404;
 
   return (
-    <Show when={!isNotFound()} fallback={<NotFoundFallback />}>
-      <main id="main" class="siam-container py-16" role="alert">
+    <Show when={!isNotFound()} fallback={<NotFoundFallback variant={variant()} />}>
+      <div class={shellClass(variant())} role="alert">
         <p class="siam-label mb-2">Error</p>
         <h1 class="text-2xl font-bold text-ink">
           {props.title ?? "We could not load this page"}
@@ -47,7 +58,7 @@ export default function RouteErrorFallback(props: {
           </button>
           <A href="/" class="siam-btn-secondary no-underline">Home</A>
         </div>
-      </main>
+      </div>
     </Show>
   );
 }

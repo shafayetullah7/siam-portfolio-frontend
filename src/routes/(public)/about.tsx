@@ -1,6 +1,11 @@
 import { A, createAsync, type RouteDefinition } from "@solidjs/router";
 import { Title, Meta } from "@solidjs/meta";
+import { PUBLIC_PAGE_WIDE } from "~/components/layout/publicPageWidth";
 import { getPublicAbout, getPublicSite } from "~/lib/api/queries/public";
+import {
+  ABOUT_CONTACT_SECTION_ID,
+  SCROLL_MT_BELOW_PUBLIC_HEADER,
+} from "~/lib/site/homeSectionIds";
 import { buildPageMeta } from "~/lib/meta/buildPageMeta";
 
 export const route = {
@@ -29,7 +34,7 @@ export default function About() {
   };
 
   return (
-    <div class="siam-container py-12">
+    <div class={PUBLIC_PAGE_WIDE}>
       <Title>{pageMeta()?.title ?? "About"}</Title>
       <Meta name="description" content={pageMeta()?.description ?? ""} />
       <Meta property="og:title" content={pageMeta()?.ogTitle ?? "About"} />
@@ -43,6 +48,19 @@ export default function About() {
       {about()?.affiliation && (
         <p class="mt-4 text-sm text-ink-muted">{about()!.affiliation}</p>
       )}
+      <section
+        id={ABOUT_CONTACT_SECTION_ID}
+        class={`mt-12 border-t border-border pt-10 ${SCROLL_MT_BELOW_PUBLIC_HEADER}`}
+        aria-labelledby="about-contact-heading"
+      >
+        <h2 id="about-contact-heading" class="siam-headline-md text-brand-deep">
+          Contact
+        </h2>
+        <p class="siam-prose mt-3 max-w-prose text-ink-muted">
+          Reach out for collaborations, speaking, or student inquiries. Replace this block with
+          CMS contact details when the content packet is approved.
+        </p>
+      </section>
       <p class="mt-6">
         <A href="/" class="text-link font-medium no-underline hover:underline">← Home</A>
       </p>

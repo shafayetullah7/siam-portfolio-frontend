@@ -1,10 +1,11 @@
 import { A } from "@solidjs/router";
 import { Title } from "@solidjs/meta";
 import EmptyState from "~/components/EmptyState";
+import { PUBLIC_PAGE_WIDE } from "~/components/layout/publicPageWidth";
 
 export default function NotFound() {
   return (
-    <div class="siam-container py-16 sm:py-24">
+    <div class={PUBLIC_PAGE_WIDE}>
       <Title>Page not found</Title>
       <EmptyState
         title="Page not found"

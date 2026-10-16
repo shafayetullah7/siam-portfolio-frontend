@@ -1,10 +1,9 @@
 import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { MetaProvider } from "@solidjs/meta";
-import { ErrorBoundary, Suspense, type JSX } from "solid-js";
+import { ErrorBoundary, type JSX } from "solid-js";
 import SkipLink from "~/components/SkipLink";
 import RouteErrorFallback from "~/components/RouteErrorFallback";
-import PageLoading from "~/components/PageLoading";
 import "./app.css";
 
 function AppShell(props: { children: JSX.Element }) {
@@ -13,10 +12,10 @@ function AppShell(props: { children: JSX.Element }) {
       <SkipLink />
       <ErrorBoundary
         fallback={(error, reset) => (
-          <RouteErrorFallback error={error} reset={reset} />
+          <RouteErrorFallback error={error} reset={reset} variant="standalone" />
         )}
       >
-        <Suspense fallback={<PageLoading />}>{props.children}</Suspense>
+        {props.children}
       </ErrorBoundary>
     </>
   );

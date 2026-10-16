@@ -1,5 +1,5 @@
 import type { PublicSitePayload } from "~/lib/api/endpoints/public/site.api";
-import { HOME_SECTION_LABELS } from "~/components/landing/homeSectionLabels";
+import { HOME_SECTION_DOM_IDS } from "./homeSectionIds";
 import { filterPublicNav } from "./filterPublicNav";
 
 export type PrimaryNavItemKind = "hub" | "focus" | "cms";
@@ -11,7 +11,7 @@ export type PrimaryNavItem = {
   kind: PrimaryNavItemKind;
 };
 
-const FOCUS_SECTION_ID = HOME_SECTION_LABELS.currentlyWorkingOn.domId;
+const FOCUS_SECTION_ID = HOME_SECTION_DOM_IDS.currentlyWorkingOn;
 
 export const PUBLIC_HUB_NAV: readonly PrimaryNavItem[] = [
   { label: "Research", href: "/research", matchPath: "/research", kind: "hub" },

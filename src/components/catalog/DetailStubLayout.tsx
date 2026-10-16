@@ -1,6 +1,7 @@
 import { A } from "@solidjs/router";
 import { For } from "solid-js";
 import type { JSX } from "solid-js";
+import { PUBLIC_PAGE_WIDE } from "~/components/layout/publicPageWidth";
 
 export type DetailStubLayoutProps = {
   title: string;
@@ -13,7 +14,7 @@ export type DetailStubLayoutProps = {
 
 export default function DetailStubLayout(props: DetailStubLayoutProps) {
   return (
-    <div class="siam-container py-12">
+    <div class={PUBLIC_PAGE_WIDE}>
       <p class="mb-6">
         <A href={props.backHref} class="text-link text-sm font-medium no-underline hover:underline">
           ← {props.backLabel}

@@ -1,4 +1,5 @@
 import type { HomeSectionId } from "~/content";
+import { HOME_SECTION_DOM_IDS } from "~/lib/site/homeSectionIds";
 
 export type HomeSectionLabel = {
   domId: string;
@@ -26,45 +27,45 @@ export const HOME_SECTION_LABELS: Record<
   HomeSectionLabel
 > = {
   affiliation: {
-    domId: "affiliation",
+    domId: HOME_SECTION_DOM_IDS.affiliation,
     title: "Current affiliation",
     shipsInPhase: "LP2",
   },
   researchFocus: {
-    domId: "research-focus",
+    domId: HOME_SECTION_DOM_IDS.researchFocus,
     title: "Research pillars & foundations",
     sectionEyebrow: "01 // FOCUS AREAS",
     shipsInPhase: "LP3",
   },
   selectedPublications: {
-    domId: "selected-publications",
+    domId: HOME_SECTION_DOM_IDS.selectedPublications,
     title: "Selected publications",
     sectionEyebrow: "02 // SCHOLARSHIP",
     shipsInPhase: "LP4",
   },
   featuredProjects: {
-    domId: "featured-projects",
+    domId: HOME_SECTION_DOM_IDS.featuredProjects,
     title: "Open source & applied systems",
     sectionEyebrow: "03 // ARTIFACTS & SYSTEMS",
     shipsInPhase: "LP4",
   },
   highlights: {
-    domId: "highlights",
+    domId: HOME_SECTION_DOM_IDS.highlights,
     title: "Highlights",
     shipsInPhase: "LP5",
   },
   currentlyWorkingOn: {
-    domId: "currently-working-on",
+    domId: HOME_SECTION_DOM_IDS.currentlyWorkingOn,
     title: "Currently working on",
     shipsInPhase: "LP5",
   },
   profiles: {
-    domId: "profiles",
+    domId: HOME_SECTION_DOM_IDS.profiles,
     title: "Profiles",
     shipsInPhase: "LP5",
   },
   collaborationCta: {
-    domId: "collaboration",
+    domId: HOME_SECTION_DOM_IDS.collaborationCta,
     title: "Collaboration",
     shipsInPhase: "LP5",
   },

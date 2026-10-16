@@ -1,8 +1,16 @@
-import { useLocation, type RouteSectionProps } from "@solidjs/router";
+import { useLocation, type RouteDefinition, type RouteSectionProps } from "@solidjs/router";
+import AsyncRouteShell from "~/components/AsyncRouteShell";
 import Nav from "~/components/Nav";
 import LandingHomeFooter from "~/components/landing/LandingHomeFooter";
 import { homeContent } from "~/content";
+import { getPublicSite } from "~/lib/api/queries/public";
 import { PublicSiteProvider } from "~/lib/site/PublicSiteProvider";
+
+export const route = {
+  preload: () => {
+    void getPublicSite();
+  },
+} satisfies RouteDefinition;
 
 export default function PublicLayout(props: RouteSectionProps) {
   const location = useLocation();
@@ -17,7 +25,7 @@ export default function PublicLayout(props: RouteSectionProps) {
           id="main"
           class="flex-1 w-full bg-canvas pt-[var(--siam-public-header-height)]"
         >
-          {props.children}
+          <AsyncRouteShell compactLoading>{props.children}</AsyncRouteShell>
         </main>
         <LandingHomeFooter profiles={profiles()} />
       </div>

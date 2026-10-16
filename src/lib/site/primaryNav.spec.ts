@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { HOME_SECTION_LABELS } from "~/components/landing/homeSectionLabels";
+import { HOME_SECTION_DOM_IDS } from "./homeSectionIds";
 import {
   buildFooterNavItems,
   buildPrimaryNavItems,
@@ -49,7 +49,7 @@ describe("primaryNav", () => {
 
   it("focus href matches currently-working-on section id", () => {
     expect(PUBLIC_FOCUS_NAV.href).toBe(
-      `/#${HOME_SECTION_LABELS.currentlyWorkingOn.domId}`,
+      `/#${HOME_SECTION_DOM_IDS.currentlyWorkingOn}`,
     );
   });
 

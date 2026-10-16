@@ -267,7 +267,7 @@ export default function ProfilePage() {
 | Piece | SIAM |
 |--------|------|
 | Files | `src/routes/` — `index.tsx`, `[id].tsx`, `[[optional]].tsx`, `[...404].tsx` |
-| App shell | `app.tsx`: `Router` + `FileRoutes`; `root` = `Suspense` + children; public Nav/footer in `(public).tsx` |
+| App shell | `app.tsx`: thin `ErrorBoundary` only; `(public).tsx`: Nav + `main` + `AsyncRouteShell` + footer; admin: `AsyncRouteShell` inside `main` |
 | Links | `<A href="…">` from `@solidjs/router` |
 | Params / search | `useParams()`; `useSearchParams()` tuple — **proxy**, read properties to subscribe; route pages may use `props.params` in `createAsync(() => get(props.params.id))` per [routing doc](https://docs.solidjs.com/solid-start/v2/building-your-application/routing) |
 | Layouts | Not Next `layout.tsx` — use nested routes + `<Outlet>` per Start docs |

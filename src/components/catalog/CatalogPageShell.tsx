@@ -1,6 +1,7 @@
 import { A } from "@solidjs/router";
 import { For } from "solid-js";
 import type { JSX } from "solid-js";
+import { PUBLIC_PAGE_WIDE } from "~/components/layout/publicPageWidth";
 
 export type CatalogBreadcrumb = {
   label: string;
@@ -16,9 +17,7 @@ export type CatalogPageShellProps = {
 };
 
 export default function CatalogPageShell(props: CatalogPageShellProps) {
-  const containerClass = props.wide
-    ? "mx-auto w-full max-w-[var(--siam-content-width-wide)] px-[var(--siam-gutter)] py-12 lg:px-[var(--siam-gutter-desktop)]"
-    : "siam-container py-12";
+  const containerClass = props.wide ? PUBLIC_PAGE_WIDE : "siam-container py-12";
 
   return (
     <div class={containerClass}>

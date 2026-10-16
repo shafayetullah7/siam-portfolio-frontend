@@ -1,5 +1,6 @@
 import { A } from "@solidjs/router";
 import { Show } from "solid-js";
+import { PUBLIC_PAGE_WIDE } from "~/components/layout/publicPageWidth";
 import { ArrowExternal, ChevronRight } from "~/icons";
 
 /** Phase 1 reference compositions — not P01. DEV only; not linked from prod home. */
@@ -8,7 +9,7 @@ export default function DesignPreview() {
     <Show
       when={import.meta.env.DEV}
       fallback={
-        <div class="siam-container py-16">
+        <div class={PUBLIC_PAGE_WIDE}>
           <h1 class="text-xl font-semibold text-ink">Not available</h1>
           <p class="mt-2 text-ink-muted">This preview is for local development only.</p>
           <A href="/" class="mt-6 inline-block text-link no-underline">Home</A>
@@ -22,7 +23,7 @@ export default function DesignPreview() {
 
 function DesignPreviewContent() {
   return (
-    <div class="siam-container py-12 sm:py-16">
+    <div class={PUBLIC_PAGE_WIDE}>
       <p class="siam-eyebrow mb-4">Academic Atelier</p>
       <h1 class="siam-display-hero max-w-3xl">
         Reference compositions for researcher sign-off
