@@ -13,7 +13,7 @@ export default function LandingSection(props: LandingSectionProps) {
   return (
     <section id={props.id} class="scroll-mt-20" aria-labelledby={headingId}>
       {props.kicker ? <p class="siam-label mb-2">{props.kicker}</p> : null}
-      <h2 id={headingId} class="text-xl font-semibold text-ink">
+      <h2 id={headingId} class="siam-headline-md">
         {props.title}
       </h2>
       <div class="mt-4">{props.children}</div>

@@ -42,14 +42,14 @@ export default function ProjectCard(props: ProjectCardProps) {
         <ProjectCardImage image={item.image!} />
       </Show>
       <div class="p-5">
-        <h3 class="font-semibold text-ink">{item.title}</h3>
+        <h3 class="font-serif text-lg font-medium text-ink">{item.title}</h3>
         <p class="mt-2 text-sm text-ink-muted">{item.summary}</p>
         <Show when={item.tags && item.tags.length > 0}>
           <ul class="mt-4 flex flex-wrap gap-2" role="list">
             <For each={item.tags}>
               {(tag) => (
                 <li>
-                  <span class="siam-chip">{tag}</span>
+                  <span class="siam-tag">{tag}</span>
                 </li>
               )}
             </For>

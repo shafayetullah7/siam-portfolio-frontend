@@ -29,11 +29,12 @@ This project does **not** use Tailwind v3 patterns. Treat v3 blog posts, Stack O
    @import "tailwindcss";
    ```
 2. **Extend the theme** with `@theme` or `@theme inline` in CSS ([theme variables](https://tailwindcss.com/docs/theme)):
-   - Literal values: `@theme { --color-brand: #0b6b5f; }` → `bg-brand`
+   - Literal values: `@theme { --color-brand: #0f3e36; }` → `bg-brand` (prefer semantic `primary` instead)
    - Pointing at `:root` primitives: `@theme inline { --color-primary: var(--siam-primary); }` (required when values are CSS variables)
 3. **Use the Vite plugin**, not PostCSS `tailwindcss` as the main pipeline (already configured).
 4. **Prefer utilities in JSX** (`class="flex gap-4 text-ink"`). Use `.siam-*` component classes only for repeated composites.
 5. **Add new brand tokens** in `tokens.css`, map in `@theme inline`, document in `docs/design-tokens.md`.
+6. **Typography** — use `font-sans` (default), `font-serif` (Newsreader), `font-mono` (JetBrains Mono); prefer `.siam-display-hero` / `.siam-headline-*` over ad-hoc clamps.
 6. **Borders:** v4 default border color is `currentColor` — always set color on borders in UI, e.g. `border border-border` (SIAM token).
 7. **Opacity:** use slash modifiers — `bg-ink/50`, not `bg-opacity-50`.
 8. **Focus:** use `focus-visible:` and/or global styles in `app.css`; for rings use `ring-3 ring-focus` if you need v3-like 3px ring (bare `ring` is 1px in v4).

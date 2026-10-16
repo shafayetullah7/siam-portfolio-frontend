@@ -11,7 +11,9 @@ export default function CurrentlyWorkingOn(props: CurrentlyWorkingOnProps) {
   return (
     <div>
       <p class="siam-prose text-ink-muted">{props.data.text}</p>
-      <p class="mt-3 text-sm text-ink-subtle">Updated {updatedLabel()}</p>
+      <p class="mt-3 font-mono text-xs font-medium uppercase tracking-wider text-ink-subtle">
+        Updated {updatedLabel()}
+      </p>
     </div>
   );
 }

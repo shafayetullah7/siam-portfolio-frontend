@@ -104,6 +104,8 @@ Spec: [design-tokens.md](../../docs/design-tokens.md). Wiring: [tailwind.md](./t
 
 ### 3.2 Tailwind semantic classes (preferred)
 
+**Theme:** Academic Atelier — mint canvas, forest primary, sage surfaces. Spec: [design-tokens.md](../../docs/design-tokens.md).
+
 Use **token utilities**, not random palette grays/blues:
 
 | Use | Classes |
@@ -111,11 +113,13 @@ Use **token utilities**, not random palette grays/blues:
 | Page background | `bg-canvas` |
 | Cards, inputs | `bg-surface`, `border border-border` |
 | Headings / body | `text-ink`, `text-ink-muted`, `text-ink-subtle` |
+| Editorial titles | `font-serif`, `.siam-display-hero`, `.siam-headline-lg` / `-md` |
+| Eyebrows / venues | `font-mono`, `.siam-label`, `.siam-eyebrow`, `.siam-pill` |
 | Primary CTA | `siam-btn-primary` or `bg-primary text-primary-foreground` |
-| Secondary CTA | `siam-btn-secondary` |
+| Secondary CTA | `siam-btn-secondary` (outline; hover `bg-secondary-container`) |
 | Links | `text-link hover:text-link-hover` |
-| Section labels | `siam-label` |
-| Research / project / writing card header | `bg-accent-research`, `bg-accent-project`, `bg-accent-writing` |
+| Emblem / mint panel | `bg-surface-emblem`, `bg-accent-writing` |
+| Research bar / taxonomy | `bg-accent-research`, `bg-accent-project` (chip surface, not peach) |
 
 ### 3.3 Layout helpers (`app.css`)
 

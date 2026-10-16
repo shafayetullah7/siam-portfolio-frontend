@@ -42,14 +42,11 @@ export default function HeroBlock(props: HeroBlockProps) {
     <section aria-labelledby="home-hero-heading">
       <div class="lg:grid lg:grid-cols-[1fr_minmax(12rem,28%)] lg:items-center lg:gap-10 xl:gap-12">
         <div>
-          <p class="siam-label mb-4 text-primary">{hero.descriptor}</p>
-          <h1
-            id="home-hero-heading"
-            class="max-w-3xl text-[clamp(2.75rem,5.5vw,4rem)] font-bold leading-[1.05] tracking-tight text-ink"
-          >
+          <p class="siam-eyebrow mb-4 text-primary">{hero.descriptor}</p>
+          <h1 id="home-hero-heading" class="siam-display-hero max-w-3xl">
             {hero.name}
           </h1>
-          <p class="siam-prose mt-6 max-w-2xl text-lg text-ink-muted lg:max-w-prose">
+          <p class="siam-prose mt-6 max-w-2xl lg:max-w-prose">
             {hero.positioning}
           </p>
           <div class="mt-10 flex flex-wrap gap-3">
