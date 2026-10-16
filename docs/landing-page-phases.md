@@ -114,7 +114,7 @@ flowchart LR
 
 **Checklist:** [landing-page-lp3-checklist.md](./landing-page-lp3-checklist.md)
 
-**Objective:** 3–6 thematic cards linking to future research routes (or `/about#expertise` until Research exists).
+**Objective:** 3–6 thematic cards on `/` (section `#research-focus`, unchanged order) linking to **`/research/:slug`**; full hub at **`/research`**. See [catalog-content.md](./catalog-content.md).
 
 **Deliverables**
 

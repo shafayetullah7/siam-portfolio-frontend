@@ -1,3 +1,4 @@
+import { validateCatalogFeaturedBounds } from "./catalog";
 import type {
   HomeHighlight,
   HomePageContent,
@@ -53,6 +54,8 @@ export function validateHomeContentBounds(
       );
     }
   }
+
+  errors.push(...validateCatalogFeaturedBounds());
 
   return errors;
 }

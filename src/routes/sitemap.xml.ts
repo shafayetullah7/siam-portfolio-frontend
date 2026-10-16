@@ -1,12 +1,13 @@
 import type { APIEvent } from "@solidjs/start/server";
+import { listCatalogSitemapPaths } from "~/content/catalog";
 import { sitePublicApi } from "~/lib/api/endpoints/public/site.api";
 import { getSiteOrigin } from "~/lib/site/siteOrigin";
 
 export async function GET(_event: APIEvent) {
-  let paths = ["/", "/about"];
+  let paths = ["/", "/about", ...listCatalogSitemapPaths()];
   try {
     const site = await sitePublicApi.get();
-    paths = site.sitemapPaths;
+    paths = [...new Set([...site.sitemapPaths, ...listCatalogSitemapPaths()])];
   } catch {
     // fallback when API offline
   }

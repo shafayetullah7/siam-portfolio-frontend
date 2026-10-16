@@ -76,7 +76,7 @@ See [Handle error and loading states](https://docs.solidjs.com/solid-router/data
 
 ## Public chrome (F6)
 
-[`PublicSiteProvider`](../lib/site/PublicSiteProvider.tsx) loads `getPublicSite` for [`Nav`](./Nav.tsx) and [`PublicFooter`](./PublicFooter.tsx). Nav links are filtered with [`filterPublicNav`](../lib/site/filterPublicNav.ts) against `sitemapPaths`.
+Public chrome lives in [`routes/(public).tsx`](../routes/(public).tsx): `PublicSiteProvider`, fixed landing-style [`Nav`](./Nav.tsx), single `main#main`, and [`LandingHomeFooter`](./landing/LandingHomeFooter.tsx). [`primaryNav.ts`](../lib/site/primaryNav.ts) builds link lists: **code-owned** hub routes (`/research`, `/publications`, `/projects`), **Focus** (`/#currently-working-on` from home section ids), then CMS items from [`filterPublicNav`](../lib/site/filterPublicNav.ts) (gated by API `sitemapPaths`, deduped against hubs). Header and footers share the same builder; footers omit Focus.
 
 ## Manual checklist
 

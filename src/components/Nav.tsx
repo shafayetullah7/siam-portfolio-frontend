@@ -1,52 +1,44 @@
 import { A, useLocation } from "@solidjs/router";
 import { createSignal, For, Show } from "solid-js";
-import { filterPublicNav } from "~/lib/site/filterPublicNav";
+import {
+  buildPrimaryNavItems,
+  isPrimaryNavActive,
+  type PrimaryNavItem,
+} from "~/lib/site/primaryNav";
 import { usePublicSite } from "~/lib/site/PublicSiteProvider";
-
-const HOME_SECTION_LINKS = [
-  { label: "Research", href: "/#research-focus" },
-  { label: "Publications", href: "/#selected-publications" },
-  { label: "Projects", href: "/#featured-projects" },
-  { label: "Focus", href: "/#currently-working-on" },
-] as const;
 
 export default function Nav() {
   const location = useLocation();
   const { site } = usePublicSite();
   const [menuOpen, setMenuOpen] = createSignal(false);
 
-  const isHome = () => location.pathname === "/";
-
-  const navItems = () => {
-    const s = site();
-    if (!s) return [];
-    return filterPublicNav(s.nav, s.sitemapPaths);
-  };
-
+  const navItems = () => buildPrimaryNavItems(site());
   const siteName = () => site()?.siteName ?? "SIAM";
 
-  const linkClass = (path: string) => {
-    const isActive = path === location.pathname;
+  const linkClass = (item: PrimaryNavItem) => {
+    const active = isPrimaryNavActive(location.pathname, location.hash, item);
     return [
-      "text-sm font-medium transition-colors duration-200",
-      isActive ? "text-link" : "text-ink-muted hover:text-ink",
+      "rounded-lg px-3 py-2 text-sm transition-colors",
+      active
+        ? "bg-secondary-container text-on-secondary-container"
+        : "text-on-surface-variant hover:bg-secondary-container hover:text-on-secondary-container",
+    ].join(" ");
+  };
+
+  const mobileLinkClass = (item: PrimaryNavItem) => {
+    const active = isPrimaryNavActive(location.pathname, location.hash, item);
+    return [
+      "block py-2 text-sm no-underline",
+      active ? "text-link" : "text-ink-muted hover:text-ink",
     ].join(" ");
   };
 
   return (
     <header
-      class={
-        isHome()
-          ? "fixed top-0 left-0 z-50 w-full border-b border-border/50 bg-surface/85 shadow-[0_1px_8px_rgba(0,0,0,0.04)] backdrop-blur-xl"
-          : "border-b border-border bg-canvas/95 backdrop-blur-sm"
-      }
+      class="fixed top-0 left-0 z-50 w-full border-b border-border/50 bg-surface/85 shadow-[0_1px_8px_rgba(0,0,0,0.04)] backdrop-blur-xl"
     >
       <div
-        class={
-          isHome()
-            ? "mx-auto flex h-20 max-w-[var(--siam-content-width-wide)] items-center justify-between gap-4 px-[var(--siam-gutter)] lg:px-[var(--siam-gutter-desktop)]"
-            : "siam-container flex h-14 items-center justify-between gap-4"
-        }
+        class="mx-auto flex h-20 max-w-[var(--siam-content-width-wide)] items-center justify-between gap-4 px-[var(--siam-gutter)] lg:px-[var(--siam-gutter-desktop)]"
       >
         <A href="/" class="flex items-center gap-3 text-ink no-underline hover:text-ink">
           <div
@@ -63,37 +55,19 @@ export default function Nav() {
           </div>
         </A>
 
-        <Show
-          when={isHome()}
-          fallback={
-            <nav class="hidden sm:block" aria-label="Primary">
-              <ul class="flex items-center gap-6 sm:gap-8">
-                <For each={navItems()}>
-                  {(item) => (
-                    <li>
-                      <A href={item.path} class={linkClass(item.path)}>
-                        {item.label}
-                      </A>
-                    </li>
-                  )}
-                </For>
-              </ul>
-            </nav>
-          }
-        >
-          <nav class="hidden lg:flex items-center gap-1" aria-label="Primary">
-            <For each={HOME_SECTION_LINKS}>
+        <nav class="hidden lg:flex items-center gap-1" aria-label="Primary">
+          <ul class="flex items-center gap-1">
+            <For each={navItems()}>
               {(item) => (
-                <A
-                  href={item.href}
-                  class="rounded-lg px-3 py-2 text-sm text-on-surface-variant transition-colors hover:bg-secondary-container hover:text-on-secondary-container"
-                >
-                  {item.label}
-                </A>
+                <li>
+                  <A href={item.href} class={linkClass(item)}>
+                    {item.label}
+                  </A>
+                </li>
               )}
             </For>
-          </nav>
-        </Show>
+          </ul>
+        </nav>
 
         <div class="flex items-center gap-2">
           <A
@@ -118,47 +92,24 @@ export default function Nav() {
         <nav
           id="mobile-primary-nav"
           class="border-t border-border bg-canvas lg:hidden"
-          aria-label="Primary"
+          aria-label="Menu"
         >
           <ul
-            class={
-              isHome()
-                ? "mx-auto flex max-w-[var(--siam-content-width-wide)] flex-col gap-1 px-[var(--siam-gutter)] py-3"
-                : "siam-container flex flex-col gap-1 py-3"
-            }
+            class="mx-auto flex max-w-[var(--siam-content-width-wide)] flex-col gap-1 px-[var(--siam-gutter)] py-3"
           >
-            <Show
-              when={isHome()}
-              fallback={
-                <For each={navItems()}>
-                  {(item) => (
-                    <li>
-                      <A
-                        href={item.path}
-                        class={`block py-2 ${linkClass(item.path)}`}
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        {item.label}
-                      </A>
-                    </li>
-                  )}
-                </For>
-              }
-            >
-              <For each={HOME_SECTION_LINKS}>
-                {(item) => (
-                  <li>
-                    <A
-                      href={item.href}
-                      class="block py-2 text-sm text-ink-muted no-underline hover:text-ink"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      {item.label}
-                    </A>
-                  </li>
-                )}
-              </For>
-            </Show>
+            <For each={navItems()}>
+              {(item) => (
+                <li>
+                  <A
+                    href={item.href}
+                    class={mobileLinkClass(item)}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {item.label}
+                  </A>
+                </li>
+              )}
+            </For>
           </ul>
         </nav>
       </Show>

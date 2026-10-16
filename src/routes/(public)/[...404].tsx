@@ -4,7 +4,7 @@ import EmptyState from "~/components/EmptyState";
 
 export default function NotFound() {
   return (
-    <main id="main" class="siam-container py-16 sm:py-24">
+    <div class="siam-container py-16 sm:py-24">
       <Title>Page not found</Title>
       <EmptyState
         title="Page not found"
@@ -15,6 +15,6 @@ export default function NotFound() {
           <A href="/about" class="siam-btn-secondary no-underline">About</A>
         </div>
       </EmptyState>
-    </main>
+    </div>
   );
 }

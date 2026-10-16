@@ -1,6 +1,8 @@
+import { A } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import type { HomeProfileLink } from "~/content";
 import { ChevronRight } from "~/icons";
+import { buildFooterNavItems } from "~/lib/site/primaryNav";
 import { usePublicSite } from "~/lib/site/PublicSiteProvider";
 
 export type LandingHomeFooterProps = {
@@ -14,6 +16,7 @@ export default function LandingHomeFooter(props: LandingHomeFooterProps) {
   const tagline = () =>
     site()?.footerText ??
     "Theoretical foundations & empirical alignment for humane machine intelligence.";
+  const footerNav = () => buildFooterNavItems(site());
 
   return (
     <footer class="mt-16 w-full bg-surface-container-low">
@@ -35,6 +38,24 @@ export default function LandingHomeFooter(props: LandingHomeFooterProps) {
             Back to top
           </a>
         </div>
+        <Show when={footerNav().length > 0}>
+          <nav aria-label="Footer">
+            <ul class="flex flex-wrap gap-x-4 gap-y-2">
+              <For each={footerNav()}>
+                {(item) => (
+                  <li>
+                    <A
+                      href={item.href}
+                      class="font-mono text-xs text-secondary no-underline transition-colors hover:text-primary"
+                    >
+                      {item.label}
+                    </A>
+                  </li>
+                )}
+              </For>
+            </ul>
+          </nav>
+        </Show>
         <Show when={props.profiles && props.profiles.length > 0}>
           <div class="flex flex-wrap items-center gap-4">
             <For each={props.profiles}>

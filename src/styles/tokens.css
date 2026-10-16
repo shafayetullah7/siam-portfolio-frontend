@@ -51,6 +51,7 @@
   --siam-error-surface: #fef3f2;
 
   /* Layout */
+  --siam-public-header-height: 5rem;
   --siam-content-width: 67.5rem;
   --siam-content-width-wide: 75rem;
   --siam-prose-width: 42rem;

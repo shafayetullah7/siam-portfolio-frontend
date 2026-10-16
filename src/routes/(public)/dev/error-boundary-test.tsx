@@ -11,16 +11,16 @@ export default function ErrorBoundaryTest() {
     <Show
       when={import.meta.env.DEV}
       fallback={
-        <main id="main" class="siam-container py-16">
+        <div class="siam-container py-16">
           <p class="text-ink-muted">Not available.</p>
           <A href="/" class="text-link">Home</A>
-        </main>
+        </div>
       }
     >
-      <main id="main" class="siam-container py-8">
+      <div class="siam-container py-8">
         <p class="text-sm text-ink-muted mb-4">Dev: ErrorBoundary test</p>
         <ThrowOnRender />
-      </main>
+      </div>
     </Show>
   );
 }

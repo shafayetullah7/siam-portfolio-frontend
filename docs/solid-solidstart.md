@@ -267,7 +267,7 @@ export default function ProfilePage() {
 | Piece | SIAM |
 |--------|------|
 | Files | `src/routes/` — `index.tsx`, `[id].tsx`, `[[optional]].tsx`, `[...404].tsx` |
-| App shell | `app.tsx`: `Router` + `FileRoutes`; `root` = Nav + `Suspense` + children |
+| App shell | `app.tsx`: `Router` + `FileRoutes`; `root` = `Suspense` + children; public Nav/footer in `(public).tsx` |
 | Links | `<A href="…">` from `@solidjs/router` |
 | Params / search | `useParams()`; `useSearchParams()` tuple — **proxy**, read properties to subscribe; route pages may use `props.params` in `createAsync(() => get(props.params.id))` per [routing doc](https://docs.solidjs.com/solid-start/v2/building-your-application/routing) |
 | Layouts | Not Next `layout.tsx` — use nested routes + `<Outlet>` per Start docs |
@@ -302,16 +302,20 @@ Official mapping: [Routing](https://docs.solidjs.com/solid-start/v2/building-you
 3. **Never** add `admin/<segment>.tsx` **and** `admin/<segment>/` at the same time. SolidStart will register conflicting routes; the wrong page can win (e.g. public 404 on `/admin/register`). If a segment needs children, use **`segment/index.tsx`**, not `segment.tsx`.
 4. **Do not** flatten multi-segment URLs into one filename (e.g. `register-verify.tsx` for `/admin/register/verify`) unless the product URL changes — keep filenames aligned with URL segments.
 5. **Dynamic segments** live in the folder that matches the static prefix: `admin/pages/[id].tsx`, not `admin/[id].tsx` for page IDs.
-6. **Pathless route groups** like `(public).tsx` are mentioned in [frontend-setup-phases.md](./frontend-setup-phases.md) as optional; SIAM does not use them today. Prefer the rules above unless a future refactor is tested against `pnpm build`.
+6. **Pathless route groups** — [`routes/(public).tsx`](../src/routes/(public).tsx) wraps all public pages (URLs unchanged). Sibling modules live under `routes/(public)/`. Admin and API routes (`robots.txt.ts`, `sitemap.xml.ts`) stay at `routes/` root.
 
 ### 8.3 Current route tree (audit)
 
 | URL | File |
 |-----|------|
-| `/` | `index.tsx` |
-| `/about` | `about.tsx` |
-| `/design-preview` | `design-preview.tsx` |
-| `/*` (404) | `[...404].tsx` |
+| Public layout | `(public).tsx` |
+| `/` | `(public)/index.tsx` |
+| `/about` | `(public)/about.tsx` |
+| `/research`, `/research/:slug` | `(public)/research/` |
+| `/publications`, `/publications/:slug` | `(public)/publications/` |
+| `/projects`, `/projects/:slug` | `(public)/projects/` |
+| `/design-preview` | `(public)/design-preview.tsx` |
+| `/*` (404) | `(public)/[...404].tsx` |
 | `/admin` | `admin.tsx` (layout) + `admin/index.tsx` |
 | `/admin/login` | `admin/login.tsx` |
 | `/admin/register` | `admin/register/index.tsx` |
@@ -322,7 +326,7 @@ Official mapping: [Routing](https://docs.solidjs.com/solid-start/v2/building-you
 | `/admin/pages` | `admin/pages/index.tsx` |
 | `/admin/pages/:id` | `admin/pages/[id].tsx` |
 | `/admin/site` | `admin/site/index.tsx` |
-| `/dev/error-boundary-test` | `dev/error-boundary-test.tsx` |
+| `/dev/error-boundary-test` | `(public)/dev/error-boundary-test.tsx` |
 
 Admin auth pages intentionally mix **flat** modules (single URL) and the **register/** folder (two URLs). That is consistent with §8.2, not an exception to fix by moving `login` into `login/index.tsx`. See [admin-auth-map.md](./admin-auth-map.md).
 

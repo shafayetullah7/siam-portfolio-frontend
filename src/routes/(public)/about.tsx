@@ -29,7 +29,7 @@ export default function About() {
   };
 
   return (
-    <main id="main" class="siam-container py-12">
+    <div class="siam-container py-12">
       <Title>{pageMeta()?.title ?? "About"}</Title>
       <Meta name="description" content={pageMeta()?.description ?? ""} />
       <Meta property="og:title" content={pageMeta()?.ogTitle ?? "About"} />
@@ -46,6 +46,6 @@ export default function About() {
       <p class="mt-6">
         <A href="/" class="text-link font-medium no-underline hover:underline">← Home</A>
       </p>
-    </main>
+    </div>
   );
 }

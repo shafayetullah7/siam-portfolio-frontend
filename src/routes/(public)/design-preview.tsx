@@ -8,11 +8,11 @@ export default function DesignPreview() {
     <Show
       when={import.meta.env.DEV}
       fallback={
-        <main id="main" class="siam-container py-16">
+        <div class="siam-container py-16">
           <h1 class="text-xl font-semibold text-ink">Not available</h1>
           <p class="mt-2 text-ink-muted">This preview is for local development only.</p>
           <A href="/" class="mt-6 inline-block text-link no-underline">Home</A>
-        </main>
+        </div>
       }
     >
       <DesignPreviewContent />
@@ -22,7 +22,7 @@ export default function DesignPreview() {
 
 function DesignPreviewContent() {
   return (
-    <main id="main" class="siam-container py-12 sm:py-16">
+    <div class="siam-container py-12 sm:py-16">
       <p class="siam-eyebrow mb-4">Academic Atelier</p>
       <h1 class="siam-display-hero max-w-3xl">
         Reference compositions for researcher sign-off
@@ -148,6 +148,6 @@ function DesignPreviewContent() {
           Back to home
         </A>
       </p>
-    </main>
+    </div>
   );
 }

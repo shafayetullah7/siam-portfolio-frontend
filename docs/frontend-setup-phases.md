@@ -108,7 +108,7 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 
 **Tasks**
 
-1. **Public layout** — Optional `routes/(public).tsx` or shared wrapper: `main#main`, footer placeholder, hide `Nav` on admin (today: `app.tsx` + `admin.tsx`).
+1. **Public layout** — [`routes/(public).tsx`](../src/routes/(public).tsx): landing `Nav`, `main#main`, `LandingHomeFooter`; admin stays in `admin.tsx` only.
 2. **404** — Rewrite [`src/routes/[...404].tsx`](../src/routes/[...404].tsx): SIAM tokens, link home, optional “contact”; remove Solid starter links.
 3. **Root boundaries** — In `app.tsx`: wrap `props.children` in **`ErrorBoundary`** (app-wide fallback + `reset`) **outside** or **inside** `Suspense` per desired behavior (boundary catches render errors from async children once resolved).
 4. **Dev-only routes** — Gate `design-preview`, strip or hide `ApiStatus` on production home.

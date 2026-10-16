@@ -1,4 +1,11 @@
 export type {
+  ProjectRecord,
+  PublicationRecord,
+  ResearchTheme,
+  ResearchThemeStatus,
+} from "./catalog.types";
+
+export type {
   HomeAffiliation,
   HomeCollaborationCta,
   HomeCta,
@@ -18,6 +25,26 @@ export type {
 } from "./home.types";
 
 export { homeContent } from "./home.content";
+export { projectsCatalog } from "./projects.catalog";
+export { publicationsCatalog } from "./publications.catalog";
+export { researchThemesCatalog } from "./research.catalog";
+
+export {
+  getProject,
+  getPublication,
+  getResearchTheme,
+  listCatalogSitemapPaths,
+  listFeaturedProjectsForHome,
+  listFeaturedPublicationsForHome,
+  listFeaturedResearchForHome,
+  listProjects,
+  listPublications,
+  listResearchThemes,
+  projectToHomeItem,
+  publicationToHomeItem,
+  researchThemeToHomeItem,
+  validateCatalogFeaturedBounds,
+} from "./catalog";
 
 export {
   assertHomeContentBounds,

@@ -41,7 +41,7 @@ describe("LandingPage", () => {
     );
     expect(document.getElementById("affiliation")).toBeTruthy();
     expect(screen.getByRole("link", { name: "Explore research" }).getAttribute("href")).toBe(
-      "/#research-focus",
+      "/research",
     );
   });
 });

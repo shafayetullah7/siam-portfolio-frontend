@@ -1,7 +1,12 @@
 /**
  * PLACEHOLDER — replace before public launch.
- * Source of truth migration: docs/content-packet/*.md
+ * Research / publications / projects on home come from catalogs (featuredOnHome).
  */
+import {
+  listFeaturedProjectsForHome,
+  listFeaturedPublicationsForHome,
+  listFeaturedResearchForHome,
+} from "./catalog";
 import type { HomePageContent } from "./home.types";
 
 export const homeContent: HomePageContent = {
@@ -13,7 +18,7 @@ export const homeContent: HomePageContent = {
     portrait: null,
     statusBadge: "LIVE DISPATCH",
     contactEmail: "researcher@university.edu",
-    primaryCta: { label: "Explore research", href: "/#research-focus" },
+    primaryCta: { label: "Explore research", href: "/research" },
     secondaryCta: { label: "Get in touch", href: "/about#contact" },
     ledger: {
       headerLabel: "Scholar ledger",
@@ -30,66 +35,9 @@ export const homeContent: HomePageContent = {
     organization: "[Organization]",
     location: "[City, Country]",
   },
-  researchFocus: [
-    {
-      title: "Interpretable representation learning",
-      description:
-        "Disentangling latent structure for human-verifiable attribution in deep models. Replace with approved theme copy.",
-      href: "/about",
-      tags: ["Interpretability", "Attribution", "Latent audits"],
-      linkLabel: "Explore theme & preprints",
-    },
-    {
-      title: "Sample-efficient constrained optimization",
-      description:
-        "Robust learning under data scarcity, physical boundaries, and distribution shift—with selective expert-in-the-loop queries.",
-      href: "/about",
-      tags: ["Active learning", "Data scarcity", "Optimization"],
-      linkLabel: "Explore theme & preprints",
-    },
-    {
-      title: "Human-aligned oversight & governance",
-      description:
-        "Evaluation suites, stress tests, and safety guarantees before autonomous pipelines enter high-consequence domains.",
-      href: "/about",
-      tags: ["Safety", "Human oversight", "Evaluation"],
-      linkLabel: "Explore theme & preprints",
-    },
-  ],
-  selectedPublications: [
-    {
-      title: "Example publication title (placeholder)",
-      authorsShort: "[Author A], [Author B], …",
-      year: 2025,
-      venue: "NeurIPS",
-      significance:
-        "One sentence on why this work matters—replace with verified copy from the content packet.",
-      href: "/about",
-    },
-    {
-      title: "Second example publication (placeholder)",
-      authorsShort: "[Author A] et al.",
-      year: 2024,
-      venue: "ICML",
-      significance: "Significance line for layout testing only.",
-      href: "/about",
-    },
-  ],
-  featuredProjects: [
-    {
-      title: "Example open-source project (placeholder)",
-      summary:
-        "Problem, approach, and outcome in two sentences. Not a real project until content-packet approval.",
-      href: "/about",
-      tags: ["Python", "ML", "Prototype"],
-    },
-    {
-      title: "Second example project (placeholder)",
-      summary: "Another featured system for the home grid.",
-      href: "/about",
-      tags: ["JAX", "Research code"],
-    },
-  ],
+  researchFocus: listFeaturedResearchForHome(),
+  selectedPublications: listFeaturedPublicationsForHome(),
+  featuredProjects: listFeaturedProjectsForHome(),
   highlights: [
     {
       badge: "INVITED TALK",

@@ -1,3 +1,4 @@
+import { A } from "@solidjs/router";
 import type { HomeResearchFocusItem } from "~/content";
 import LandingSectionHeader from "./LandingSectionHeader";
 import { HOME_SECTION_LABELS } from "./homeSectionLabels";
@@ -17,10 +18,15 @@ export default function ResearchFocusSection(props: ResearchFocusSectionProps) {
         sectionEyebrow={meta.sectionEyebrow ?? "01 // FOCUS AREAS"}
         title={meta.title}
         aside={
-          <p class="max-w-md text-sm text-secondary">
-            {meta.aside ??
-              "Theoretical rigor met with operational deployments. Addressing failure modes before systems enter high-stakes settings."}
-          </p>
+          <div class="flex max-w-md flex-col gap-2 text-sm text-secondary">
+            <p>
+              {meta.aside ??
+                "Theoretical rigor met with operational deployments. Addressing failure modes before systems enter high-stakes settings."}
+            </p>
+            <A href="/research" class="font-mono text-xs text-primary no-underline hover:underline">
+              View all themes →
+            </A>
+          </div>
         }
       />
       <ResearchFocusGrid items={props.items} />
