@@ -67,6 +67,7 @@ src/
 | Rule | Detail |
 |------|--------|
 | **Thin routes** | Route files wire `query` / layout / meta; avoid 200-line pages. |
+| **Route files** | SolidStart file routing: one URL → one `.tsx` unless the prefix has multiple children → folder + `index.tsx`. Never `segment.tsx` + `segment/` together. [solid-solidstart.md §8](./solid-solidstart.md#8-routing-this-repo). |
 | **Presentational components** | Receive data via props; no hidden `fetch` inside dumb UI. |
 | **One HTTP layer** | All `fetch` goes through `lib/api` — never scatter `fetch('/api/...')` in components. |
 | **API types** | TypeScript interfaces in `lib/api/types` — **no Zod** on responses ([api-convention.md](./api-convention.md)). |

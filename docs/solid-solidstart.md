@@ -275,6 +275,57 @@ export default function ProfilePage() {
 
 Path alias: `~/` → `src/`.
 
+### 8.1 Filename → URL (SolidStart v2)
+
+Official mapping: [Routing](https://docs.solidjs.com/solid-start/v2/building-your-application/routing).
+
+| Pattern | Example file(s) | URL |
+|--------|------------------|-----|
+| Index | `routes/index.tsx` | `/` |
+| Single segment | `routes/about.tsx` | `/about` |
+| Nested static | `routes/blog/post.tsx` | `/blog/post` |
+| Segment default + siblings | `routes/blog/index.tsx` + `routes/blog/post.tsx` | `/blog`, `/blog/post` |
+| Dynamic param | `routes/users/[id].tsx` | `/users/:id` |
+| Optional param | `routes/users/[[id]].tsx` | `/users` or `/users/:id` |
+| Catch-all | `routes/[...404].tsx` | unmatched paths (SIAM 404 page) |
+| HTTP handler | `routes/robots.txt.ts` (`export function GET`) | `/robots.txt` |
+
+**Layout routes:** a module at `routes/admin.tsx` wraps all paths under `/admin/*` (default export receives children; SIAM uses `RouteSectionProps` in [`admin.tsx`](../src/routes/admin.tsx)). Child pages live in `routes/admin/` as siblings of the layout file’s logical tree, not in a Next.js `layout.tsx`.
+
+### 8.2 SIAM conventions (when to use a file vs a folder)
+
+1. **One URL, one page** — use a single route module: `admin/login.tsx` → `/admin/login`. Same for hyphenated paths: `forgot-password.tsx` → `/admin/forgot-password`.
+2. **Several URLs under the same path prefix** — use a **directory** with `index.tsx` for the prefix and sibling modules for children:
+   - `admin/register/index.tsx` → `/admin/register`
+   - `admin/register/verify.tsx` → `/admin/register/verify`
+   - `admin/pages/index.tsx` + `admin/pages/[id].tsx` → list + editor
+3. **Never** add `admin/<segment>.tsx` **and** `admin/<segment>/` at the same time. SolidStart will register conflicting routes; the wrong page can win (e.g. public 404 on `/admin/register`). If a segment needs children, use **`segment/index.tsx`**, not `segment.tsx`.
+4. **Do not** flatten multi-segment URLs into one filename (e.g. `register-verify.tsx` for `/admin/register/verify`) unless the product URL changes — keep filenames aligned with URL segments.
+5. **Dynamic segments** live in the folder that matches the static prefix: `admin/pages/[id].tsx`, not `admin/[id].tsx` for page IDs.
+6. **Pathless route groups** like `(public).tsx` are mentioned in [frontend-setup-phases.md](./frontend-setup-phases.md) as optional; SIAM does not use them today. Prefer the rules above unless a future refactor is tested against `pnpm build`.
+
+### 8.3 Current route tree (audit)
+
+| URL | File |
+|-----|------|
+| `/` | `index.tsx` |
+| `/about` | `about.tsx` |
+| `/design-preview` | `design-preview.tsx` |
+| `/*` (404) | `[...404].tsx` |
+| `/admin` | `admin.tsx` (layout) + `admin/index.tsx` |
+| `/admin/login` | `admin/login.tsx` |
+| `/admin/register` | `admin/register/index.tsx` |
+| `/admin/register/verify` | `admin/register/verify.tsx` |
+| `/admin/forgot-password` | `admin/forgot-password.tsx` |
+| `/admin/reset-password` | `admin/reset-password.tsx` |
+| `/admin/change-password` | `admin/change-password.tsx` |
+| `/admin/pages` | `admin/pages/index.tsx` |
+| `/admin/pages/:id` | `admin/pages/[id].tsx` |
+| `/admin/site` | `admin/site/index.tsx` |
+| `/dev/error-boundary-test` | `dev/error-boundary-test.tsx` |
+
+Admin auth pages intentionally mix **flat** modules (single URL) and the **register/** folder (two URLs). That is consistent with §8.2, not an exception to fix by moving `login` into `login/index.tsx`. See [admin-auth-map.md](./admin-auth-map.md).
+
 ---
 
 ## 9. Loading, Suspense, errors (keep separate)

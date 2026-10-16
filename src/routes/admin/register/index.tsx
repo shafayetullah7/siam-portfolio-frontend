@@ -5,6 +5,7 @@ import { adminAuthApi } from "~/lib/api/endpoints/admin/auth.api";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
 import FormField from "~/components/forms/FormField";
 import FormTextInput from "~/components/forms/FormTextInput";
+import PasswordVisibilityToggle from "~/components/forms/PasswordVisibilityToggle";
 import { registerAction } from "~/lib/forms/actions/admin-register.actions";
 import type { RegisterActionResult } from "~/lib/forms/types";
 
@@ -102,16 +103,12 @@ export default function AdminRegister() {
                 name="password"
                 autocomplete="new-password"
                 error={fieldErrors().password}
-                class="pr-24"
+                class="pr-11"
               />
-              <button
-                type="button"
-                class="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-link"
-                aria-pressed={showPassword()}
-                onClick={() => setShowPassword((v) => !v)}
-              >
-                {showPassword() ? "Hide password" : "Show password"}
-              </button>
+              <PasswordVisibilityToggle
+                visible={showPassword()}
+                onToggle={() => setShowPassword((v) => !v)}
+              />
             </div>
           </FormField>
           <FormErrorAlert message={formMessage()} />

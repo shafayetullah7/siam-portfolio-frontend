@@ -14,12 +14,25 @@ Defined in [`src/lib/auth/publicAdminAuthPaths.ts`](../src/lib/auth/publicAdminA
 
 **Planned (not in list yet):** `/admin/security` (MFA), possible `/admin/login/mfa` challenge route (AA6).
 
+## Route file layout (SolidStart)
+
+Auth URLs are not all the same *shape* on disk:
+
+| Style | When | Examples in this repo |
+|-------|------|------------------------|
+| Flat `admin/<name>.tsx` | Exactly one page for that URL | `login.tsx`, `forgot-password.tsx`, `reset-password.tsx`, `change-password.tsx` |
+| Folder `admin/<segment>/index.tsx` + siblings | Two or more URLs under `/admin/<segment>/…` | `register/index.tsx` + `register/verify.tsx` |
+
+Do **not** add `admin/register.tsx` alongside `admin/register/` — use `register/index.tsx` only ([solid-solidstart.md §8.2](./solid-solidstart.md#82-siam-conventions-when-to-use-a-file-vs-a-folder)).
+
+If MFA adds `/admin/login/mfa`, use `admin/login/index.tsx` (move today’s login page from `login.tsx`) + `admin/login/mfa.tsx`, or a dedicated flat route if the URL stays a single segment.
+
 ## Routes
 
 | Route | File | API (`adminAuthApi`) | Zod schema | Submit pattern |
 |-------|------|----------------------|------------|----------------|
 | `/admin/login` | [`routes/admin/login.tsx`](../src/routes/admin/login.tsx) | `login`, `registrationStatus` (register link) | `admin-login.schema.ts` | `loginAction` + `useSubmission` |
-| `/admin/register` | [`routes/admin/register.tsx`](../src/routes/admin/register.tsx) | `register`, `registrationStatus` (disabled gate) | `admin-register.schema.ts` | `registerAction` + `useSubmission`; `AdminAuthLayout`; `FormField` |
+| `/admin/register` | [`routes/admin/register/index.tsx`](../src/routes/admin/register/index.tsx) | `register`, `registrationStatus` (disabled gate) | `admin-register.schema.ts` | `registerAction` + `useSubmission`; `AdminAuthLayout`; `FormField` |
 | `/admin/register/verify` | [`routes/admin/register/verify.tsx`](../src/routes/admin/register/verify.tsx) | `registrationStatus`, `verifyRegistration`, `resendRegistrationOtp` | `admin-verify-otp.schema.ts` | `verifyRegistrationAction` + resend button; `AdminAuthLayout` |
 | `/admin/forgot-password` | [`routes/admin/forgot-password.tsx`](../src/routes/admin/forgot-password.tsx) | `forgotPassword` | `admin-forgot-password.schema.ts` | `forgotPasswordAction` + `useSubmission`; `AdminAuthLayout` |
 | `/admin/reset-password` | [`routes/admin/reset-password.tsx`](../src/routes/admin/reset-password.tsx) | `resetPassword` | `admin-reset-password.schema.ts` | `resetPasswordAction` + hidden `token`; success → `/admin/login?message=password_reset` |

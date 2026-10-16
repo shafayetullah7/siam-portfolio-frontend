@@ -1,5 +1,4 @@
-import type { JSX } from "solid-js";
-import { Show } from "solid-js";
+import { children, Show, type JSX } from "solid-js";
 
 export type AdminAuthLayoutProps = {
   title: string;
@@ -10,6 +9,8 @@ export type AdminAuthLayoutProps = {
 
 /** Centered card for all public admin auth routes (login, register, verify, forgot, reset). */
 export default function AdminAuthLayout(props: AdminAuthLayoutProps) {
+  const footer = children(() => props.footer);
+
   return (
     <div class="mx-auto max-w-md py-16">
       <div class="rounded-lg border border-border bg-surface px-6 py-8 shadow-sm">
@@ -19,8 +20,8 @@ export default function AdminAuthLayout(props: AdminAuthLayoutProps) {
         </Show>
         {props.children}
       </div>
-      <Show when={props.footer}>
-        <div class="mt-6">{props.footer}</div>
+      <Show when={footer()} keyed>
+        {(slot) => <div class="mt-6">{slot}</div>}
       </Show>
     </div>
   );

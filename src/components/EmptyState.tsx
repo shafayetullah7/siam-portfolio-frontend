@@ -1,4 +1,4 @@
-import type { JSX } from "solid-js";
+import { children, Show, type JSX } from "solid-js";
 
 interface EmptyStateProps {
   title: string;
@@ -10,6 +10,8 @@ interface EmptyStateProps {
 
 export default function EmptyState(props: EmptyStateProps) {
   const variant = () => props.variant ?? "default";
+  const resolved = children(() => props.children);
+
   return (
     <div
       class="siam-empty-state"
@@ -19,10 +21,12 @@ export default function EmptyState(props: EmptyStateProps) {
       role="status"
     >
       <p class="text-base font-semibold text-ink">{props.title}</p>
-      {props.description && (
+      <Show when={props.description}>
         <p class="mt-2 text-sm text-ink-muted">{props.description}</p>
-      )}
-      {props.children && <div class="mt-4">{props.children}</div>}
+      </Show>
+      <Show when={resolved()} keyed>
+        {(slot) => <div class="mt-4">{slot}</div>}
+      </Show>
     </div>
   );
 }
