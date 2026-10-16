@@ -1,5 +1,6 @@
 import type { APIEvent } from "@solidjs/start/server";
 import { sitePublicApi } from "~/lib/api/endpoints/public/site.api";
+import { getSiteOrigin } from "~/lib/site/siteOrigin";
 
 export async function GET(_event: APIEvent) {
   let paths = ["/", "/about"];
@@ -9,7 +10,7 @@ export async function GET(_event: APIEvent) {
   } catch {
     // fallback when API offline
   }
-  const origin = import.meta.env.VITE_SITE_ORIGIN ?? "http://localhost:3000";
+  const origin = getSiteOrigin();
   const urls = paths
     .map((p) => `  <url><loc>${origin}${p}</loc></url>`)
     .join("\n");

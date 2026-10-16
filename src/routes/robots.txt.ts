@@ -1,7 +1,8 @@
 import type { APIEvent } from "@solidjs/start/server";
+import { getSiteOrigin } from "~/lib/site/siteOrigin";
 
 export function GET(_event: APIEvent) {
-  const origin = import.meta.env.VITE_SITE_ORIGIN ?? "http://localhost:3000";
+  const origin = getSiteOrigin();
   const body = `User-agent: *
 Allow: /
 

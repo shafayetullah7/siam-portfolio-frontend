@@ -21,7 +21,7 @@ Single entry point for building **`siam-frontend`**: structure, **theme**, **API
 |--------|--------|
 | UI | SolidJS 1.9 + SolidStart 2 + `@solidjs/router` |
 | Styles | Tailwind v4 + SIAM tokens (`src/styles/tokens.css`, `src/app.css`) |
-| Public site | Routes under `src/routes/` (not `/admin`) |
+| Public site | Routes under `src/routes/` (not `/admin`); static home until CMS (LP7) — see **Static home** below |
 | CMS | Routes under `src/routes/admin/` (or `admin.tsx` layout group per Start file routing) |
 | API | `siam-api` — **`/api/v1/public/*`**, **`/api/v1/admin/*`** |
 | Auth | HttpOnly cookies + readable `xsrf-token`; no JWT in `localStorage` |
@@ -38,6 +38,18 @@ Env (convention):
 VITE_API_BASE=http://localhost:5000/api/v1
 VITE_SITE_ORIGIN=http://localhost:3000
 ```
+
+### Static home (P01, LP0–LP6)
+
+Until CMS homepage (LP7 / Phase 9), `/` is driven by static content, not `getPublicHome()`:
+
+| Layer | Location |
+|--------|----------|
+| Copy & validation | [`src/content/`](../src/content/) — `home.content.ts`, `home.types.ts`, `home.validation.ts`; import via `~/content` |
+| Sections UI | [`src/components/landing/`](../src/components/landing/) |
+| Route | [`src/routes/index.tsx`](../src/routes/index.tsx) — `LandingPage`, meta + `getPublicSite()` for site name |
+
+See [landing-page-phases.md](./landing-page-phases.md) and per-phase checklists (`landing-page-lp*-checklist.md`).
 
 ---
 

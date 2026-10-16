@@ -1,0 +1,103 @@
+/**
+ * Static home page content model (P01). Keep aligned with future GET /public/home
+ * aggregate and PublicHomePayload extensions (LP7 / A03).
+ */
+
+export type HomeCta = {
+  label: string;
+  href: string;
+};
+
+export type HomePortrait = {
+  src: string;
+  alt: string;
+};
+
+export type HomeHero = {
+  name: string;
+  descriptor: string;
+  positioning: string;
+  portrait: HomePortrait | null;
+  primaryCta: HomeCta;
+  secondaryCta: HomeCta;
+};
+
+export type HomeAffiliation = {
+  role: string;
+  organization: string;
+  location?: string;
+};
+
+export type HomeResearchFocusItem = {
+  title: string;
+  description: string;
+  href: string;
+};
+
+export type HomePublicationHighlight = {
+  title: string;
+  authorsShort: string;
+  year: number;
+  venue: string;
+  significance: string;
+  href: string;
+};
+
+export type HomeProjectHighlight = {
+  title: string;
+  summary: string;
+  href: string;
+  tags?: readonly string[];
+  image?: HomePortrait;
+};
+
+export type HomeHighlight = {
+  text: string;
+  sourceUrl?: string;
+  asOfDate?: string;
+};
+
+export type HomeCurrentlyWorkingOn = {
+  text: string;
+  updatedAt: string;
+};
+
+export type HomeProfileLink = {
+  label: string;
+  href: string;
+};
+
+export type HomeCollaborationCta = {
+  headline: string;
+  body: string;
+  href: string;
+};
+
+export type HomePageSeo = {
+  title?: string;
+  description?: string;
+};
+
+export type HomePageContent = {
+  hero: HomeHero;
+  affiliation?: HomeAffiliation;
+  researchFocus?: readonly HomeResearchFocusItem[];
+  selectedPublications?: readonly HomePublicationHighlight[];
+  featuredProjects?: readonly HomeProjectHighlight[];
+  highlights?: readonly HomeHighlight[];
+  currentlyWorkingOn?: HomeCurrentlyWorkingOn;
+  profiles?: readonly HomeProfileLink[];
+  collaborationCta?: HomeCollaborationCta;
+  seo?: HomePageSeo;
+};
+
+export type HomeSectionId =
+  | "hero"
+  | "affiliation"
+  | "researchFocus"
+  | "selectedPublications"
+  | "featuredProjects"
+  | "highlights"
+  | "currentlyWorkingOn"
+  | "profiles"
+  | "collaborationCta";

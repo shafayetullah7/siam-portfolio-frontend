@@ -114,6 +114,21 @@
     @apply shadow-card-hover;
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    .siam-reveal {
+      opacity: 0;
+      transform: translateY(0.5rem);
+      transition:
+        opacity 0.45s ease,
+        transform 0.45s ease;
+    }
+
+    .siam-reveal.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
   .siam-skip-link {
     @apply fixed left-4 top-4 z-50 -translate-y-16 rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground no-underline transition-transform focus:translate-y-0;
   }

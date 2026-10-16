@@ -14,21 +14,23 @@ Example route:
 
 ```tsx
 import { createAsync, type RouteDefinition } from "@solidjs/router";
-import { getPublicSite, getPublicHome } from "~/lib/api/queries/public";
+import { getPublicSite } from "~/lib/api/queries/public";
+import LandingPage from "~/components/landing/LandingPage";
+import { homeContent } from "~/content";
 
 export const route = {
   preload: () => {
     void getPublicSite();
-    void getPublicHome();
   },
 } satisfies RouteDefinition;
 
 export default function Home() {
   const site = createAsync(() => getPublicSite(), { deferStream: true });
-  const home = createAsync(() => getPublicHome(), { deferStream: true });
-  // ...
+  return <LandingPage content={homeContent} />;
 }
 ```
+
+Home body is static (`~/content`) until LP7/CMS; `getPublicHome` remains in the API layer for future parity.
 
 After admin mutations, invalidate cached public data:
 
