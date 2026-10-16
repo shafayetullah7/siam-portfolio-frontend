@@ -1,1 +1,2 @@
-/** Admin endpoint modules (auth, media, …) — Phase 5+. */
+export { adminAuthApi } from "./auth.api";
+export { adminPagesApi } from "./pages.api";

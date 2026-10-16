@@ -1,5 +1,6 @@
 import { Router, useLocation } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
+import { MetaProvider } from "@solidjs/meta";
 import { Suspense } from "solid-js";
 import Nav from "~/components/Nav";
 import SkipLink from "~/components/SkipLink";
@@ -20,12 +21,14 @@ function AppShell(props: { children: unknown }) {
 
 export default function App() {
   return (
-    <Router
-      root={props => (
-        <AppShell>{props.children}</AppShell>
-      )}
-    >
-      <FileRoutes />
-    </Router>
+    <MetaProvider>
+      <Router
+        root={props => (
+          <AppShell>{props.children}</AppShell>
+        )}
+      >
+        <FileRoutes />
+      </Router>
+    </MetaProvider>
   );
 }

@@ -10,6 +10,8 @@ Single entry point for building **`siam-frontend`**: structure, **theme**, **API
 | [admin-auth.md](../../siam-api/docs/admin-auth.md) — cookie JWT, CSRF, API endpoints |
 | [architecture.md](../../siam-api/docs/architecture.md) — `/api/v1/public` vs `/admin` |
 | **[api-convention.md](./api-convention.md)** — **publicClient / adminClient**, endpoints, Zod forms-only |
+| **[frontend-setup-phases.md](./frontend-setup-phases.md)** — **phased platform plan** (404, boundaries, query/SSR, auth UX) |
+| **[../../docs/local-development.md](../../docs/local-development.md)** — **two-terminal dev**, ports, SSR vs proxy |
 
 ---
 
@@ -348,3 +350,4 @@ PATCH → 401 → forceLogout → login page (unsaved work: warn via beforeunloa
 | Date | Change |
 |------|--------|
 | 2026-10-14 | Initial combined guide: theme, API, admin auth, 401 logout |
+| 2026-10-16 | Link monorepo [local-development.md](../../docs/local-development.md); F0 env/SSR runbook |

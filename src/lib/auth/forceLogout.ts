@@ -21,6 +21,8 @@ export async function forceLogout(): Promise<void> {
     } catch {
       // Best-effort logout
     }
+    const { adminSession } = await import("./adminSession");
+    adminSession.clear();
     const login = "/admin/login?reason=session_expired";
     if (window.location.pathname.startsWith("/admin")) {
       window.location.replace(login);
