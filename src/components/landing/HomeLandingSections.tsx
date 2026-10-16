@@ -2,12 +2,10 @@ import type { JSX } from "solid-js";
 import type { HomePageContent } from "~/content";
 import { listVisibleSectionIds } from "~/content";
 import CollaborationCta from "./CollaborationCta";
-import CurrentlyWorkingOnSection from "./CurrentlyWorkingOnSection";
 import FeaturedProjectsSection from "./FeaturedProjectsSection";
-import HighlightsSection from "./HighlightsSection";
 import HomeHeroRegion from "./HomeHeroRegion";
+import HomeInsightsRegion from "./HomeInsightsRegion";
 import LandingSectionReveal from "./LandingSectionReveal";
-import ProfilesSection from "./ProfilesSection";
 import ResearchFocusSection from "./ResearchFocusSection";
 import SelectedPublicationsSection from "./SelectedPublicationsSection";
 
@@ -21,6 +19,10 @@ function reveal(children: JSX.Element) {
 
 export default function HomeLandingSections(props: HomeLandingSectionsProps) {
   const sectionIds = () => listVisibleSectionIds(props.content);
+  const showInsights = () =>
+    sectionIds().includes("highlights") ||
+    sectionIds().includes("currentlyWorkingOn") ||
+    sectionIds().includes("profiles");
 
   return (
     <>
@@ -52,15 +54,17 @@ export default function HomeLandingSections(props: HomeLandingSectionsProps) {
           return reveal(<FeaturedProjectsSection items={props.content.featuredProjects!} />);
         }
         if (id === "highlights") {
-          return reveal(<HighlightsSection items={props.content.highlights!} />);
-        }
-        if (id === "currentlyWorkingOn") {
+          if (!showInsights()) return null;
           return reveal(
-            <CurrentlyWorkingOnSection data={props.content.currentlyWorkingOn!} />,
+            <HomeInsightsRegion
+              highlights={props.content.highlights}
+              currentlyWorkingOn={props.content.currentlyWorkingOn}
+              profiles={props.content.profiles}
+            />,
           );
         }
-        if (id === "profiles") {
-          return reveal(<ProfilesSection items={props.content.profiles!} />);
+        if (id === "currentlyWorkingOn" || id === "profiles") {
+          return null;
         }
         if (id === "collaborationCta") {
           return reveal(<CollaborationCta cta={props.content.collaborationCta!} />);

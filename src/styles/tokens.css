@@ -10,6 +10,17 @@
   --siam-surface: #ffffff;
   --siam-surface-muted: #ecf6f1;
   --siam-surface-emblem: #eaf1ee;
+  --siam-surface-container-lowest: #ffffff;
+  --siam-surface-container-low: #ecf6f1;
+  --siam-surface-container: #e6f0eb;
+  --siam-surface-container-high: #e0eae5;
+  --siam-on-surface-variant: #404846;
+  --siam-on-secondary-container: #546661;
+  --siam-on-primary-container: #7ca99e;
+  --siam-primary-fixed: #bdece0;
+  --siam-on-primary-fixed: #00201b;
+  --siam-brand-deep: #002721;
+  --siam-secondary: #50625d;
   --siam-ink: #141d1a;
   --siam-ink-muted: #54655f;
   --siam-ink-subtle: #717976;

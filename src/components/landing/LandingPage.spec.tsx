@@ -8,12 +8,25 @@ vi.mock("@solidjs/router", () => ({
   A: (props: { href: string; children?: JSX.Element; "aria-label"?: string }) => (
     <a href={props.href} aria-label={props["aria-label"]}>{props.children}</a>
   ),
+  query: (fn: () => unknown) => fn,
+}));
+
+vi.mock("~/lib/site/PublicSiteProvider", () => ({
+  usePublicSite: () => ({
+    site: () => ({ siteName: "SIAM", footerText: "", nav: [], sitemapPaths: [] }),
+  }),
 }));
 
 function expectedHomeH2Count(content: HomePageContent): number {
-  return listVisibleSectionIds(content).filter(
-    (id) => id !== "hero" && id !== "affiliation",
-  ).length;
+  const ids = listVisibleSectionIds(content);
+  let count = 0;
+  if (ids.includes("researchFocus")) count += 1;
+  if (ids.includes("selectedPublications")) count += 1;
+  if (ids.includes("featuredProjects")) count += 1;
+  if (ids.includes("highlights")) count += 1;
+  if (ids.includes("currentlyWorkingOn")) count += 1;
+  if (ids.includes("collaborationCta")) count += 1;
+  return count;
 }
 
 describe("LandingPage", () => {
@@ -27,7 +40,7 @@ describe("LandingPage", () => {
       expectedHomeH2Count(homeContent),
     );
     expect(document.getElementById("affiliation")).toBeTruthy();
-    expect(screen.getByRole("link", { name: "View research" }).getAttribute("href")).toBe(
+    expect(screen.getByRole("link", { name: "Explore research" }).getAttribute("href")).toBe(
       "/#research-focus",
     );
   });

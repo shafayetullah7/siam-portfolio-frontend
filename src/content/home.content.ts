@@ -1,22 +1,29 @@
 /**
  * PLACEHOLDER — replace before public launch.
  * Source of truth migration: docs/content-packet/*.md
- *
- * Hero copy: name (no brackets at launch), descriptor (one line), positioning (1–2 sentences).
- * CTAs: primary → /#research-focus until /research exists; secondary → /about#contact until
- * P16 /contact. Portrait: src + alt from content-packet when approved; null uses motif UI.
  */
 import type { HomePageContent } from "./home.types";
 
 export const homeContent: HomePageContent = {
   hero: {
     name: "[Researcher Name]",
-    descriptor: "Machine learning researcher and builder of thoughtful AI systems",
+    descriptor: "Machine learning researcher & builder of thoughtful AI systems",
     positioning:
-      "I study reliable learning under real-world constraints—transparency, data limits, and human oversight—so models can earn trust in practice.",
+      "I study reliable learning under real-world constraints—transparency, data limits, and human oversight—so models can earn verifiable trust in practice.",
     portrait: null,
-    primaryCta: { label: "View research", href: "/#research-focus" },
-    secondaryCta: { label: "Contact", href: "/about#contact" },
+    statusBadge: "LIVE DISPATCH",
+    contactEmail: "researcher@university.edu",
+    primaryCta: { label: "Explore research", href: "/#research-focus" },
+    secondaryCta: { label: "Get in touch", href: "/about#contact" },
+    ledger: {
+      headerLabel: "Scholar ledger",
+      metrics: [
+        { value: "—", label: "Peer-reviewed pubs" },
+        { value: "—", label: "Citations tracked" },
+        { value: "—", label: "Open artifacts" },
+        { value: "—", label: "Top venues" },
+      ],
+    },
   },
   affiliation: {
     role: "[Role / title]",
@@ -25,76 +32,96 @@ export const homeContent: HomePageContent = {
   },
   researchFocus: [
     {
-      title: "Theme one (placeholder)",
+      title: "Interpretable representation learning",
       description:
-        "Short description of a research area. Replace with content from research-themes.md.",
+        "Disentangling latent structure for human-verifiable attribution in deep models. Replace with approved theme copy.",
       href: "/about",
+      tags: ["Interpretability", "Attribution", "Latent audits"],
+      linkLabel: "Explore theme & preprints",
     },
     {
-      title: "Theme two (placeholder)",
-      description: "Another focus area with a clear link to a future research page.",
+      title: "Sample-efficient constrained optimization",
+      description:
+        "Robust learning under data scarcity, physical boundaries, and distribution shift—with selective expert-in-the-loop queries.",
       href: "/about",
+      tags: ["Active learning", "Data scarcity", "Optimization"],
+      linkLabel: "Explore theme & preprints",
     },
     {
-      title: "Theme three (placeholder)",
-      description: "Third theme to exercise the 3-column layout on desktop.",
+      title: "Human-aligned oversight & governance",
+      description:
+        "Evaluation suites, stress tests, and safety guarantees before autonomous pipelines enter high-consequence domains.",
       href: "/about",
+      tags: ["Safety", "Human oversight", "Evaluation"],
+      linkLabel: "Explore theme & preprints",
     },
   ],
   selectedPublications: [
     {
-      title: "Example publication (placeholder)",
+      title: "Example publication title (placeholder)",
       authorsShort: "[Author A], [Author B], …",
       year: 2025,
-      venue: "Venue or preprint (placeholder)",
+      venue: "NeurIPS",
       significance:
-        "One sentence on why this work matters—replace with verified copy.",
+        "One sentence on why this work matters—replace with verified copy from the content packet.",
       href: "/about",
     },
     {
       title: "Second example publication (placeholder)",
       authorsShort: "[Author A] et al.",
       year: 2024,
-      venue: "Conference or journal (placeholder)",
+      venue: "ICML",
       significance: "Significance line for layout testing only.",
       href: "/about",
     },
   ],
   featuredProjects: [
     {
-      title: "Example project (placeholder)",
+      title: "Example open-source project (placeholder)",
       summary:
-        "Problem, approach, and outcome in two sentences. Not a real project until content-packet is approved.",
+        "Problem, approach, and outcome in two sentences. Not a real project until content-packet approval.",
       href: "/about",
-      tags: ["ML", "Prototype"],
+      tags: ["Python", "ML", "Prototype"],
     },
     {
       title: "Second example project (placeholder)",
-      summary: "Another featured case study for the home grid.",
+      summary: "Another featured system for the home grid.",
       href: "/about",
+      tags: ["JAX", "Research code"],
     },
   ],
   highlights: [
     {
-      text: "Invited talk at [event name] (placeholder milestone)",
+      badge: "INVITED TALK",
+      dateLabel: "2025",
+      title: "[Event name] (placeholder)",
+      text:
+        "Short description of the talk or milestone. Replace with verified highlights from the content packet.",
     },
   ],
   currentlyWorkingOn: {
+    headline:
+      "“Can we bound adversarial perturbation in multimodal systems under real-world constraints?”",
     text:
-      "Exploring [active research question]—details will be updated when approved for public sharing.",
+      "Exploring whether geometric structure in latent space predicts failure modes before deployment—details updated when approved for public sharing.",
     updatedAt: "2026-10-01",
+    statusLabel: "Status: Empirical validation",
+    statusDetail: "Stage 3 of 4",
   },
   profiles: [
-    { label: "Google Scholar", href: "https://scholar.google.com/" },
-    { label: "ORCID", href: "https://orcid.org/" },
-    { label: "GitHub", href: "https://github.com/" },
+    { label: "Google Scholar", href: "https://scholar.google.com/", subtitle: "Profile" },
+    { label: "ORCID", href: "https://orcid.org/", subtitle: "Verified ID" },
+    { label: "GitHub", href: "https://github.com/", subtitle: "@researcher" },
+    { label: "arXiv", href: "https://arxiv.org/", subtitle: "Author feed" },
   ],
-  // collaborationCta.href: /about until P16 /contact; UI button label is fixed "Contact" (see CollaborationCta.tsx).
   collaborationCta: {
-    headline: "Interested in collaborating?",
+    headline: "Interested in collaborating or exploring research partnerships?",
     body:
-      "I welcome conversations about interpretable ML, applied research partnerships, and mentoring—reach out with a short note on your idea.",
-    href: "/about",
+      "I welcome thoughtful conversations about interpretable ML foundations, applied research partnerships, and student mentorship—reach out with context on your goals.",
+    href: "/about#contact",
+    secondaryHref: "/about#contact",
+    secondaryLabel: "Schedule advisory chat",
+    replyNote: "Typical reply: 48–72 hours",
   },
   seo: {
     title: "Home",

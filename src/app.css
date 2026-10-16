@@ -27,6 +27,25 @@
   --color-link-hover: var(--siam-link-hover);
   --color-focus: var(--siam-focus);
   --color-secondary-container: var(--siam-secondary-container);
+  --color-surface-container-lowest: var(--siam-surface-container-lowest);
+  --color-surface-container-low: var(--siam-surface-container-low);
+  --color-surface-container: var(--siam-surface-container);
+  --color-surface-container-high: var(--siam-surface-container-high);
+  --color-on-surface-variant: var(--siam-on-surface-variant);
+  --color-on-secondary-container: var(--siam-on-secondary-container);
+  --color-on-primary-container: var(--siam-on-primary-container);
+  --color-primary-fixed: var(--siam-primary-fixed);
+  --color-on-primary-fixed: var(--siam-on-primary-fixed);
+  --color-brand-deep: var(--siam-brand-deep);
+  --color-secondary: var(--siam-secondary);
+
+  --spacing-gutter: var(--siam-gutter);
+  --spacing-gutter-desktop: var(--siam-gutter-desktop);
+  --spacing-space-xs: var(--siam-space-xs);
+  --spacing-space-sm: var(--siam-space-sm);
+  --spacing-space-md: var(--siam-space-md);
+  --spacing-space-lg: var(--siam-space-lg);
+  --spacing-space-xl: var(--siam-space-xl);
 
   --color-accent-research: var(--siam-accent-research);
   --color-accent-project: var(--siam-accent-project);
@@ -256,5 +275,15 @@
 
   .siam-pub-row {
     @apply flex flex-col gap-2 border-b border-border-hairline py-4 sm:flex-row sm:items-baseline sm:justify-between;
+  }
+
+  .landing-panel {
+    @apply rounded-xl bg-surface-container-lowest shadow-sm;
+  }
+
+  .landing-hero-shell {
+    box-shadow:
+      0 12px 36px -8px rgba(0, 39, 33, 0.06),
+      0 2px 8px rgba(0, 39, 33, 0.03);
   }
 }

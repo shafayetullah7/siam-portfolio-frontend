@@ -4,6 +4,8 @@ export type {
   HomeCta,
   HomeCurrentlyWorkingOn,
   HomeHero,
+  HomeHeroLedger,
+  HomeHeroMetric,
   HomeHighlight,
   HomePageContent,
   HomePageSeo,

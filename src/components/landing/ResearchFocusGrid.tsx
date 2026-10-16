@@ -10,9 +10,9 @@ export default function ResearchFocusGrid(props: ResearchFocusGridProps) {
   return (
     <ul class="m-0 grid list-none gap-4 p-0 sm:grid-cols-2 lg:grid-cols-3" role="list">
       <For each={props.items}>
-        {(item) => (
+        {(item, index) => (
           <li>
-            <ResearchFocusCard item={item} />
+            <ResearchFocusCard item={item} themeIndex={index() + 1} />
           </li>
         )}
       </For>

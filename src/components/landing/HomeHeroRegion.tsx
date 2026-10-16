@@ -13,7 +13,7 @@ export default function HomeHeroRegion(props: HomeHeroRegionProps) {
     <HeroShell>
       <HeroBlock hero={props.hero} />
       {props.affiliation ? (
-        <div class="mt-8 border-t border-border pt-6">
+        <div class="mt-8">
           <AffiliationStrip affiliation={props.affiliation} />
         </div>
       ) : null}

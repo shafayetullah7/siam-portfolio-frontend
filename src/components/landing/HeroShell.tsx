@@ -7,10 +7,13 @@ export type HeroShellProps = {
 export default function HeroShell(props: HeroShellProps) {
   return (
     <div
-      class="overflow-hidden rounded-lg border border-border bg-surface shadow-card border-l-4 border-l-primary"
+      class="landing-hero-shell relative w-full overflow-hidden rounded-2xl bg-surface-container-lowest p-5 sm:p-6 lg:p-10"
     >
-      <div class="h-1 bg-accent-research" aria-hidden="true" />
-      <div class="p-6 sm:p-10">{props.children}</div>
+      <div
+        class="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-primary via-primary to-secondary-container"
+        aria-hidden="true"
+      />
+      <div class="relative">{props.children}</div>
     </div>
   );
 }

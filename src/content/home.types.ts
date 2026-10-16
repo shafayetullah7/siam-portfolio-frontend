@@ -13,6 +13,17 @@ export type HomePortrait = {
   alt: string;
 };
 
+export type HomeHeroMetric = {
+  value: string;
+  label: string;
+};
+
+export type HomeHeroLedger = {
+  headerLabel?: string;
+  orcid?: string;
+  metrics?: readonly HomeHeroMetric[];
+};
+
 export type HomeHero = {
   name: string;
   descriptor: string;
@@ -20,6 +31,10 @@ export type HomeHero = {
   portrait: HomePortrait | null;
   primaryCta: HomeCta;
   secondaryCta: HomeCta;
+  /** Mono badge e.g. "LIVE DISPATCH" */
+  statusBadge?: string;
+  contactEmail?: string;
+  ledger?: HomeHeroLedger;
 };
 
 export type HomeAffiliation = {
@@ -32,6 +47,8 @@ export type HomeResearchFocusItem = {
   title: string;
   description: string;
   href: string;
+  tags?: readonly string[];
+  linkLabel?: string;
 };
 
 export type HomePublicationHighlight = {
@@ -55,22 +72,32 @@ export type HomeHighlight = {
   text: string;
   sourceUrl?: string;
   asOfDate?: string;
+  title?: string;
+  badge?: string;
+  dateLabel?: string;
 };
 
 export type HomeCurrentlyWorkingOn = {
   text: string;
   updatedAt: string;
+  headline?: string;
+  statusLabel?: string;
+  statusDetail?: string;
 };
 
 export type HomeProfileLink = {
   label: string;
   href: string;
+  subtitle?: string;
 };
 
 export type HomeCollaborationCta = {
   headline: string;
   body: string;
   href: string;
+  secondaryHref?: string;
+  secondaryLabel?: string;
+  replyNote?: string;
 };
 
 export type HomePageSeo = {

@@ -4,6 +4,8 @@ export type HomeSectionLabel = {
   domId: string;
   title: string;
   kicker?: string;
+  sectionEyebrow?: string;
+  aside?: string;
   /** LP phase that replaces this stub. */
   shipsInPhase: string;
 };
@@ -30,17 +32,20 @@ export const HOME_SECTION_LABELS: Record<
   },
   researchFocus: {
     domId: "research-focus",
-    title: "Research focus",
+    title: "Research pillars & foundations",
+    sectionEyebrow: "01 // FOCUS AREAS",
     shipsInPhase: "LP3",
   },
   selectedPublications: {
     domId: "selected-publications",
     title: "Selected publications",
+    sectionEyebrow: "02 // SCHOLARSHIP",
     shipsInPhase: "LP4",
   },
   featuredProjects: {
     domId: "featured-projects",
-    title: "Featured projects",
+    title: "Open source & applied systems",
+    sectionEyebrow: "03 // ARTIFACTS & SYSTEMS",
     shipsInPhase: "LP4",
   },
   highlights: {
