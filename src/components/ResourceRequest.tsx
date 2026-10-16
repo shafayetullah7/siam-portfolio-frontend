@@ -9,14 +9,14 @@ export default function ResourceRequest<T>(props: {
   emptyWhen?: (data: T) => boolean;
   emptyFallback?: JSX.Element;
 }) {
-  const [data, { error, loading, refetch }] = props.resource;
+  const [data, { refetch }] = props.resource;
 
   return (
-    <Show when={!loading()} fallback={<PageLoading />}>
+    <Show when={!data.loading} fallback={<PageLoading />}>
       <Show
-        when={!error()}
+        when={!data.error}
         fallback={
-          <HttpErrorNotice error={error()!} onRetry={() => refetch()} />
+          <HttpErrorNotice error={data.error!} onRetry={() => refetch()} />
         }
       >
         <Show when={data()} keyed>

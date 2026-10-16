@@ -56,7 +56,9 @@ export default function Home() {
           <A href="/dev/error-boundary-test" class="text-link">Error boundary test (dev)</A>
         </p>
       </Show>
-      <ApiStatus />
+      <Show when={import.meta.env.DEV}>
+        <ApiStatus />
+      </Show>
     </main>
   );
 }

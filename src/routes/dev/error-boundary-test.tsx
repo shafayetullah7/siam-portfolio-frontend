@@ -1,7 +1,7 @@
 import { A } from "@solidjs/router";
 import { Show } from "solid-js";
 
-function ThrowOnRender() {
+function ThrowOnRender(): never {
   throw new Error("Intentional error for ErrorBoundary test (dev only)");
 }
 

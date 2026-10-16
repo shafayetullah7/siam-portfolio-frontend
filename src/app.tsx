@@ -1,7 +1,7 @@
 import { Router, useLocation } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { MetaProvider } from "@solidjs/meta";
-import { ErrorBoundary, Suspense } from "solid-js";
+import { ErrorBoundary, Suspense, type JSX } from "solid-js";
 import Nav from "~/components/Nav";
 import SkipLink from "~/components/SkipLink";
 import RouteErrorFallback from "~/components/RouteErrorFallback";
@@ -10,7 +10,7 @@ import PublicShell from "~/components/PublicShell";
 import { PublicSiteProvider } from "~/lib/site/PublicSiteProvider";
 import "./app.css";
 
-function AppShell(props: { children: unknown }) {
+function AppShell(props: { children: JSX.Element }) {
   const location = useLocation();
   const isAdmin = () => location.pathname.startsWith("/admin");
 

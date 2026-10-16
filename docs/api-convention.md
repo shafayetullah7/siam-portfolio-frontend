@@ -302,6 +302,7 @@ Use **Zod 4** consistently with `siam-api` if sharing message style; frontend fo
 ## 11. SSR notes (when admin/public fetch on server)
 
 - **Absolute URL:** Node `fetch` cannot use `/api/v1/...` alone. `apiBaseUrl()` resolves `VITE_API_BASE` + `VITE_API_SSR_ORIGIN` (or `http://localhost:<VITE_API_PROXY_PORT>`) during SSR; the Vite dev proxy is browser-only.
+- **Cross-host production:** Set `VITE_API_BASE` to the full API origin (e.g. `https://api.example.com/api/v1`) at build time. The browser calls that URL directly; `adminClient` needs API `CORS_ORIGIN` / `credentials: true` for cookie auth. SSR still uses `VITE_API_SSR_ORIGIN` when the base is a path; with a full `https://` base, SSR uses the same URL.
 - Forward incoming `Cookie` header on server-side `adminClient` calls.
 - Forward API `Set-Cookie` to the HTML response (Nitro/Start 2 — implement when needed; byte-forge uses Vinxi `propagateSetCookies`).
 - Do not store admin profile in module scope on the server.

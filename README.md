@@ -38,7 +38,10 @@ pnpm dev
 | `pnpm dev` | Vite + SolidStart dev server |
 | `pnpm build` | Production build (`.output/`) |
 | `pnpm start` | Run Nitro server from build |
-| `pnpm test` | Vitest (API URL resolver) |
+| `pnpm test` | Vitest (unit + component tests) |
+| `pnpm typecheck` | `tsc --noEmit` on `src/` |
+| `pnpm test:e2e` | Playwright (requires API + `pnpm start`; see local-development) |
+| `pnpm test:e2e:install` | Install Chromium for Playwright |
 
 ## Building
 

@@ -20,6 +20,11 @@ app.config.timestamp_*.js
 *.launch
 .settings/
 
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+
 # Temp
 gitignore
 

@@ -18,6 +18,12 @@ describe("api errors", () => {
     expect(getApiErrorMessage(new ApiError("Bad", 400))).toBe("Bad");
   });
 
+  it("getApiErrorMessage falls back for Error and unknown", () => {
+    expect(getApiErrorMessage(new Error("Oops"))).toBe("Oops");
+    expect(getApiErrorMessage("plain")).toBe("plain");
+    expect(getApiErrorMessage(null)).toContain("Something went wrong");
+  });
+
   it("maps 403 user message", () => {
     const msg = getApiErrorUserMessage(new ApiError("Forbidden", 403));
     expect(msg.title).toBe("Action not allowed");

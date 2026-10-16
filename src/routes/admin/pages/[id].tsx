@@ -28,7 +28,7 @@ function resultFieldErrors(
 
 export default function AdminPageEdit() {
   const params = useParams();
-  const pageId = () => params.id;
+  const pageId = () => params.id ?? "new";
   const saveSubmission = useSubmission(savePageAction);
   const publishSubmission = useSubmission(publishPageAction);
 

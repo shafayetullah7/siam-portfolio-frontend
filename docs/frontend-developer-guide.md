@@ -347,6 +347,8 @@ PATCH → 401 → forceLogout → login page (unsaved work: warn via beforeunloa
 - [ ] `credentials: 'include'` only on admin client  
 - [ ] CSRF on all admin mutations  
 - [ ] No secrets in `VITE_*`  
+- [ ] Cross-host deploy: full `VITE_API_BASE` + API CORS for admin cookies ([api-convention.md](./api-convention.md) §11)  
+- [ ] Nitro ships baseline headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`) via `vite.config.ts`  
 - [ ] Admin routes guarded client-side; API always enforces `AdminAuthGuard`  
 - [ ] 401 → single `forceLogout`; 403 handled case-by-case  
 - [ ] Theme tokens used for UI consistency  

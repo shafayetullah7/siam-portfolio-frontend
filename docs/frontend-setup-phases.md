@@ -35,6 +35,7 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 | HTTP errors | `ApiError` in clients; **no shared UI** mapping 400/403/404/429 |
 | Admin auth | `AdminAuthProvider` + `useAdminAuth`; `adminSession` bridge for `forceLogout` |
 | Forms / Zod | `lib/forms` — Zod 4 schemas, `action` + `useSubmission`, shared field components |
+| Tests / CI | Vitest + Playwright e2e; `pnpm typecheck`; CI e2e with Postgres + API |
 | Public layout | API-driven `Nav` / footer via `PublicSiteProvider` + `getPublicSite` |
 | Product routes P03–P18 | Mostly **not started** (see portfolio phases) |
 
@@ -269,8 +270,8 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 
 **Exit criteria**
 
-- [ ] CI runs lint + build + targeted e2e.
-- [ ] Production env documented in `.env.example`.
+- [x] CI runs typecheck + build + test + targeted e2e (`siam-frontend` + `siam-frontend-e2e` jobs).
+- [x] Production env documented in `.env.example`.
 
 ---
 
@@ -330,3 +331,4 @@ F8 continuous; e2e after F1+F5
 | 2026-10-16 | **F5 done:** `AdminAuthProvider`, auth routes + Zod schemas, admin header logout; MFA UI deferred |
 | 2026-10-16 | **F6 done:** `PublicSiteProvider`, API Nav/footer, `/admin/site`, `robots.txt` sitemap line |
 | 2026-10-16 | **F7 done:** Form actions, field components, page/site editors, login exemplar, `useUnsavedChanges` |
+| 2026-10-16 | **F8 done:** Playwright e2e, `typecheck`, Nitro security headers, RouteErrorFallback tests |
