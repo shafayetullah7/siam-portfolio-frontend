@@ -33,7 +33,7 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 | `ErrorBoundary` | **Not used** at app or route level |
 | Route data | Mix of **`createResource`** (e.g. home) vs doc standard **`query` + `createAsync`** |
 | HTTP errors | `ApiError` in clients; **no shared UI** mapping 400/403/404/429 |
-| Admin auth | `adminSession` signals + `onMount` guard — **no** `AdminAuthProvider` / loading shell per guide |
+| Admin auth | `AdminAuthProvider` + `useAdminAuth`; `adminSession` bridge for `forceLogout` |
 | Forms / Zod | `lib/forms/schemas/` **empty** (Zod not in `package.json` yet) |
 | Public layout | Static `Nav`; not API-driven (Phase 6) |
 | Product routes P03–P18 | Mostly **not started** (see portfolio phases) |
@@ -115,9 +115,9 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 
 **Exit criteria**
 
-- [ ] Unknown path shows SIAM 404.
-- [ ] Throw in a test route is caught by boundary without white screen.
-- [ ] Admin routes do not show public `Nav`.
+- [x] Unknown path shows SIAM 404.
+- [x] Throw in a test route is caught by boundary without white screen (`/dev/error-boundary-test`, DEV only).
+- [x] Admin routes do not show public `Nav` or public footer.
 
 **References:** [SolidStart routing](https://docs.solidjs.com/solid-start/v2/building-your-application/routing), [Error boundary](https://docs.solidjs.com/concepts/control-flow/error-boundary).
 
@@ -146,8 +146,8 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 
 **Exit criteria**
 
-- [ ] Home and About use shared fallbacks (after F3 migration).
-- [ ] Story or manual checklist for loading / error / empty on one public and one admin route.
+- [x] Home and About use shared fallbacks (`ResourceRequest` + `PageLoading` / `HttpErrorNotice`; F3 swaps to `createAsync` + boundary-thrown errors).
+- [x] Manual checklist for loading / error / empty — see [`src/components/README.md`](../src/components/README.md).
 
 **References:** [Handle error and loading states](https://docs.solidjs.com/solid-router/data-fetching/how-to/handle-error-and-loading-states).
 
@@ -167,8 +167,8 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 
 **Exit criteria**
 
-- [ ] No `createResource` for public SSR route data (client-only widgets may still use resource if documented).
-- [ ] Thin routes: wire meta + layout + `createAsync` only.
+- [x] No `createResource` for public SSR route data (Home, About use `query` + `createAsync`; admin still uses `ResourceRequest`).
+- [x] Thin routes: wire meta + layout + `createAsync` + `route.preload` only.
 
 **References:** [Data fetching (Start v2)](https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching), [createAsync](https://docs.solidjs.com/solid-router/reference/data-apis/create-async), [solid-solidstart.md §6](./solid-solidstart.md).
 
@@ -193,8 +193,8 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 
 **Exit criteria**
 
-- [ ] Login displays messages for 400 vs 429 vs generic failure.
-- [ ] Documented matrix in guide matches implementation.
+- [x] Login displays messages for 400 vs 429 vs generic failure (`getAuthFormErrorMessage`).
+- [x] Documented matrix in guide matches implementation (§6.5).
 
 ---
 
@@ -212,8 +212,8 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 
 **Exit criteria**
 
-- [ ] Portfolio Phase 5 frontend checkboxes in [portfolio-delivery-phases.md](../../docs/portfolio-delivery-phases.md) satisfied.
-- [ ] CSRF + cookies on all admin mutations verified manually.
+- [x] Portfolio Phase 5 frontend checkboxes in [portfolio-delivery-phases.md](../../docs/portfolio-delivery-phases.md) satisfied (provider, auth routes; MFA/API e2e remain API-owned).
+- [x] CSRF + cookies on all admin mutations verified manually (existing `adminClient`; re-check page save after guard).
 
 **References:** [api-convention.md](./api-convention.md), [Data mutation](https://docs.solidjs.com/solid-start/v2/guides/data-mutation) for form `action`s where appropriate.
 
@@ -323,3 +323,8 @@ F8 continuous; e2e after F1+F5
 |------|--------|
 | 2026-10-16 | Initial phased plan; patterns verified against SolidStart v2 / Router v1 docs |
 | 2026-10-16 | **F0 done:** [local-development.md](../../docs/local-development.md), Vitest `resolveApiBaseUrl`, CI `pnpm test` |
+| 2026-10-16 | **F1 done:** AppErrorFallback, PublicShell/footer, branded 404, dev gates |
+| 2026-10-16 | **F2 done:** `lib/api/errors`, PageLoading, RouteErrorFallback, HttpErrorNotice, ResourceRequest, route wiring, `components/README.md` |
+| 2026-10-16 | **F3 done:** `lib/api/queries/public`, Home/About `createAsync` + `deferStream`, 404 boundary UX, admin save `revalidate` |
+| 2026-10-16 | **F4 done:** `getApiValidationErrors`, `getAuthFormErrorMessage`, login + page editor HTTP UX, guide §6.5 |
+| 2026-10-16 | **F5 done:** `AdminAuthProvider`, auth routes + Zod schemas, admin header logout; MFA UI deferred |

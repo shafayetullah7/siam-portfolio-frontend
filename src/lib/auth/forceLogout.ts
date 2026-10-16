@@ -23,6 +23,7 @@ export async function forceLogout(): Promise<void> {
     }
     const { adminSession } = await import("./adminSession");
     adminSession.clear();
+    // Login page shows banner when reason=session_expired (frontend-developer-guide §6.4).
     const login = "/admin/login?reason=session_expired";
     if (window.location.pathname.startsWith("/admin")) {
       window.location.replace(login);

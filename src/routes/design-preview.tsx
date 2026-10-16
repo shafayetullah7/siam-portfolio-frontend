@@ -1,8 +1,26 @@
 import { A } from "@solidjs/router";
+import { Show } from "solid-js";
 import { ArrowExternal, ChevronRight } from "~/icons";
 
-/** Phase 1 reference compositions — not P01. Hidden from primary nav. */
+/** Phase 1 reference compositions — not P01. DEV only; not linked from prod home. */
 export default function DesignPreview() {
+  return (
+    <Show
+      when={import.meta.env.DEV}
+      fallback={
+        <main id="main" class="siam-container py-16">
+          <h1 class="text-xl font-semibold text-ink">Not available</h1>
+          <p class="mt-2 text-ink-muted">This preview is for local development only.</p>
+          <A href="/" class="mt-6 inline-block text-link no-underline">Home</A>
+        </main>
+      }
+    >
+    <DesignPreviewContent />
+    </Show>
+  );
+}
+
+function DesignPreviewContent() {
   return (
     <main id="main" class="siam-container py-12 sm:py-16">
       <p class="siam-label mb-4">Design preview</p>

@@ -1,20 +1,33 @@
 import { Router, useLocation } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { MetaProvider } from "@solidjs/meta";
-import { Suspense } from "solid-js";
+import { ErrorBoundary, Suspense } from "solid-js";
 import Nav from "~/components/Nav";
 import SkipLink from "~/components/SkipLink";
+import RouteErrorFallback from "~/components/RouteErrorFallback";
+import PageLoading from "~/components/PageLoading";
+import PublicShell from "~/components/PublicShell";
 import "./app.css";
 
 function AppShell(props: { children: unknown }) {
   const location = useLocation();
   const isAdmin = () => location.pathname.startsWith("/admin");
 
+  const content = (
+    <ErrorBoundary
+      fallback={(error, reset) => (
+        <RouteErrorFallback error={error} reset={reset} />
+      )}
+    >
+      <Suspense fallback={<PageLoading />}>{props.children}</Suspense>
+    </ErrorBoundary>
+  );
+
   return (
     <>
       <SkipLink />
       {!isAdmin() && <Nav />}
-      <Suspense>{props.children}</Suspense>
+      {isAdmin() ? content : <PublicShell>{content}</PublicShell>}
     </>
   );
 }

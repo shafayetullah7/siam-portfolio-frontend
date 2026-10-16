@@ -7,6 +7,21 @@ export interface AdminProfile {
   mfaEnabled: boolean;
 }
 
+export interface AdminRegisterResult {
+  pendingId: string;
+  otpExpiresAt: string;
+}
+
+export interface AdminRegistrationStatus {
+  hasPending: boolean;
+  otpExpiresAt?: string;
+  locked?: boolean;
+}
+
+export interface AdminForgotPasswordResult {
+  message: string;
+}
+
 export interface SitePageAdmin {
   id: string;
   slug: string;

@@ -1,22 +1,29 @@
-import { A } from "@solidjs/router";
+import { A, createAsync, type RouteDefinition } from "@solidjs/router";
 import { Title, Meta } from "@solidjs/meta";
-import { createResource, Show } from "solid-js";
+import { Show } from "solid-js";
 import ApiStatus from "~/components/ApiStatus";
-import { sitePublicApi } from "~/lib/api/endpoints/public/site.api";
+import { getPublicHome, getPublicSite } from "~/lib/api/queries/public";
 import { buildPageMeta } from "~/lib/meta/buildPageMeta";
 
-export default function Home() {
-  const [site] = createResource(() => sitePublicApi.get());
-  const [home] = createResource(() => sitePublicApi.home());
+export const route = {
+  preload: () => {
+    void getPublicSite();
+    void getPublicHome();
+  },
+} satisfies RouteDefinition;
 
-  const meta = () => {
+export default function Home() {
+  const site = createAsync(() => getPublicSite(), { deferStream: true });
+  const home = createAsync(() => getPublicHome(), { deferStream: true });
+
+  const pageMeta = () => {
     const s = site();
     const h = home();
-    if (!s) return null;
+    if (!s || !h) return null;
     return buildPageMeta(
       {
-        title: h?.heroTitle ?? "Home",
-        body: h?.heroSubtitle ?? "",
+        title: h.heroTitle ?? "Home",
+        body: h.heroSubtitle ?? "",
       },
       { siteName: s.siteName, defaultMetaDescription: s.defaultMetaDescription },
     );
@@ -24,8 +31,8 @@ export default function Home() {
 
   return (
     <main id="main" class="siam-container py-12 sm:py-16">
-      <Title>{meta()?.title ?? "Home"}</Title>
-      <Meta name="description" content={meta()?.description ?? ""} />
+      <Title>{pageMeta()?.title ?? "Home"}</Title>
+      <Meta name="description" content={pageMeta()?.description ?? ""} />
       <p class="siam-label mb-4">Portfolio</p>
       <h1 class="max-w-3xl text-[clamp(2.5rem,5vw,3.5rem)] font-bold leading-[1.1] tracking-tight">
         {home()?.heroTitle ?? (
@@ -44,8 +51,9 @@ export default function Home() {
         <button type="button" class="siam-btn-secondary">Contact</button>
       </div>
       <Show when={import.meta.env.DEV}>
-        <p class="mt-8 text-sm">
-          <A href="/design-preview" class="text-link">Open design preview (dev)</A>
+        <p class="mt-8 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+          <A href="/design-preview" class="text-link">Design preview (dev)</A>
+          <A href="/dev/error-boundary-test" class="text-link">Error boundary test (dev)</A>
         </p>
       </Show>
       <ApiStatus />

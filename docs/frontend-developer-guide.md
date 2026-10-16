@@ -285,6 +285,24 @@ Parallel requests: first 401 runs logout; others hit `loggingOut` guard.
 
 Read `reason` query on login page: “Your session expired. Sign in again.”
 
+### 6.5 Implementation (F4)
+
+Helpers in [`src/lib/api/errors.ts`](../src/lib/api/errors.ts):
+
+| Helper | Use |
+|--------|-----|
+| `getApiErrorMessage` / `getApiErrorUserMessage` | Generic copy; route/boundary and inline alerts |
+| `getApiValidationErrors` | `ApiError` 400 → field list from envelope |
+| `getAuthFormErrorMessage` | Login (and future register): 400 / 401 / 429 / default |
+
+| Surface | Behavior |
+|---------|----------|
+| [`routes/admin/login.tsx`](../src/routes/admin/login.tsx) | `reason=session_expired` banner; `getAuthFormErrorMessage` on failed login |
+| [`routes/admin/pages/[id].tsx`](../src/routes/admin/pages/[id].tsx) | Load 404 → `EmptyState`; save/publish 400/403 → `siam-alert-error` + field hints |
+| Public SSR | 404 → `RouteErrorFallback` (F3) |
+| `adminClient` 401 on protected routes | Refresh → `forceLogout` → login with `session_expired` |
+| `publicClient` | Never `forceLogout` |
+
 ---
 
 ## 7. End-to-end flows
@@ -351,3 +369,4 @@ PATCH → 401 → forceLogout → login page (unsaved work: warn via beforeunloa
 |------|--------|
 | 2026-10-14 | Initial combined guide: theme, API, admin auth, 401 logout |
 | 2026-10-16 | Link monorepo [local-development.md](../../docs/local-development.md); F0 env/SSR runbook |
+| 2026-10-16 | F1: root ErrorBoundary, PublicFooter, branded 404 |

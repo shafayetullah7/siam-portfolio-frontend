@@ -1,25 +1,24 @@
-import { createSignal } from "solid-js";
 import type { AdminProfile } from "~/lib/api/types/admin.types";
-import { adminAuthApi } from "~/lib/api/endpoints/admin/auth.api";
+import type { AdminAuthContextValue } from "./admin-auth.types";
 
-const [admin, setAdmin] = createSignal<AdminProfile | null>(null);
-const [checked, setChecked] = createSignal(false);
+let bridge: AdminAuthContextValue | null = null;
 
+/** Called by AdminAuthProvider so forceLogout can clear session outside components. */
+export function registerAdminAuthBridge(value: AdminAuthContextValue) {
+  bridge = value;
+}
+
+/** @deprecated Prefer useAdminAuth() — kept for gradual migration */
 export const adminSession = {
-  admin,
-  checked,
-  setAdmin,
+  admin: () => bridge?.admin() ?? null,
+  checked: () => bridge?.status() !== "unknown",
+  setAdmin(profile: AdminProfile) {
+    bridge?.setFromLogin(profile);
+  },
   async load() {
-    try {
-      const profile = await adminAuthApi.check();
-      setAdmin(profile);
-    } catch {
-      setAdmin(null);
-    } finally {
-      setChecked(true);
-    }
+    await bridge?.bootstrap();
   },
   clear() {
-    setAdmin(null);
+    bridge?.clear();
   },
 };
