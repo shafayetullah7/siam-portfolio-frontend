@@ -291,17 +291,7 @@ export const loginSchema = z.object({
 export type LoginFormValues = z.infer<typeof loginSchema>;
 ```
 
-```tsx
-async function onSubmit(raw: LoginFormValues) {
-  const result = loginSchema.safeParse(raw);
-  if (!result.success) {
-    setErrors(flattenZodErrors(result.error));
-    return;
-  }
-  const admin = await adminAuthApi.login(result.data);
-  authStore.setFromLogin(admin);
-}
-```
+**Default admin mutation (F7):** Router `action` + `form method="post"` + `useSubmission`. Actions return `FormActionResult` from `lib/forms/types.ts`. Parse `FormData` with `parseWithSchema`; on API failure use `mapAdminMutationError` (CMS) or `getAuthFormErrorMessage` (auth). Client-executed actions (no `"use server"`) so `adminClient` CSRF cookies work — see `lib/forms/README.md`.
 
 **API validation errors (400):** map `ApiError.body` `validationErrors` to form fields — still no Zod on the response; read typed `ApiFailure` shape.
 

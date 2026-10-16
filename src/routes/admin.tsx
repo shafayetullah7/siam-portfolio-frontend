@@ -36,6 +36,7 @@ function AdminHeader() {
           SIAM Admin
         </a>
         <nav class="flex flex-wrap items-center gap-4 text-sm">
+          <A href="/admin/site" class="text-link no-underline">Site</A>
           <a href="/admin/pages" class="text-link no-underline">Pages</a>
           <A href="/admin/change-password" class="text-link no-underline">
             Password

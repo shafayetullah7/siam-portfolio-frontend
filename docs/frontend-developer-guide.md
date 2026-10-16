@@ -148,9 +148,7 @@ Same tokens; more `bg-surface` + tables with `border-border`; accents only for s
 - **Wrappers:** `lib/api/endpoints/{public,admin}/*.api.ts` — only place with path strings.
 - **Queries:** `query` + `"use server"` calls **endpoints**, not UI → `fetch`.
 - **Responses:** TypeScript types + optional `unwrap` of `{ success, data }` — **no Zod** on API JSON.
-- **Forms:** Zod in `lib/forms/schemas` → `safeParse` → then `adminAuthApi.login(...)` etc.
-
-Stubs: `lib/api/types`, `lib/api/config.ts`; implement `public-client.ts` / `admin-client.ts` per api-convention.
+- **Forms:** Zod in `lib/forms/schemas` → `action` + `FormData` → endpoint; see §4.4.
 
 ### 4.2 Solid data layer
 
@@ -164,6 +162,17 @@ Stubs: `lib/api/types`, `lib/api/config.ts`; implement `public-client.ts` / `adm
 ### 4.3 Uploads (admin)
 
 `FormData` field `file` → `adminClient.post('/media/upload', formData)` — [media.md](../../siam-api/docs/media.md).
+
+### 4.4 Forms stack (F7)
+
+| Step | Detail |
+|------|--------|
+| Schema | `lib/forms/schemas/*.schema.ts` (Zod 4) |
+| Action | `lib/forms/actions/*.actions.ts` — `parseWithSchema`, `mapAdminMutationError`, `revalidate` |
+| UI | `components/forms/*`, `useSubmission(action)`, `method="post"` |
+| Dirty guard | `useUnsavedChanges` on editors |
+
+Login: `loginAction` returns profile on success; route `createEffect` calls `setFromLogin` + `navigate`. Future public contact: [`contact-inquiry.schema.ts`](../src/lib/forms/schemas/contact-inquiry.schema.ts) + [`lib/forms/README.md`](../src/lib/forms/README.md).
 
 ---
 

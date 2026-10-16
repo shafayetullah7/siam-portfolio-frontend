@@ -63,10 +63,18 @@ return (
 | `ApiError` 404 from public API | `RouteErrorFallback` → branded not-found (`EmptyState`) |
 | Render bugs / dev boundary test | `ErrorBoundary` → `RouteErrorFallback` |
 | Admin `createResource` fetch failure | `HttpErrorNotice` via `ResourceRequest` |
-| Form submit / mutation in event handler | `try/catch` — login: `getAuthFormErrorMessage`; other forms: `getApiValidationErrors` + `getApiErrorUserMessage` (403) — not `ErrorBoundary` |
+| Admin form mutation (F7) | `action` + `useSubmission` → `FormActionResult`; CMS: `mapAdminMutationError`; auth: `getAuthFormErrorMessage` — not `ErrorBoundary` |
 | Empty list / no rows | `EmptyState` (`variant="list"` in admin tables) |
 
 See [Handle error and loading states](https://docs.solidjs.com/solid-router/data-fetching/how-to/handle-error-and-loading-states).
+
+## Form fields (F7)
+
+[`components/forms/`](./forms/) — `FormField`, `FormTextInput`, `FormTextarea`, `FormErrorAlert` (token classes `siam-input` / `siam-textarea`). Pair with actions in [`lib/forms/actions/`](../lib/forms/actions/) and schemas in [`lib/forms/schemas/`](../lib/forms/schemas/).
+
+## Public chrome (F6)
+
+[`PublicSiteProvider`](../lib/site/PublicSiteProvider.tsx) loads `getPublicSite` for [`Nav`](./Nav.tsx) and [`PublicFooter`](./PublicFooter.tsx). Nav links are filtered with [`filterPublicNav`](../lib/site/filterPublicNav.ts) against `sitemapPaths`.
 
 ## Manual checklist
 

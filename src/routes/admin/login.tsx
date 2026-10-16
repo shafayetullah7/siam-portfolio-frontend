@@ -1,20 +1,19 @@
-import { A } from "@solidjs/router";
-import { createSignal, Show } from "solid-js";
-import { useNavigate, useSearchParams } from "@solidjs/router";
-import { adminAuthApi } from "~/lib/api/endpoints/admin/auth.api";
-import { getAuthFormErrorMessage } from "~/lib/api/errors";
+import { A, useNavigate, useSearchParams, useSubmission } from "@solidjs/router";
+import { createEffect, createSignal, Show } from "solid-js";
+import FormErrorAlert from "~/components/forms/FormErrorAlert";
+import FormField from "~/components/forms/FormField";
+import FormTextInput from "~/components/forms/FormTextInput";
 import { useAdminAuth } from "~/lib/auth/useAdminAuth";
-import { mapZodErrors } from "~/lib/forms/mapZodErrors";
-import { adminLoginSchema } from "~/lib/forms/schemas/admin-login.schema";
+import { loginAction } from "~/lib/forms/actions/admin-login.actions";
+import type { LoginActionResult } from "~/lib/forms/types";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
   const auth = useAdminAuth();
   const [searchParams] = useSearchParams();
+  const submission = useSubmission(loginAction);
   const [email, setEmail] = createSignal("");
   const [password, setPassword] = createSignal("");
-  const [error, setError] = createSignal<string | null>(null);
-  const [fieldErrors, setFieldErrors] = createSignal<Record<string, string>>({});
 
   const sessionExpired = () => searchParams.reason === "session_expired";
 
@@ -24,29 +23,26 @@ export default function AdminLogin() {
     return raw;
   };
 
-  async function onSubmit(e: Event) {
-    e.preventDefault();
-    setError(null);
-    setFieldErrors({});
-    const parsed = adminLoginSchema.safeParse({
-      email: email(),
-      password: password(),
-    });
-    if (!parsed.success) {
-      setFieldErrors(mapZodErrors(parsed.error));
-      setError("Check the fields below.");
-      return;
-    }
-    try {
-      const profile = await adminAuthApi.login(parsed.data);
-      auth.setFromLogin(profile);
+  const fieldErrors = () => {
+    const r = submission.result as LoginActionResult | undefined;
+    if (r && !r.ok && r.fieldErrors) return r.fieldErrors;
+    return {};
+  };
+
+  const formMessage = () => {
+    const r = submission.result as LoginActionResult | undefined;
+    if (r && !r.ok) return r.formMessage;
+    if (submission.error) return submission.error.message;
+    return null;
+  };
+
+  createEffect(() => {
+    const r = submission.result as LoginActionResult | undefined;
+    if (r?.ok) {
+      auth.setFromLogin(r.profile);
       navigate(returnUrl(), { replace: true });
-    } catch (err) {
-      const mapped = getAuthFormErrorMessage(err);
-      setError(mapped.formMessage);
-      setFieldErrors(mapped.fieldErrors);
     }
-  }
+  });
 
   return (
     <main id="main" class="mx-auto max-w-md py-16">
@@ -59,35 +55,37 @@ export default function AdminLogin() {
           Your session expired. Sign in again.
         </p>
       </Show>
-      <form class="mt-8 space-y-4" onSubmit={onSubmit}>
-        <label class="block text-sm font-medium">
-          Email
-          <input
+      <form
+        class="mt-8 space-y-4"
+        action={loginAction}
+        method="post"
+      >
+        <FormField label="Email" name="email" error={fieldErrors().email}>
+          <FormTextInput
             type="email"
-            class="siam-input mt-1"
+            name="email"
             value={email()}
             onInput={(e) => setEmail(e.currentTarget.value)}
-            aria-invalid={fieldErrors().email ? true : undefined}
+            error={fieldErrors().email}
           />
-          <Show when={fieldErrors().email}>
-            <p class="mt-1 text-sm text-error">{fieldErrors().email}</p>
-          </Show>
-        </label>
-        <label class="block text-sm font-medium">
-          Password
-          <input
+        </FormField>
+        <FormField label="Password" name="password" error={fieldErrors().password}>
+          <FormTextInput
             type="password"
-            class="siam-input mt-1"
+            name="password"
             value={password()}
             onInput={(e) => setPassword(e.currentTarget.value)}
-            aria-invalid={fieldErrors().password ? true : undefined}
+            error={fieldErrors().password}
           />
-          <Show when={fieldErrors().password}>
-            <p class="mt-1 text-sm text-error">{fieldErrors().password}</p>
-          </Show>
-        </label>
-        {error() && <p class="siam-alert-error" role="alert">{error()}</p>}
-        <button type="submit" class="siam-btn-primary w-full">Sign in</button>
+        </FormField>
+        <FormErrorAlert message={formMessage()} />
+        <button
+          type="submit"
+          class="siam-btn-primary w-full"
+          disabled={submission.pending}
+        >
+          {submission.pending ? "Signing in…" : "Sign in"}
+        </button>
       </form>
       <p class="mt-6 text-center text-sm text-ink-muted">
         <A href="/admin/forgot-password" class="text-link">Forgot password?</A>

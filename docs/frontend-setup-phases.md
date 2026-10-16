@@ -34,8 +34,8 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 | Route data | Mix of **`createResource`** (e.g. home) vs doc standard **`query` + `createAsync`** |
 | HTTP errors | `ApiError` in clients; **no shared UI** mapping 400/403/404/429 |
 | Admin auth | `AdminAuthProvider` + `useAdminAuth`; `adminSession` bridge for `forceLogout` |
-| Forms / Zod | `lib/forms/schemas/` **empty** (Zod not in `package.json` yet) |
-| Public layout | Static `Nav`; not API-driven (Phase 6) |
+| Forms / Zod | `lib/forms` — Zod 4 schemas, `action` + `useSubmission`, shared field components |
+| Public layout | API-driven `Nav` / footer via `PublicSiteProvider` + `getPublicSite` |
 | Product routes P03–P18 | Mostly **not started** (see portfolio phases) |
 
 ---
@@ -232,8 +232,8 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 
 **Exit criteria**
 
-- [ ] Portfolio Phase 6 frontend exit criteria met.
-- [ ] No hard-coded primary nav only Home/About in production.
+- [x] Portfolio Phase 6 frontend exit criteria met (settings + nav admin; profile/homepage admin deferred).
+- [x] No hard-coded primary nav only Home/About in production (`filterPublicNav` + API nav).
 
 ---
 
@@ -250,8 +250,8 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 
 **Exit criteria**
 
-- [ ] At least two admin forms use Zod + API error mapping.
-- [ ] Contact form (when built) follows same pattern.
+- [x] At least two admin forms use Zod + API error mapping (`/admin/site`, `/admin/pages/[id]` actions).
+- [x] Contact form (when built) follows same pattern (`contact-inquiry.schema` + `lib/forms/README`).
 
 ---
 
@@ -328,3 +328,5 @@ F8 continuous; e2e after F1+F5
 | 2026-10-16 | **F3 done:** `lib/api/queries/public`, Home/About `createAsync` + `deferStream`, 404 boundary UX, admin save `revalidate` |
 | 2026-10-16 | **F4 done:** `getApiValidationErrors`, `getAuthFormErrorMessage`, login + page editor HTTP UX, guide §6.5 |
 | 2026-10-16 | **F5 done:** `AdminAuthProvider`, auth routes + Zod schemas, admin header logout; MFA UI deferred |
+| 2026-10-16 | **F6 done:** `PublicSiteProvider`, API Nav/footer, `/admin/site`, `robots.txt` sitemap line |
+| 2026-10-16 | **F7 done:** Form actions, field components, page/site editors, login exemplar, `useUnsavedChanges` |

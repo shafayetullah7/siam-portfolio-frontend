@@ -22,6 +22,26 @@ export interface AdminForgotPasswordResult {
   message: string;
 }
 
+export interface SiteSettingsAdmin {
+  id: string;
+  siteName: string;
+  defaultMetaDescription: string | null;
+  footerText: string | null;
+  faviconUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NavItemAdmin {
+  id: string;
+  label: string;
+  path: string;
+  sortOrder: number;
+  visible: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface SitePageAdmin {
   id: string;
   slug: string;
