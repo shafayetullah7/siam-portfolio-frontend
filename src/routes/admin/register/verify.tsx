@@ -142,7 +142,7 @@ export default function AdminRegisterVerify() {
       </Show>
       <Show when={canVerify()}>
         <form
-          class="mt-8 space-y-4"
+          class="mt-6 space-y-4"
           action={verifyRegistrationAction}
           method="post"
         >
@@ -153,6 +153,7 @@ export default function AdminRegisterVerify() {
               autocomplete="one-time-code"
               maxLength={6}
               error={fieldErrors().otp}
+              class="text-center font-mono text-lg tracking-[0.35em]"
             />
           </FormField>
           <FormErrorAlert message={formMessage()} />

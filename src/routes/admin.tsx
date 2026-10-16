@@ -88,7 +88,7 @@ function AdminLayoutContent(props: RouteSectionProps) {
   const showChrome = () => auth.status() === "authenticated";
 
   return (
-    <div class="min-h-screen bg-surface-muted">
+    <div class="flex min-h-screen flex-col bg-canvas">
       <Show when={showLoading()} fallback={
         <>
           <Show when={showChrome()}>
@@ -96,7 +96,10 @@ function AdminLayoutContent(props: RouteSectionProps) {
           </Show>
           <main
             id="main"
-            class={showChrome() ? "siam-container py-8" : undefined}
+            classList={{
+              "siam-container flex-1 py-8": showChrome(),
+              "flex flex-1 flex-col justify-center": !showChrome(),
+            }}
           >
             {props.children}
           </main>

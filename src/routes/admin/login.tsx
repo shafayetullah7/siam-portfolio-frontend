@@ -1,6 +1,7 @@
 import { A, useNavigate, useSearchParams, useSubmission } from "@solidjs/router";
 import { createEffect, createSignal, onMount, Show } from "solid-js";
 import AdminAuthLayout from "~/components/admin/AdminAuthLayout";
+import AdminAuthStatusBanner from "~/components/admin/AdminAuthStatusBanner";
 import { adminAuthApi } from "~/lib/api/endpoints/admin/auth.api";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
 import FormField from "~/components/forms/FormField";
@@ -70,23 +71,15 @@ export default function AdminLogin() {
       }
     >
       <Show when={sessionExpired()}>
-        <p
-          class="mt-4 rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-ink-muted"
-          role="status"
-        >
-          Your session expired. Sign in again.
-        </p>
+        <AdminAuthStatusBanner>Your session expired. Sign in again.</AdminAuthStatusBanner>
       </Show>
       <Show when={passwordReset()}>
-        <p
-          class="mt-4 rounded-md border border-border bg-surface-muted px-4 py-3 text-sm text-ink-muted"
-          role="status"
-        >
+        <AdminAuthStatusBanner variant="success">
           Password updated. Sign in with your new password.
-        </p>
+        </AdminAuthStatusBanner>
       </Show>
       <form
-        class="mt-8 space-y-4"
+        class="mt-6 space-y-4"
         action={loginAction}
         method="post"
       >

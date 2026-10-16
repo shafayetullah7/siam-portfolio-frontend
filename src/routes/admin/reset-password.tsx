@@ -4,6 +4,7 @@ import AdminAuthLayout from "~/components/admin/AdminAuthLayout";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
 import FormField from "~/components/forms/FormField";
 import FormTextInput from "~/components/forms/FormTextInput";
+import PasswordVisibilityToggle from "~/components/forms/PasswordVisibilityToggle";
 import { resetPasswordAction } from "~/lib/forms/actions/admin-reset-password.actions";
 import type { ResetPasswordActionResult } from "~/lib/forms/types";
 
@@ -12,6 +13,7 @@ export default function AdminResetPassword() {
   const [searchParams] = useSearchParams();
   const submission = useSubmission(resetPasswordAction);
   const [password, setPassword] = createSignal("");
+  const [showPassword, setShowPassword] = createSignal(false);
 
   const token = () => {
     const t = searchParams.token;
@@ -55,17 +57,24 @@ export default function AdminResetPassword() {
         </p>
       </Show>
       <Show when={token()}>
-        <form class="mt-8 space-y-4" action={resetPasswordAction} method="post">
+        <form class="mt-6 space-y-4" action={resetPasswordAction} method="post">
           <input type="hidden" name="token" value={token()} />
           <FormField label="New password" name="password" error={fieldErrors().password}>
-            <FormTextInput
-              type="password"
-              name="password"
-              autocomplete="new-password"
-              value={password()}
-              onInput={(e) => setPassword(e.currentTarget.value)}
-              error={fieldErrors().password}
-            />
+            <div class="relative">
+              <FormTextInput
+                type={showPassword() ? "text" : "password"}
+                name="password"
+                autocomplete="new-password"
+                value={password()}
+                onInput={(e) => setPassword(e.currentTarget.value)}
+                error={fieldErrors().password}
+                class="pr-11"
+              />
+              <PasswordVisibilityToggle
+                visible={showPassword()}
+                onToggle={() => setShowPassword((v) => !v)}
+              />
+            </div>
           </FormField>
           <FormErrorAlert message={formMessage()} />
           <button

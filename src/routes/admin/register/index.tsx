@@ -63,7 +63,7 @@ export default function AdminRegister() {
         }
       >
         <form
-          class="mt-8 space-y-4"
+          class="mt-6 space-y-4"
           action={registerAction}
           method="post"
         >

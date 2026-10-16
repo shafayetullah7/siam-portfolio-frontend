@@ -44,7 +44,7 @@ export default function AdminForgotPassword() {
       <Show
         when={successMessage()}
         fallback={
-          <form class="mt-8 space-y-4" action={forgotPasswordAction} method="post">
+          <form class="mt-6 space-y-4" action={forgotPasswordAction} method="post">
             <FormField label="Email" name="email" error={fieldErrors().email}>
               <FormTextInput
                 type="email"
@@ -66,7 +66,7 @@ export default function AdminForgotPassword() {
           </form>
         }
       >
-        <p class="text-sm text-ink-muted" role="status">{successMessage()}</p>
+        <p class="siam-alert-success mt-6" role="status">{successMessage()}</p>
       </Show>
     </AdminAuthLayout>
   );
