@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { adminPasswordSchema } from "~/lib/auth/adminPasswordPolicy";
 
 export const adminResetPasswordSchema = z.object({
   token: z.string().min(20, "Reset link is invalid or incomplete"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: adminPasswordSchema,
 });
 
 export type AdminResetPasswordInput = z.infer<typeof adminResetPasswordSchema>;

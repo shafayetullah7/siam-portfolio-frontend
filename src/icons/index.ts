@@ -4,6 +4,8 @@
  */
 
 export { ArrowExternal } from "./ArrowExternal";
+export { Check } from "./Check";
 export { ChevronRight } from "./ChevronRight";
+export { Circle } from "./Circle";
 export { Eye } from "./Eye";
 export { EyeOff } from "./EyeOff";

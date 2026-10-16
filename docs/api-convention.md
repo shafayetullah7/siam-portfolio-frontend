@@ -285,8 +285,10 @@ import { z } from "zod";
 
 export const loginSchema = z.object({
   email: z.email(),
-  password: z.string().min(8),
+  password: z.string().min(8).max(128),
 });
+
+// New passwords (register / reset / change): import adminPasswordSchema from ~/lib/auth/adminPasswordPolicy
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
 ```

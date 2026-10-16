@@ -4,7 +4,11 @@ import AdminAuthLayout from "~/components/admin/AdminAuthLayout";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
 import FormField from "~/components/forms/FormField";
 import FormTextInput from "~/components/forms/FormTextInput";
+import PasswordRequirementsChecklist, {
+  passwordRequirementsDescribedBy,
+} from "~/components/forms/PasswordRequirementsChecklist";
 import PasswordVisibilityToggle from "~/components/forms/PasswordVisibilityToggle";
+import { ADMIN_PASSWORD_MAX } from "~/lib/auth/adminPasswordPolicy";
 import { resetPasswordAction } from "~/lib/forms/actions/admin-reset-password.actions";
 import type { ResetPasswordActionResult } from "~/lib/forms/types";
 
@@ -14,6 +18,10 @@ export default function AdminResetPassword() {
   const submission = useSubmission(resetPasswordAction);
   const [password, setPassword] = createSignal("");
   const [showPassword, setShowPassword] = createSignal(false);
+  const [passwordFocused, setPasswordFocused] = createSignal(false);
+
+  const passwordChecklistVisible = () =>
+    passwordFocused() || password().length > 0;
 
   const token = () => {
     const t = searchParams.token;
@@ -66,15 +74,28 @@ export default function AdminResetPassword() {
                 name="password"
                 autocomplete="new-password"
                 value={password()}
+                maxLength={ADMIN_PASSWORD_MAX}
                 onInput={(e) => setPassword(e.currentTarget.value)}
                 error={fieldErrors().password}
                 class="pr-11"
+                describedByExtra={passwordRequirementsDescribedBy(
+                  "password",
+                  passwordChecklistVisible(),
+                )}
+                onFocus={() => setPasswordFocused(true)}
+                onBlur={() => setPasswordFocused(false)}
               />
               <PasswordVisibilityToggle
                 visible={showPassword()}
                 onToggle={() => setShowPassword((v) => !v)}
               />
             </div>
+            <PasswordRequirementsChecklist
+              name="password"
+              password={password()}
+              visible={passwordChecklistVisible()}
+              showErrors={Boolean(fieldErrors().password)}
+            />
           </FormField>
           <FormErrorAlert message={formMessage()} />
           <button

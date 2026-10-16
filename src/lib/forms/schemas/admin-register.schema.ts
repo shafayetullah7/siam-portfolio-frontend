@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { adminPasswordSchema } from "~/lib/auth/adminPasswordPolicy";
 
 export const adminRegisterSchema = z.object({
   firstName: z.string().min(1, "First name is required").max(100),
@@ -10,7 +11,7 @@ export const adminRegisterSchema = z.object({
       "Username: 3–50 letters, numbers, _ or -",
     ),
   email: z.email("Enter a valid email"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  password: adminPasswordSchema,
 });
 
 export type AdminRegisterInput = z.infer<typeof adminRegisterSchema>;

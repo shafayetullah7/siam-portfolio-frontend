@@ -5,7 +5,11 @@ import { adminAuthApi } from "~/lib/api/endpoints/admin/auth.api";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
 import FormField from "~/components/forms/FormField";
 import FormTextInput from "~/components/forms/FormTextInput";
+import PasswordRequirementsChecklist, {
+  passwordRequirementsDescribedBy,
+} from "~/components/forms/PasswordRequirementsChecklist";
 import PasswordVisibilityToggle from "~/components/forms/PasswordVisibilityToggle";
+import { ADMIN_PASSWORD_MAX } from "~/lib/auth/adminPasswordPolicy";
 import { registerAction } from "~/lib/forms/actions/admin-register.actions";
 import type { RegisterActionResult } from "~/lib/forms/types";
 
@@ -13,7 +17,12 @@ export default function AdminRegister() {
   const navigate = useNavigate();
   const submission = useSubmission(registerAction);
   const [registrationClosed, setRegistrationClosed] = createSignal(false);
+  const [password, setPassword] = createSignal("");
   const [showPassword, setShowPassword] = createSignal(false);
+  const [passwordFocused, setPasswordFocused] = createSignal(false);
+
+  const passwordChecklistVisible = () =>
+    passwordFocused() || password().length > 0;
 
   onMount(async () => {
     try {
@@ -102,14 +111,29 @@ export default function AdminRegister() {
                 type={showPassword() ? "text" : "password"}
                 name="password"
                 autocomplete="new-password"
+                value={password()}
+                maxLength={ADMIN_PASSWORD_MAX}
                 error={fieldErrors().password}
                 class="pr-11"
+                describedByExtra={passwordRequirementsDescribedBy(
+                  "password",
+                  passwordChecklistVisible(),
+                )}
+                onInput={(e) => setPassword(e.currentTarget.value)}
+                onFocus={() => setPasswordFocused(true)}
+                onBlur={() => setPasswordFocused(false)}
               />
               <PasswordVisibilityToggle
                 visible={showPassword()}
                 onToggle={() => setShowPassword((v) => !v)}
               />
             </div>
+            <PasswordRequirementsChecklist
+              name="password"
+              password={password()}
+              visible={passwordChecklistVisible()}
+              showErrors={Boolean(fieldErrors().password)}
+            />
           </FormField>
           <FormErrorAlert message={formMessage()} />
           <button

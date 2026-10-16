@@ -30,9 +30,11 @@ export function fieldDescribedBy(
   name: string,
   error?: string,
   hint?: string,
+  extraIds?: string,
 ): string | undefined {
   const ids: string[] = [];
   if (hint) ids.push(`${name}-hint`);
+  if (extraIds) ids.push(extraIds);
   if (error) ids.push(`${name}-error`);
   return ids.length > 0 ? ids.join(" ") : undefined;
 }

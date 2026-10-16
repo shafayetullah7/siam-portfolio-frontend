@@ -3,6 +3,11 @@ import { createSignal, Show } from "solid-js";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
 import FormField from "~/components/forms/FormField";
 import FormTextInput from "~/components/forms/FormTextInput";
+import PasswordRequirementsChecklist, {
+  passwordRequirementsDescribedBy,
+} from "~/components/forms/PasswordRequirementsChecklist";
+import PasswordVisibilityToggle from "~/components/forms/PasswordVisibilityToggle";
+import { ADMIN_PASSWORD_MAX } from "~/lib/auth/adminPasswordPolicy";
 import { changePasswordAction } from "~/lib/forms/actions/admin-change-password.actions";
 import type { ChangePasswordActionResult } from "~/lib/forms/types";
 
@@ -10,6 +15,11 @@ export default function AdminChangePassword() {
   const submission = useSubmission(changePasswordAction);
   const [currentPassword, setCurrentPassword] = createSignal("");
   const [newPassword, setNewPassword] = createSignal("");
+  const [showNewPassword, setShowNewPassword] = createSignal(false);
+  const [newPasswordFocused, setNewPasswordFocused] = createSignal(false);
+
+  const newPasswordChecklistVisible = () =>
+    newPasswordFocused() || newPassword().length > 0;
 
   const result = () => submission.result as ChangePasswordActionResult | undefined;
 
@@ -54,13 +64,33 @@ export default function AdminChangePassword() {
           />
         </FormField>
         <FormField label="New password" name="newPassword" error={fieldErrors().newPassword}>
-          <FormTextInput
-            type="password"
+          <div class="relative">
+            <FormTextInput
+              type={showNewPassword() ? "text" : "password"}
+              name="newPassword"
+              autocomplete="new-password"
+              value={newPassword()}
+              maxLength={ADMIN_PASSWORD_MAX}
+              onInput={(e) => setNewPassword(e.currentTarget.value)}
+              error={fieldErrors().newPassword}
+              class="pr-11"
+              describedByExtra={passwordRequirementsDescribedBy(
+                "newPassword",
+                newPasswordChecklistVisible(),
+              )}
+              onFocus={() => setNewPasswordFocused(true)}
+              onBlur={() => setNewPasswordFocused(false)}
+            />
+            <PasswordVisibilityToggle
+              visible={showNewPassword()}
+              onToggle={() => setShowNewPassword((v) => !v)}
+            />
+          </div>
+          <PasswordRequirementsChecklist
             name="newPassword"
-            autocomplete="new-password"
-            value={newPassword()}
-            onInput={(e) => setNewPassword(e.currentTarget.value)}
-            error={fieldErrors().newPassword}
+            password={newPassword()}
+            visible={newPasswordChecklistVisible()}
+            showErrors={Boolean(fieldErrors().newPassword)}
           />
         </FormField>
         <FormErrorAlert message={formMessage()} />
