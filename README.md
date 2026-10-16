@@ -27,9 +27,9 @@ pnpm dev
 ```
 
 - App: http://localhost:3000
-- Vite proxies **`/api`** → `http://localhost:${VITE_API_PROXY_PORT:-5000}`
-- **SSR** fetches use `http://localhost:5000/api/v1/...` (not the proxy) — API must be running before loading `/` or `/about`
-- Dev-only **API health** line on home (`ApiStatus`) uses client `fetch` to `/api/v1/public/health`
+- API: `VITE_API_BASE` (default `http://localhost:5000/api/v1`); set matching `CORS_ORIGIN` on `siam-api`
+- API must be running before loading `/` or `/about` (SSR and client fetches use the same base URL)
+- Dev-only **API health** line on home (`ApiStatus`) calls the public health endpoint via `publicClient`
 
 ## Scripts
 
@@ -45,4 +45,4 @@ pnpm dev
 
 ## Building
 
-`pnpm build` generates a Node app under `.output/` for `pnpm start`. Set `VITE_API_BASE` / `VITE_API_SSR_ORIGIN` at **build** time for production API reachability (no dev proxy).
+`pnpm build` generates a Node app under `.output/` for `pnpm start`. `VITE_*` is baked in at build time — update `.env` and rebuild when changing API or site URLs (see `.env.example`).

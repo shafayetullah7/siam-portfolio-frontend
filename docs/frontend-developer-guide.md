@@ -11,7 +11,7 @@ Single entry point for building **`siam-frontend`**: structure, **theme**, **API
 | [architecture.md](../../siam-api/docs/architecture.md) — `/api/v1/public` vs `/admin` |
 | **[api-convention.md](./api-convention.md)** — **publicClient / adminClient**, endpoints, Zod forms-only |
 | **[frontend-setup-phases.md](./frontend-setup-phases.md)** — **phased platform plan** (404, boundaries, query/SSR, auth UX) |
-| **[../../docs/local-development.md](../../docs/local-development.md)** — **two-terminal dev**, ports, SSR vs proxy |
+| **[../../docs/local-development.md](../../docs/local-development.md)** — **two-terminal dev**, ports, CORS + `VITE_API_BASE` |
 
 ---
 
@@ -26,16 +26,17 @@ Single entry point for building **`siam-frontend`**: structure, **theme**, **API
 | API | `siam-api` — **`/api/v1/public/*`**, **`/api/v1/admin/*`** |
 | Auth | HttpOnly cookies + readable `xsrf-token`; no JWT in `localStorage` |
 
-**Base URL (browser):**
+**Base URL:**
 
-- **Preferred dev:** Vite proxy so the browser calls same origin — e.g. `/api/v1/...` → Nest (cookies + CSRF simpler).
-- **Cross-origin:** `VITE_API_ORIGIN` + CORS `credentials: true` on API ([project-decisions.md](../../docs/project-decisions.md)).
+- Set **`VITE_API_BASE`** to the full Nest URL (e.g. `http://localhost:5000/api/v1`). Browser and SSR use the same value.
+- Set **`CORS_ORIGIN`** on `siam-api` to the app URL (e.g. `http://localhost:3000`). Admin cookies + CSRF rely on CORS `credentials: true` ([project-decisions.md](../../docs/project-decisions.md)).
 
 Env (convention):
 
 ```bash
 # .env.example (frontend)
-VITE_API_BASE=/api/v1          # proxied path, or full origin in prod
+VITE_API_BASE=http://localhost:5000/api/v1
+VITE_SITE_ORIGIN=http://localhost:3000
 ```
 
 ---
@@ -343,7 +344,7 @@ PATCH → 401 → forceLogout → login page (unsaved work: warn via beforeunloa
 
 ## 8. Environment & security checklist
 
-- [ ] API base URL correct for dev proxy vs prod origin  
+- [ ] `VITE_API_BASE` full URL and API `CORS_ORIGIN` match app origin  
 - [ ] `credentials: 'include'` only on admin client  
 - [ ] CSRF on all admin mutations  
 - [ ] No secrets in `VITE_*`  

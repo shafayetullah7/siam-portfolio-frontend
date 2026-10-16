@@ -98,7 +98,13 @@ export async function executeRequest<T>(config: RequestConfig): Promise<T> {
       if (!response.ok) {
         throw new ApiError(response.statusText, response.status, text);
       }
-      throw new ApiError("Invalid JSON response", response.status, text);
+      const trimmed = text.trimStart().toLowerCase();
+      const looksHtml =
+        trimmed.startsWith("<!doctype") || trimmed.startsWith("<html");
+      const hint = looksHtml
+        ? " Expected API JSON but got HTML — check VITE_API_BASE points at Nest, API is running, and CORS_ORIGIN matches your app origin."
+        : "";
+      throw new ApiError(`Invalid JSON response.${hint}`, response.status, text);
     }
   }
 

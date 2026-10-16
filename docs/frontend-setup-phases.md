@@ -67,7 +67,7 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 2. In route: **`createAsync(() => getX(...))`** with reactive reads inside the arrow (params, searchParams).
 3. Optional: **`export const route = { preload: … } satisfies RouteDefinition`** to warm cache on navigation. See [Data fetching](https://docs.solidjs.com/solid-start/v2/building-your-application/data-fetching).
 4. Server-only cookie/session: **`"use server"`** inside query + `@solidjs/start/http` when needed (admin SSR reads). See same doc — `useSession` example pattern.
-5. **SSR absolute URL:** `apiBaseUrl()` must resolve to full origin on server (`VITE_API_SSR_ORIGIN` / proxy port) — browser-only Vite proxy does not apply in Node. See [api-convention.md §11](./api-convention.md).
+5. **API base URL:** `VITE_API_BASE` is a full `http(s)://…/api/v1` for browser and SSR; API `CORS_ORIGIN` matches the app. See [api-convention.md §11](./api-convention.md).
 
 ### Meta / SEO
 
@@ -88,8 +88,7 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 
 **Tasks**
 
-- Document and use `.env` from [`.env.example`](../.env.example): `VITE_API_BASE`, `VITE_API_PROXY_PORT`, `VITE_API_SSR_ORIGIN`.
-- Confirm Vite `server.proxy` `/api` → Nest ([`vite.config.ts`](../vite.config.ts)).
+- Document and use `.env` from [`.env.example`](../.env.example): `VITE_API_BASE`, `VITE_SITE_ORIGIN`; API `CORS_ORIGIN` aligned with app URL.
 - Nest running for SSR pages that hit API on first paint.
 
 **Runbook:** [../../docs/local-development.md](../../docs/local-development.md)
