@@ -16,6 +16,7 @@ export interface AdminClientOptions {
   strictAuth?: boolean;
   skipAuthHandler?: boolean;
   authRefreshRetried?: boolean;
+  csrfRetried?: boolean;
 }
 
 let refreshPromise: Promise<boolean> | null = null;
@@ -75,6 +76,19 @@ async function request<T>(
       responseType: options.responseType,
     });
   } catch (error) {
+    if (
+      error instanceof ApiError &&
+      error.status === 403 &&
+      MUTATING.has(method) &&
+      !options.csrfRetried &&
+      getXsrfTokenFromDocument()
+    ) {
+      return request<T>(method, path, body, {
+        ...options,
+        csrfRetried: true,
+      });
+    }
+
     if (
       !(error instanceof ApiError) ||
       error.status !== 401 ||

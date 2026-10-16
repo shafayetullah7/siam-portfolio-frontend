@@ -61,6 +61,17 @@ describe("api errors", () => {
     expect(result.formMessage).toContain("wait");
   });
 
+  it("getAuthFormErrorMessage maps 429 API envelope from throttler filter", () => {
+    const result = getAuthFormErrorMessage(
+      new ApiError("Too many requests. Please try again later.", 429, {
+        success: false,
+        message: "Too many requests. Please try again later.",
+        statusCode: 429,
+      }),
+    );
+    expect(result.formMessage).toContain("wait");
+  });
+
   it("getAuthFormErrorMessage maps 400 with fields", () => {
     const result = getAuthFormErrorMessage(
       new ApiError("Invalid password", 400, {

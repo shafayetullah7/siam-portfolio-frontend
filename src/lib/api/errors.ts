@@ -49,6 +49,12 @@ export function getAuthFormErrorMessage(error: unknown): AuthFormErrorResult {
       for (const item of getApiValidationErrors(error)) {
         fieldErrors[item.field] = item.message;
       }
+      if (
+        error.message === "Invalid current password" &&
+        !fieldErrors.currentPassword
+      ) {
+        fieldErrors.currentPassword = error.message;
+      }
       const formMessage =
         Object.keys(fieldErrors).length > 0
           ? error.message || "Check the fields below."

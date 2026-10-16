@@ -1,83 +1,82 @@
-import { A } from "@solidjs/router";
-import { createSignal, Show } from "solid-js";
-import { useNavigate, useSearchParams } from "@solidjs/router";
-import { adminAuthApi } from "~/lib/api/endpoints/admin/auth.api";
-import { getAuthFormErrorMessage } from "~/lib/api/errors";
-import { mapZodErrors } from "~/lib/forms/mapZodErrors";
-import { adminResetPasswordSchema } from "~/lib/forms/schemas/admin-reset-password.schema";
+import { A, useNavigate, useSearchParams, useSubmission } from "@solidjs/router";
+import { createEffect, createSignal, Show } from "solid-js";
+import AdminAuthLayout from "~/components/admin/AdminAuthLayout";
+import FormErrorAlert from "~/components/forms/FormErrorAlert";
+import FormField from "~/components/forms/FormField";
+import FormTextInput from "~/components/forms/FormTextInput";
+import { resetPasswordAction } from "~/lib/forms/actions/admin-reset-password.actions";
+import type { ResetPasswordActionResult } from "~/lib/forms/types";
 
 export default function AdminResetPassword() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const submission = useSubmission(resetPasswordAction);
   const [password, setPassword] = createSignal("");
-  const [error, setError] = createSignal<string | null>(null);
-  const [fieldErrors, setFieldErrors] = createSignal<Record<string, string>>({});
-  const [done, setDone] = createSignal(false);
 
   const token = () => {
     const t = searchParams.token;
     return typeof t === "string" ? t : "";
   };
 
-  async function onSubmit(e: Event) {
-    e.preventDefault();
-    setError(null);
-    setFieldErrors({});
-    const parsed = adminResetPasswordSchema.safeParse({
-      token: token(),
-      password: password(),
-    });
-    if (!parsed.success) {
-      setFieldErrors(mapZodErrors(parsed.error));
-      setError("Check the fields below.");
-      return;
+  const result = () => submission.result as ResetPasswordActionResult | undefined;
+
+  const fieldErrors = () => {
+    const r = result();
+    if (r && !r.ok && r.fieldErrors) return r.fieldErrors;
+    return {};
+  };
+
+  const formMessage = () => {
+    const r = result();
+    if (r && !r.ok) return r.formMessage;
+    if (submission.error) return submission.error.message;
+    return null;
+  };
+
+  createEffect(() => {
+    const r = result();
+    if (r?.ok) {
+      navigate("/admin/login?message=password_reset", { replace: true });
     }
-    try {
-      await adminAuthApi.resetPassword(parsed.data);
-      setDone(true);
-      setTimeout(() => navigate("/admin/login", { replace: true }), 2000);
-    } catch (err) {
-      const mapped = getAuthFormErrorMessage(err);
-      setError(mapped.formMessage);
-      setFieldErrors(mapped.fieldErrors);
-    }
-  }
+  });
 
   return (
-    <main id="main" class="mx-auto max-w-md py-16">
-      <h1 class="text-2xl font-bold text-ink">Reset password</h1>
-      <Show when={!token() && !done()}>
-        <p class="siam-alert-error mt-4" role="alert">
+    <AdminAuthLayout
+      title="Reset password"
+      footer={
+        <p class="text-center text-sm text-ink-muted">
+          <A href="/admin/login" class="text-link">Sign in</A>
+        </p>
+      }
+    >
+      <Show when={!token()}>
+        <p class="siam-alert-error" role="alert">
           This reset link is invalid. Request a new one from the forgot password page.
         </p>
       </Show>
-      <Show when={done()}>
-        <p class="mt-4 text-sm text-ink-muted" role="status">
-          Password updated. Redirecting to sign in…
-        </p>
-      </Show>
-      <Show when={token() && !done()}>
-        <form class="mt-8 space-y-4" onSubmit={onSubmit}>
-          <label class="block text-sm font-medium">
-            New password
-            <input
+      <Show when={token()}>
+        <form class="mt-8 space-y-4" action={resetPasswordAction} method="post">
+          <input type="hidden" name="token" value={token()} />
+          <FormField label="New password" name="password" error={fieldErrors().password}>
+            <FormTextInput
               type="password"
-              class="siam-input mt-1"
+              name="password"
+              autocomplete="new-password"
               value={password()}
               onInput={(e) => setPassword(e.currentTarget.value)}
-              aria-invalid={fieldErrors().password ? true : undefined}
+              error={fieldErrors().password}
             />
-            <Show when={fieldErrors().password}>
-              <p class="mt-1 text-sm text-error">{fieldErrors().password}</p>
-            </Show>
-          </label>
-          {error() && <p class="siam-alert-error" role="alert">{error()}</p>}
-          <button type="submit" class="siam-btn-primary w-full">Update password</button>
+          </FormField>
+          <FormErrorAlert message={formMessage()} />
+          <button
+            type="submit"
+            class="siam-btn-primary w-full"
+            disabled={submission.pending}
+          >
+            {submission.pending ? "Updating…" : "Update password"}
+          </button>
         </form>
       </Show>
-      <p class="mt-6 text-center text-sm">
-        <A href="/admin/login" class="text-link">Sign in</A>
-      </p>
-    </main>
+    </AdminAuthLayout>
   );
 }

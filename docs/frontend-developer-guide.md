@@ -181,6 +181,8 @@ Login: `loginAction` returns profile on success; route `createEffect` calls `set
 
 Session lives in **cookies**, not in frontend memory as source of truth. UI state is a **cache** of `GET /admin/auth/check`.
 
+**Route ↔ API map:** [admin-auth-map.md](./admin-auth-map.md). API contract: [siam-api/docs/admin-auth.md](../../siam-api/docs/admin-auth.md) (implementation status + HTTP errors).
+
 ### 5.1 Endpoints (auth flows)
 
 | Action | Call |
@@ -231,9 +233,11 @@ Optional: mirror guard on **server** `"use server"` actions by checking session 
 
 ### 5.5 Login / logout UX
 
-**Login success:** `setFromLogin(admin)` → `navigate(returnUrl || '/admin')`.
+**Login success:** `setFromLogin(admin)` → `navigate(safeAdminReturnUrl(returnUrl))` (default `/admin`). The query param is sanitized in [`safeAdminReturnUrl.ts`](../src/lib/auth/safeAdminReturnUrl.ts): only same-origin paths starting with `/admin` (no `://` or `//` open redirects).
 
-**Logout (user button):** `POST logout` → `clear()` → `navigate('/admin/login')`.
+**Logout (user button):** `POST logout` → `clear()` → `navigate('/admin/login')` (best-effort API; `clear()` always runs).
+
+**Auth chrome:** [`AdminAuthLayout`](../src/components/admin/AdminAuthLayout.tsx) on all public auth routes (login, register, verify, forgot, reset).
 
 **Forced logout (§6):** `clear()` first → best-effort `logout` → `navigate('/admin/login?reason=session_expired')`.
 

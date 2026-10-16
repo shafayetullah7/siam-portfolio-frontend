@@ -202,6 +202,8 @@ Phased plan to bring **`siam-frontend`** to a production-ready platform: routing
 
 **Objective:** Match [admin-auth.md](../../siam-api/docs/admin-auth.md) and guide §5–6.
 
+**Remaining work (registration resend, MFA, e2e, shared auth UI):** [admin-auth-delivery-phases.md](../../docs/admin-auth-delivery-phases.md)
+
 **Tasks**
 
 1. **`AdminAuthProvider`** + `useAdminAuth()` wrapping `/admin` layout (not public site).

@@ -42,6 +42,13 @@ export const adminAuthApi = {
       publicAuth,
     ),
 
+  resendRegistrationOtp: () =>
+    adminClient.post<{ otpExpiresAt: string }>(
+      "/auth/resend-registration-otp",
+      undefined,
+      publicAuth,
+    ),
+
   forgotPassword: (body: { email: string }) =>
     adminClient.post<AdminForgotPasswordResult>(
       "/auth/forgot-password",

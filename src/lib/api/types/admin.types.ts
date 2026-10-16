@@ -13,9 +13,11 @@ export interface AdminRegisterResult {
 }
 
 export interface AdminRegistrationStatus {
+  registrationEnabled: boolean;
   hasPending: boolean;
   otpExpiresAt?: string;
   locked?: boolean;
+  nextResendAt?: string;
 }
 
 export interface AdminForgotPasswordResult {
