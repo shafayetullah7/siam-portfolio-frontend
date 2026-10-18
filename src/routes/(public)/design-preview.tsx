@@ -2,7 +2,7 @@ import { A } from "@solidjs/router";
 import { Show } from "solid-js";
 import AdminAuthLayout from "~/components/admin/AdminAuthLayout";
 import AdminPageHeader from "~/components/admin/AdminPageHeader";
-import { ADMIN_NAV_ITEMS } from "~/components/admin/adminNav";
+import { ADMIN_NAV_SECTIONS } from "~/components/admin/adminNav";
 import AdminAuthStatusBanner from "~/components/admin/AdminAuthStatusBanner";
 import { PUBLIC_PAGE_WIDE } from "~/components/layout/publicPageWidth";
 import { ArrowExternal, ChevronRight } from "~/icons";
@@ -185,23 +185,37 @@ function DesignPreviewContent() {
             <div class="border-b border-border px-4 py-3 text-sm font-semibold text-brand-deep">
               SIAM Admin
             </div>
-            <nav class="flex-1 px-2 py-3 text-sm" aria-label="Admin preview">
-              <ul class="space-y-1">
-                {ADMIN_NAV_ITEMS.map((item) => (
-                  <li>
-                    <span
-                      classList={{
-                        "block rounded-lg px-3 py-2": true,
-                        "bg-secondary-container text-on-secondary-container":
-                          item.label === "Pages",
-                        "text-on-surface-variant": item.label !== "Pages",
-                      }}
-                    >
-                      {item.label}
-                    </span>
-                  </li>
-                ))}
-              </ul>
+            <nav class="flex-1 overflow-y-auto px-2 py-3 text-sm" aria-label="Admin preview">
+              {ADMIN_NAV_SECTIONS.slice(0, 2).map((section) => (
+                <div class="mt-3 border-t border-border pt-3 first:mt-0 first:border-0 first:pt-0">
+                  <p class="px-2 pb-1 text-[10px] font-medium uppercase tracking-wide text-ink-muted">
+                    {section.label}
+                  </p>
+                  <ul class="space-y-1">
+                    {section.items.map((item) => (
+                      <li>
+                        <span
+                          classList={{
+                            "flex items-center justify-between gap-2 rounded-lg px-3 py-2": true,
+                            "bg-secondary-container text-on-secondary-container":
+                              item.status === "active" && item.id === "pages",
+                            "text-on-surface-variant":
+                              item.status === "active" && item.id !== "pages",
+                            "text-ink-muted": item.status === "comingSoon",
+                          }}
+                        >
+                          <span>{item.label}</span>
+                          {item.status === "comingSoon" ? (
+                            <span class="rounded bg-secondary-container px-1.5 py-0.5 text-[10px]">
+                              Soon
+                            </span>
+                          ) : null}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </nav>
           </div>
           <div class="min-w-0 flex-1 p-6">

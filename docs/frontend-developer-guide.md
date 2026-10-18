@@ -143,7 +143,9 @@ import { SomeIcon } from "~/icons";
 
 Same tokens; more `bg-surface` + tables with `border-border`; accents only for status chips. No peach/mint full-page backgrounds in CMS lists.
 
-**Authenticated CMS shell:** [`AdminAppShell`](../src/components/admin/AdminAppShell.tsx) in [`routes/admin.tsx`](../src/routes/admin.tsx) — full viewport width (sidebar + `main#main`); route bodies sit in [`AdminPageContainer`](../src/components/admin/AdminPageContainer.tsx) (`siam-container`). Public auth routes stay centered with no sidebar. Nav config: [`adminNav.ts`](../src/components/admin/adminNav.ts).
+**Authenticated CMS shell:** [`AdminAppShell`](../src/components/admin/AdminAppShell.tsx) in [`routes/admin.tsx`](../src/routes/admin.tsx) — full viewport width (sidebar + `main#main`); route bodies sit in [`AdminPageContainer`](../src/components/admin/AdminPageContainer.tsx) (`siam-container`). Public auth routes stay centered with no sidebar.
+
+**Sidebar IA:** [`adminNav.ts`](../src/components/admin/adminNav.ts) exports `ADMIN_NAV_SECTIONS` (Overview, Content, Library & inbox, Site, More). Items with `status: "active"` are links; `comingSoon` rows show a **Soon** badge and do not navigate. When a module ships, add the route and set `status: "active"`. Map: [admin-sidebar-ia.md](../../docs/admin-sidebar-ia.md).
 
 ### 3.6 Adding a new color
 

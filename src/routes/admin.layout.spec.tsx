@@ -1,4 +1,4 @@
-import { render, screen } from "@solidjs/testing-library";
+import { render, screen, within } from "@solidjs/testing-library";
 import type { JSX } from "solid-js";
 import { describe, expect, it, vi } from "vitest";
 import type { AdminAuthStatus } from "~/lib/auth/admin-auth.types";
@@ -77,5 +77,7 @@ describe("AdminLayoutContent session loading", () => {
     expect(adminNav).toBeTruthy();
     expect(main?.contains(adminNav)).toBe(false);
     expect(screen.getByText("Protected")).toBeTruthy();
+    const activeLinks = within(adminNav).getAllByRole("link");
+    expect(activeLinks.length).toBeGreaterThanOrEqual(3);
   });
 });

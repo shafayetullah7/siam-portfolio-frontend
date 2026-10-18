@@ -1,11 +1,9 @@
-import { A, useLocation, useNavigate } from "@solidjs/router";
-import { For, Show } from "solid-js";
+import { A, useNavigate } from "@solidjs/router";
+import { For, Index, Show } from "solid-js";
 import { adminAuthApi } from "~/lib/api/endpoints/admin/auth.api";
 import { useAdminAuth } from "~/lib/auth/AdminAuthProvider";
-import { ADMIN_NAV_ITEMS, type AdminNavItem, isAdminNavActive } from "./adminNav";
-
-const navLinkClass =
-  "block rounded-lg px-3 py-2 text-sm text-on-surface-variant no-underline transition-colors hover:bg-secondary-container hover:text-on-secondary-container";
+import AdminNavRow from "./AdminNavRow";
+import { ADMIN_NAV_SECTIONS } from "./adminNav";
 
 const footerLinkClass =
   "block rounded-lg px-3 py-2 text-sm text-on-surface-variant no-underline transition-colors hover:bg-secondary-container hover:text-on-secondary-container";
@@ -15,7 +13,6 @@ export type AdminSidebarProps = {
 };
 
 export default function AdminSidebar(props: AdminSidebarProps) {
-  const location = useLocation();
   const navigate = useNavigate();
   const auth = useAdminAuth();
 
@@ -35,16 +32,6 @@ export default function AdminSidebar(props: AdminSidebarProps) {
     navigate("/admin/login", { replace: true });
   }
 
-  function linkClass(item: AdminNavItem) {
-    const active = isAdminNavActive(location.pathname, item);
-    return [
-      navLinkClass,
-      active ? "bg-secondary-container text-on-secondary-container" : "",
-    ]
-      .filter(Boolean)
-      .join(" ");
-  }
-
   function afterNav() {
     props.onNavigate?.();
   }
@@ -62,24 +49,34 @@ export default function AdminSidebar(props: AdminSidebarProps) {
       </div>
 
       <nav class="flex-1 overflow-y-auto px-3 py-4" aria-label="Admin">
-        <ul class="space-y-1">
-          <For each={ADMIN_NAV_ITEMS}>
-            {(item) => (
-              <li>
-                <A
-                  href={item.href}
-                  class={linkClass(item)}
-                  aria-current={
-                    isAdminNavActive(location.pathname, item) ? "page" : undefined
-                  }
-                  onClick={afterNav}
+        <Index each={ADMIN_NAV_SECTIONS}>
+          {(section, index) => {
+            const headingId = `admin-nav-section-${section().id}`;
+            return (
+              <div
+                classList={{
+                  "mt-4 border-t border-border pt-4": index > 0,
+                }}
+              >
+                <p
+                  id={headingId}
+                  class="px-3 pb-1 text-xs font-medium uppercase tracking-wide text-ink-muted"
                 >
-                  {item.label}
-                </A>
-              </li>
-            )}
-          </For>
-        </ul>
+                  {section().label}
+                </p>
+                <ul class="space-y-1" aria-labelledby={headingId}>
+                  <For each={section().items}>
+                    {(item) => (
+                      <li>
+                        <AdminNavRow item={item} onNavigate={afterNav} />
+                      </li>
+                    )}
+                  </For>
+                </ul>
+              </div>
+            );
+          }}
+        </Index>
       </nav>
 
       <div class="border-t border-border px-3 py-4">
