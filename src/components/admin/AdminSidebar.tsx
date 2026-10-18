@@ -1,0 +1,105 @@
+import { A, useLocation, useNavigate } from "@solidjs/router";
+import { For, Show } from "solid-js";
+import { adminAuthApi } from "~/lib/api/endpoints/admin/auth.api";
+import { useAdminAuth } from "~/lib/auth/AdminAuthProvider";
+import { ADMIN_NAV_ITEMS, type AdminNavItem, isAdminNavActive } from "./adminNav";
+
+const navLinkClass =
+  "block rounded-lg px-3 py-2 text-sm text-on-surface-variant no-underline transition-colors hover:bg-secondary-container hover:text-on-secondary-container";
+
+const footerLinkClass =
+  "block rounded-lg px-3 py-2 text-sm text-on-surface-variant no-underline transition-colors hover:bg-secondary-container hover:text-on-secondary-container";
+
+export type AdminSidebarProps = {
+  onNavigate?: () => void;
+};
+
+export default function AdminSidebar(props: AdminSidebarProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const auth = useAdminAuth();
+
+  const label = () => {
+    const a = auth.admin();
+    if (!a) return "";
+    return a.firstName?.trim() || a.userName;
+  };
+
+  async function logout() {
+    try {
+      await adminAuthApi.logout();
+    } catch {
+      /* session may already be dead */
+    }
+    auth.clear();
+    navigate("/admin/login", { replace: true });
+  }
+
+  function linkClass(item: AdminNavItem) {
+    const active = isAdminNavActive(location.pathname, item);
+    return [
+      navLinkClass,
+      active ? "bg-secondary-container text-on-secondary-container" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
+  }
+
+  function afterNav() {
+    props.onNavigate?.();
+  }
+
+  return (
+    <div class="flex h-full min-h-0 flex-col">
+      <div class="border-b border-border px-4 py-4">
+        <A
+          href="/admin"
+          class="font-semibold text-brand-deep no-underline"
+          onClick={afterNav}
+        >
+          SIAM Admin
+        </A>
+      </div>
+
+      <nav class="flex-1 overflow-y-auto px-3 py-4" aria-label="Admin">
+        <ul class="space-y-1">
+          <For each={ADMIN_NAV_ITEMS}>
+            {(item) => (
+              <li>
+                <A
+                  href={item.href}
+                  class={linkClass(item)}
+                  aria-current={
+                    isAdminNavActive(location.pathname, item) ? "page" : undefined
+                  }
+                  onClick={afterNav}
+                >
+                  {item.label}
+                </A>
+              </li>
+            )}
+          </For>
+        </ul>
+      </nav>
+
+      <div class="border-t border-border px-3 py-4">
+        <A href="/" class={footerLinkClass} onClick={afterNav}>
+          Public site
+        </A>
+        <A
+          href="/admin/change-password"
+          class={`${footerLinkClass} mt-1`}
+          onClick={afterNav}
+        >
+          Account
+        </A>
+        <Show when={label()}>
+          <p class="mt-3 px-3 text-xs text-ink-muted">{label()}</p>
+        </Show>
+        <button type="button" class={`${footerLinkClass} mt-1 w-full text-left`} onClick={logout}>
+          Log out
+        </button>
+      </div>
+    </div>
+  );
+}

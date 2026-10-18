@@ -1,5 +1,7 @@
 import { useSubmission } from "@solidjs/router";
+import { Title } from "@solidjs/meta";
 import { createSignal, Show } from "solid-js";
+import AdminPageHeader from "~/components/admin/AdminPageHeader";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
 import FormField from "~/components/forms/FormField";
 import FormTextInput from "~/components/forms/FormTextInput";
@@ -44,7 +46,8 @@ export default function AdminChangePassword() {
 
   return (
     <div class="max-w-md">
-      <h1 class="text-2xl font-bold text-ink">Change password</h1>
+      <Title>Change password — SIAM Admin</Title>
+      <AdminPageHeader title="Change password" />
       <Show when={successMessage()}>
         <p class="siam-alert-success mt-4" role="status">{successMessage()}</p>
       </Show>

@@ -1,4 +1,5 @@
 import { A, useNavigate, useSubmission } from "@solidjs/router";
+import { Title } from "@solidjs/meta";
 import { createEffect, createSignal, onMount, Show } from "solid-js";
 import AdminAuthLayout from "~/components/admin/AdminAuthLayout";
 import { adminAuthApi } from "~/lib/api/endpoints/admin/auth.api";
@@ -110,15 +111,15 @@ export default function AdminRegisterVerify() {
     otpExpirySec() > 0;
 
   return (
-    <AdminAuthLayout
-      title="Verify registration"
-      description="Enter the 6-digit code sent to the site owner email."
-      footer={
-        <p class="text-center text-sm text-ink-muted">
-          <A href="/admin/login" class="text-link">Back to sign in</A>
-        </p>
-      }
-    >
+    <>
+      <Title>Verify registration — SIAM Admin</Title>
+      <AdminAuthLayout
+        title="Verify registration"
+        description="Enter the 6-digit code sent to the site owner email."
+        footer={
+          <A href="/admin/login" class="text-link no-underline">Back to sign in</A>
+        }
+      >
       <Show when={status()?.hasPending === false}>
         <p class="mt-4 text-sm text-ink-muted" role="status">
           No pending registration.{" "}
@@ -183,6 +184,7 @@ export default function AdminRegisterVerify() {
           )}
         </div>
       </Show>
-    </AdminAuthLayout>
+      </AdminAuthLayout>
+    </>
   );
 }

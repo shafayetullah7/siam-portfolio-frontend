@@ -1,5 +1,9 @@
 import { A } from "@solidjs/router";
 import { Show } from "solid-js";
+import AdminAuthLayout from "~/components/admin/AdminAuthLayout";
+import AdminPageHeader from "~/components/admin/AdminPageHeader";
+import { ADMIN_NAV_ITEMS } from "~/components/admin/adminNav";
+import AdminAuthStatusBanner from "~/components/admin/AdminAuthStatusBanner";
 import { PUBLIC_PAGE_WIDE } from "~/components/layout/publicPageWidth";
 import { ArrowExternal, ChevronRight } from "~/icons";
 
@@ -126,6 +130,83 @@ function DesignPreviewContent() {
           <blockquote class="siam-citation">
             Citation or pull quote pattern for insights pages.
           </blockquote>
+        </div>
+      </section>
+
+      <section class="mt-14" aria-labelledby="admin-auth-heading">
+        <h2 id="admin-auth-heading" class="siam-headline-md">
+          Admin auth card
+        </h2>
+        <p class="mt-2 text-sm text-ink-muted">
+          Centered owner-access shell used on <code class="text-xs">/admin/login</code> and related routes.
+        </p>
+        <div class="mt-6 overflow-hidden rounded-xl border border-border">
+          <AdminAuthLayout
+            title="Admin sign in"
+            footer={
+              <span class="text-link">Forgot password?</span>
+            }
+          >
+            <AdminAuthStatusBanner>Your session expired. Sign in again.</AdminAuthStatusBanner>
+            <div class="mt-6 space-y-4">
+              <label class="block text-sm font-medium text-ink">
+                Email
+                <input
+                  type="email"
+                  class="siam-input mt-1 w-full"
+                  disabled
+                  value="owner@example.edu"
+                />
+              </label>
+              <label class="block text-sm font-medium text-ink">
+                Password
+                <input type="password" class="siam-input mt-1 w-full" disabled />
+              </label>
+              <button type="button" class="siam-btn-primary w-full" disabled>
+                Sign in
+              </button>
+            </div>
+          </AdminAuthLayout>
+        </div>
+      </section>
+
+      <section class="mt-14" aria-labelledby="admin-workspace-heading">
+        <h2 id="admin-workspace-heading" class="siam-headline-md">
+          Admin workspace shell
+        </h2>
+        <p class="mt-2 text-sm text-ink-muted">
+          Full-width CMS chrome with sidebar; route content uses <code class="text-xs">siam-container</code> inside <code class="text-xs">main#main</code>.
+        </p>
+        <div
+          class="mt-6 flex h-72 overflow-hidden rounded-xl border border-border bg-canvas"
+          role="presentation"
+        >
+          <div class="flex w-48 shrink-0 flex-col border-r border-border bg-surface">
+            <div class="border-b border-border px-4 py-3 text-sm font-semibold text-brand-deep">
+              SIAM Admin
+            </div>
+            <nav class="flex-1 px-2 py-3 text-sm" aria-label="Admin preview">
+              <ul class="space-y-1">
+                {ADMIN_NAV_ITEMS.map((item) => (
+                  <li>
+                    <span
+                      classList={{
+                        "block rounded-lg px-3 py-2": true,
+                        "bg-secondary-container text-on-secondary-container":
+                          item.label === "Pages",
+                        "text-on-surface-variant": item.label !== "Pages",
+                      }}
+                    >
+                      {item.label}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+          <div class="min-w-0 flex-1 p-6">
+            <AdminPageHeader title="Site pages" description="Preview of in-main page header." />
+          </div>
         </div>
       </section>
 

@@ -1,6 +1,8 @@
 import { A, useNavigate, useSubmission } from "@solidjs/router";
+import { Title } from "@solidjs/meta";
 import { createEffect, createSignal, onMount, Show } from "solid-js";
 import AdminAuthLayout from "~/components/admin/AdminAuthLayout";
+import EmptyState from "~/components/EmptyState";
 import { adminAuthApi } from "~/lib/api/endpoints/admin/auth.api";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
 import FormField from "~/components/forms/FormField";
@@ -54,23 +56,30 @@ export default function AdminRegister() {
   });
 
   return (
-    <AdminAuthLayout
-      title="Create admin account"
-      description="Registration sends a 6-digit code to the site owner email for verification."
-      footer={
-        <p class="text-center text-sm text-ink-muted">
-          <A href="/admin/login" class="text-link">Sign in instead</A>
-        </p>
-      }
-    >
-      <Show
-        when={!registrationClosed()}
-        fallback={
-          <p class="mt-4 siam-alert-error" role="status">
-            Registration is disabled. Contact a site administrator if you need access.
-          </p>
+    <>
+      <Title>Register — SIAM Admin</Title>
+      <AdminAuthLayout
+        title="Create admin account"
+        description="Registration sends a 6-digit code to the site owner email for verification."
+        footer={
+          <A href="/admin/login" class="text-link no-underline">Sign in instead</A>
         }
       >
+        <Show
+          when={!registrationClosed()}
+          fallback={
+            <div class="mt-6">
+              <EmptyState
+                title="Registration is disabled"
+                description="Contact a site administrator if you need access."
+              >
+                <A href="/admin/login" class="siam-btn-secondary no-underline">
+                  Back to sign in
+                </A>
+              </EmptyState>
+            </div>
+          }
+        >
         <form
           class="mt-6 space-y-4"
           action={registerAction}
@@ -144,7 +153,8 @@ export default function AdminRegister() {
             {submission.pending ? "Continuing…" : "Continue"}
           </button>
         </form>
-      </Show>
-    </AdminAuthLayout>
+        </Show>
+      </AdminAuthLayout>
+    </>
   );
 }

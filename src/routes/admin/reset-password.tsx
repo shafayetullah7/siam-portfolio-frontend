@@ -1,4 +1,5 @@
 import { A, useNavigate, useSearchParams, useSubmission } from "@solidjs/router";
+import { Title } from "@solidjs/meta";
 import { createEffect, createSignal, Show } from "solid-js";
 import AdminAuthLayout from "~/components/admin/AdminAuthLayout";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
@@ -51,14 +52,14 @@ export default function AdminResetPassword() {
   });
 
   return (
-    <AdminAuthLayout
-      title="Reset password"
-      footer={
-        <p class="text-center text-sm text-ink-muted">
-          <A href="/admin/login" class="text-link">Sign in</A>
-        </p>
-      }
-    >
+    <>
+      <Title>Reset password — SIAM Admin</Title>
+      <AdminAuthLayout
+        title="Reset password"
+        footer={
+          <A href="/admin/login" class="text-link no-underline">Sign in</A>
+        }
+      >
       <Show when={!token()}>
         <p class="siam-alert-error" role="alert">
           This reset link is invalid. Request a new one from the forgot password page.
@@ -107,6 +108,7 @@ export default function AdminResetPassword() {
           </button>
         </form>
       </Show>
-    </AdminAuthLayout>
+      </AdminAuthLayout>
+    </>
   );
 }

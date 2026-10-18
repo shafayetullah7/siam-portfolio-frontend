@@ -1,5 +1,7 @@
 import { createResource } from "solid-js";
 import { A } from "@solidjs/router";
+import { Title } from "@solidjs/meta";
+import AdminPageHeader from "~/components/admin/AdminPageHeader";
 import EmptyState from "~/components/EmptyState";
 import ResourceRequest from "~/components/ResourceRequest";
 import { adminClient } from "~/lib/api";
@@ -18,8 +20,8 @@ export default function AdminHome() {
     <ResourceRequest resource={countsResource}>
       {(counts) => (
         <div>
-          <h1 class="text-2xl font-bold text-ink">Dashboard</h1>
-          <p class="mt-2 text-ink-muted">CMS overview</p>
+          <Title>Dashboard — SIAM Admin</Title>
+          <AdminPageHeader title="Dashboard" description="CMS overview" />
           <dl class="mt-8 grid gap-4 sm:grid-cols-2">
             <div class="siam-card p-4">
               <dt class="text-sm text-ink-muted">Published pages</dt>

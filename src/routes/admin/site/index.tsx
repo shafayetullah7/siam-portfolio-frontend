@@ -1,7 +1,7 @@
-import {
-  useSubmission,
-} from "@solidjs/router";
+import { useSubmission } from "@solidjs/router";
+import { Title } from "@solidjs/meta";
 import { createEffect, createSignal, For, onMount, Show } from "solid-js";
+import AdminPageHeader from "~/components/admin/AdminPageHeader";
 import { adminPagesApi } from "~/lib/api/endpoints/admin/pages.api";
 import { adminSiteApi } from "~/lib/api/endpoints/admin/site.api";
 import type { NavItemAdmin } from "~/lib/api/types/admin.types";
@@ -136,7 +136,11 @@ export default function AdminSiteSettings() {
 
   return (
     <div class="max-w-3xl space-y-12">
-      <h1 class="text-2xl font-bold text-ink">Site settings</h1>
+      <Title>Site settings — SIAM Admin</Title>
+      <AdminPageHeader
+        title="Site settings"
+        description="Brand, metadata, and primary navigation."
+      />
       <Show when={loadError()}>
         <FormErrorAlert message={loadError()} />
       </Show>

@@ -1,5 +1,7 @@
 import { createResource, For } from "solid-js";
 import { A } from "@solidjs/router";
+import { Title } from "@solidjs/meta";
+import AdminPageHeader from "~/components/admin/AdminPageHeader";
 import EmptyState from "~/components/EmptyState";
 import ResourceRequest from "~/components/ResourceRequest";
 import { adminPagesApi } from "~/lib/api/endpoints/admin/pages.api";
@@ -25,10 +27,10 @@ export default function AdminPagesList() {
     >
       {(pages) => (
         <div>
-          <div class="flex items-center justify-between gap-4">
-            <h1 class="text-2xl font-bold text-ink">Site pages</h1>
+          <Title>Site pages — SIAM Admin</Title>
+          <AdminPageHeader title="Site pages" description="Draft and published content pages.">
             <A href="/admin/pages/new" class="siam-btn-primary no-underline">New page</A>
-          </div>
+          </AdminPageHeader>
           <ul class="mt-6 divide-y divide-border">
             <For each={pages}>
               {(page) => (

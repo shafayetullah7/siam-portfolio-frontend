@@ -11,6 +11,10 @@ import type {
   AdminAuthContextValue,
   AdminAuthStatus,
 } from "./admin-auth.types";
+import {
+  ADMIN_BOOTSTRAP_TIMEOUT_MS,
+  withTimeout,
+} from "./bootstrapWithTimeout";
 import { registerAdminAuthBridge } from "./adminSession";
 
 const AdminAuthContext = createContext<AdminAuthContextValue>();
@@ -25,7 +29,10 @@ export function AdminAuthProvider(props: ParentProps) {
     async bootstrap() {
       setStatus("unknown");
       try {
-        const profile = await adminAuthApi.check();
+        const profile = await withTimeout(
+          adminAuthApi.check(),
+          ADMIN_BOOTSTRAP_TIMEOUT_MS,
+        );
         setAdmin(profile);
         setStatus("authenticated");
       } catch {

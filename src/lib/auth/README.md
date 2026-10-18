@@ -36,8 +36,8 @@ sequenceDiagram
 
 [`AdminAuthProvider.tsx`](./AdminAuthProvider.tsx) wraps [`routes/admin.tsx`](../../routes/admin.tsx):
 
-1. `bootstrap()` → `GET /auth/check` → `authenticated` or `anonymous`
-2. While `unknown` → [`PageLoading`](../components/PageLoading.tsx)
+1. `bootstrap()` → `GET /auth/check` (bounded by [`bootstrapWithTimeout.ts`](./bootstrapWithTimeout.ts), 15s) → `authenticated` or `anonymous`
+2. While `unknown` (or brief `anonymous` on protected path before redirect) → compact [`PageLoading`](../../components/PageLoading.tsx) **inside** `main#main` with the same main layout classes as the upcoming screen (centered for public auth band; CMS chrome appears only after session resolves)
 3. `anonymous` on protected path → `/admin/login?returnUrl=…`
 4. `authenticated` on public auth path (except `/admin/reset-password`) → `/admin`
 
@@ -74,4 +74,4 @@ Public auth pages use SolidStart **`action`** + **`useSubmission`** (see [`../fo
 
 Verify **resend** uses `adminAuthApi.resendRegistrationOtp()` from a button handler (not a form action).
 
-**UI:** [`AdminAuthLayout`](../../components/admin/AdminAuthLayout.tsx) on all public auth routes; [`FormField`](../../components/forms/FormField.tsx) / [`FormTextInput`](../../components/forms/FormTextInput.tsx) for inputs.
+**UI:** [`AdminAuthLayout`](../../components/admin/AdminAuthLayout.tsx) on all public auth routes (`AdminAuthWordmark`, [`AdminAuthFooterLinks`](../../components/admin/AdminAuthFooterLinks.tsx) with contextual links + **Public site**). Authenticated CMS uses [`AdminAppShell`](../../components/admin/AdminAppShell.tsx) (sidebar + full-width layout; mobile drawer) and [`AdminPageHeader`](../../components/admin/AdminPageHeader.tsx) per route. Reference: dev [`/design-preview`](../../routes/(public)/design-preview.tsx) § Admin auth card and Admin workspace shell. Form inputs: [`FormField`](../../components/forms/FormField.tsx) / [`FormTextInput`](../../components/forms/FormTextInput.tsx).

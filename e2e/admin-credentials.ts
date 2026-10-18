@@ -1,5 +1,3 @@
-export const CI_ADMIN_EMAIL =
-  process.env.CI_ADMIN_EMAIL ?? "ci-admin@example.com";
-
-export const CI_ADMIN_PASSWORD =
-  process.env.CI_ADMIN_PASSWORD ?? "CiTestPassword1!";
+/** Must match siam-api/src/db/seed/dev-admin.ts (pnpm db:seed). */
+export const DEV_ADMIN_EMAIL = "dev-admin@example.com";
+export const DEV_ADMIN_PASSWORD = "DevTestPassword1!";

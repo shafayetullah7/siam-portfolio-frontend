@@ -1,4 +1,5 @@
 import { A, useNavigate, useSearchParams, useSubmission } from "@solidjs/router";
+import { Title } from "@solidjs/meta";
 import { createEffect, createSignal, onMount, Show } from "solid-js";
 import AdminAuthLayout from "~/components/admin/AdminAuthLayout";
 import AdminAuthStatusBanner from "~/components/admin/AdminAuthStatusBanner";
@@ -10,7 +11,10 @@ import PasswordVisibilityToggle from "~/components/forms/PasswordVisibilityToggl
 import { safeAdminReturnUrl } from "~/lib/auth/safeAdminReturnUrl";
 import { useAdminAuth } from "~/lib/auth/useAdminAuth";
 import { loginAction } from "~/lib/forms/actions/admin-login.actions";
+import { focusFirstFormError } from "~/lib/forms/focusFirstFormError";
 import type { LoginActionResult } from "~/lib/forms/types";
+
+const LOGIN_FORM_ERROR_ID = "admin-login-form-error";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -54,71 +58,80 @@ export default function AdminLogin() {
     if (r?.ok) {
       auth.setFromLogin(r.profile);
       navigate(returnUrl(), { replace: true });
+      return;
+    }
+    if (r && !r.ok) {
+      focusFirstFormError(
+        r.fieldErrors ?? {},
+        ["email", "password"],
+        LOGIN_FORM_ERROR_ID,
+      );
     }
   });
 
   return (
-    <AdminAuthLayout
-      title="Admin sign in"
-      footer={
-        <p class="text-center text-sm text-ink-muted">
-          <A href="/admin/forgot-password" class="text-link">Forgot password?</A>
-          <Show when={showRegisterLink()}>
-            {" · "}
-            <A href="/admin/register" class="text-link">Register</A>
-          </Show>
-        </p>
-      }
-    >
-      <Show when={sessionExpired()}>
-        <AdminAuthStatusBanner>Your session expired. Sign in again.</AdminAuthStatusBanner>
-      </Show>
-      <Show when={passwordReset()}>
-        <AdminAuthStatusBanner variant="success">
-          Password updated. Sign in with your new password.
-        </AdminAuthStatusBanner>
-      </Show>
-      <form
-        class="mt-6 space-y-4"
-        action={loginAction}
-        method="post"
+    <>
+      <Title>Sign in — SIAM Admin</Title>
+      <AdminAuthLayout
+        title="Admin sign in"
+        footer={
+          <>
+            <A href="/admin/forgot-password" class="text-link no-underline">
+              Forgot password?
+            </A>
+            <Show when={showRegisterLink()}>
+              <span aria-hidden="true"> · </span>
+              <A href="/admin/register" class="text-link no-underline">Register</A>
+            </Show>
+          </>
+        }
       >
-        <FormField label="Email" name="email" error={fieldErrors().email}>
-          <FormTextInput
-            type="email"
-            name="email"
-            autocomplete="email"
-            value={email()}
-            onInput={(e) => setEmail(e.currentTarget.value)}
-            error={fieldErrors().email}
-          />
-        </FormField>
-        <FormField label="Password" name="password" error={fieldErrors().password}>
-          <div class="relative">
+        <Show when={sessionExpired()}>
+          <AdminAuthStatusBanner>Your session expired. Sign in again.</AdminAuthStatusBanner>
+        </Show>
+        <Show when={passwordReset()}>
+          <AdminAuthStatusBanner variant="success">
+            Password updated. Sign in with your new password.
+          </AdminAuthStatusBanner>
+        </Show>
+        <form class="mt-6 space-y-4" action={loginAction} method="post">
+          <FormField label="Email" name="email" error={fieldErrors().email}>
             <FormTextInput
-              type={showPassword() ? "text" : "password"}
-              name="password"
-              autocomplete="current-password"
-              value={password()}
-              onInput={(e) => setPassword(e.currentTarget.value)}
-              error={fieldErrors().password}
-              class="pr-11"
+              type="email"
+              name="email"
+              autocomplete="email"
+              value={email()}
+              onInput={(e) => setEmail(e.currentTarget.value)}
+              error={fieldErrors().email}
             />
-            <PasswordVisibilityToggle
-              visible={showPassword()}
-              onToggle={() => setShowPassword((v) => !v)}
-            />
-          </div>
-        </FormField>
-        <FormErrorAlert message={formMessage()} />
-        <button
-          type="submit"
-          class="siam-btn-primary w-full"
-          disabled={submission.pending}
-        >
-          {submission.pending ? "Signing in…" : "Sign in"}
-        </button>
-      </form>
-    </AdminAuthLayout>
+          </FormField>
+          <FormField label="Password" name="password" error={fieldErrors().password}>
+            <div class="relative">
+              <FormTextInput
+                type={showPassword() ? "text" : "password"}
+                name="password"
+                autocomplete="current-password"
+                value={password()}
+                onInput={(e) => setPassword(e.currentTarget.value)}
+                error={fieldErrors().password}
+                class="pr-11"
+              />
+              <PasswordVisibilityToggle
+                visible={showPassword()}
+                onToggle={() => setShowPassword((v) => !v)}
+              />
+            </div>
+          </FormField>
+          <FormErrorAlert id={LOGIN_FORM_ERROR_ID} message={formMessage()} />
+          <button
+            type="submit"
+            class="siam-btn-primary w-full"
+            disabled={submission.pending}
+          >
+            {submission.pending ? "Signing in…" : "Sign in"}
+          </button>
+        </form>
+      </AdminAuthLayout>
+    </>
   );
 }

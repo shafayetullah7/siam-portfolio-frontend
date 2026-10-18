@@ -1,57 +1,14 @@
 import { createEffect, Show } from "solid-js";
 import { useLocation, useNavigate, type RouteSectionProps } from "@solidjs/router";
-import { A } from "@solidjs/router";
+import AdminAppShell from "~/components/admin/AdminAppShell";
+import AdminPageContainer from "~/components/admin/AdminPageContainer";
 import AsyncRouteShell from "~/components/AsyncRouteShell";
 import PageLoading from "~/components/PageLoading";
 import { AdminAuthProvider, useAdminAuth } from "~/lib/auth/AdminAuthProvider";
-import { adminAuthApi } from "~/lib/api/endpoints/admin/auth.api";
 import {
   isPublicAdminAuthPath,
   isResetPasswordPath,
 } from "~/lib/auth/publicAdminAuthPaths";
-
-function AdminHeader() {
-  const auth = useAdminAuth();
-  const navigate = useNavigate();
-
-  async function logout() {
-    try {
-      await adminAuthApi.logout();
-    } catch {
-      /* session may already be dead */
-    }
-    auth.clear();
-    navigate("/admin/login", { replace: true });
-  }
-
-  const label = () => {
-    const a = auth.admin();
-    if (!a) return "";
-    return a.firstName?.trim() || a.userName;
-  };
-
-  return (
-    <header class="border-b border-border bg-surface">
-      <div class="siam-container flex h-14 flex-wrap items-center justify-between gap-2">
-        <a href="/admin" class="font-semibold text-ink no-underline">
-          SIAM Admin
-        </a>
-        <nav class="flex flex-wrap items-center gap-4 text-sm">
-          <A href="/admin/site" class="text-link no-underline">Site</A>
-          <a href="/admin/pages" class="text-link no-underline">Pages</a>
-          <A href="/admin/change-password" class="text-link no-underline">
-            Password
-          </A>
-          <a href="/" class="text-link no-underline">Public site</a>
-          <span class="text-ink-muted">{label()}</span>
-          <button type="button" class="text-link text-sm" onClick={logout}>
-            Log out
-          </button>
-        </nav>
-      </div>
-    </header>
-  );
-}
 
 function AdminLayoutContent(props: RouteSectionProps) {
   const auth = useAdminAuth();
@@ -87,30 +44,48 @@ function AdminLayoutContent(props: RouteSectionProps) {
     (auth.status() === "anonymous" && !isPublicAuth());
 
   const showChrome = () => auth.status() === "authenticated";
+  const centerMain = () => !showChrome();
 
   return (
     <div class="flex min-h-screen flex-col bg-canvas">
-      <Show when={showLoading()} fallback={
-        <>
-          <Show when={showChrome()}>
-            <AdminHeader />
-          </Show>
+      <Show
+        when={showChrome() && !showLoading()}
+        fallback={
           <main
             id="main"
             classList={{
-              "siam-container flex-1 py-8": showChrome(),
-              "flex flex-1 flex-col justify-center": !showChrome(),
+              "flex flex-1 flex-col justify-center": centerMain(),
             }}
           >
-            <AsyncRouteShell compactLoading>{props.children}</AsyncRouteShell>
+            <Show
+              when={showLoading()}
+              fallback={
+                <AsyncRouteShell compactLoading>{props.children}</AsyncRouteShell>
+              }
+            >
+              <div
+                classList={{
+                  "mx-auto w-full max-w-md": centerMain(),
+                }}
+              >
+                <PageLoading compact />
+              </div>
+            </Show>
           </main>
-        </>
-      }>
-        <PageLoading />
+        }
+      >
+        <AdminAppShell>
+          <AsyncRouteShell compactLoading>
+            <AdminPageContainer>{props.children}</AdminPageContainer>
+          </AsyncRouteShell>
+        </AdminAppShell>
       </Show>
     </div>
   );
 }
+
+/** @internal Exported for layout tests */
+export { AdminLayoutContent };
 
 /** Admin layout — AdminAuthProvider + client guard (F5). */
 export default function AdminLayout(props: RouteSectionProps) {

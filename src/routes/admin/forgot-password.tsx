@@ -1,4 +1,5 @@
 import { A, useSubmission } from "@solidjs/router";
+import { Title } from "@solidjs/meta";
 import { createSignal, Show } from "solid-js";
 import AdminAuthLayout from "~/components/admin/AdminAuthLayout";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
@@ -33,14 +34,14 @@ export default function AdminForgotPassword() {
   };
 
   return (
-    <AdminAuthLayout
-      title="Forgot password"
-      footer={
-        <p class="text-center text-sm text-ink-muted">
-          <A href="/admin/login" class="text-link">Back to sign in</A>
-        </p>
-      }
-    >
+    <>
+      <Title>Forgot password — SIAM Admin</Title>
+      <AdminAuthLayout
+        title="Forgot password"
+        footer={
+          <A href="/admin/login" class="text-link no-underline">Back to sign in</A>
+        }
+      >
       <Show
         when={successMessage()}
         fallback={
@@ -68,6 +69,7 @@ export default function AdminForgotPassword() {
       >
         <p class="siam-alert-success mt-6" role="status">{successMessage()}</p>
       </Show>
-    </AdminAuthLayout>
+      </AdminAuthLayout>
+    </>
   );
 }

@@ -1,5 +1,7 @@
 import { A, useParams, useSubmission } from "@solidjs/router";
+import { Title } from "@solidjs/meta";
 import { createEffect, createSignal, onMount, Show } from "solid-js";
+import AdminPageHeader from "~/components/admin/AdminPageHeader";
 import EmptyState from "~/components/EmptyState";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
 import FormField from "~/components/forms/FormField";
@@ -109,7 +111,8 @@ export default function AdminPageEdit() {
       }
     >
       <div>
-        <h1 class="text-2xl font-bold text-ink">Edit page</h1>
+        <Title>Edit page — SIAM Admin</Title>
+        <AdminPageHeader title="Edit page" />
         <Show when={loadError()}>
           <FormErrorAlert message={loadError()} />
         </Show>
