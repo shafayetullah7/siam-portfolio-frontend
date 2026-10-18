@@ -147,6 +147,10 @@ Same tokens; more `bg-surface` + tables with `border-border`; accents only for s
 
 **Sidebar IA:** [`adminNav.ts`](../src/components/admin/adminNav.ts) exports `ADMIN_NAV_SECTIONS` (Overview, Content, Library & inbox, Site, More). Items with `status: "active"` are links; `comingSoon` rows show a **Soon** badge and do not navigate. When a module ships, add the route and set `status: "active"`. Map: [admin-sidebar-ia.md](../../docs/admin-sidebar-ia.md).
 
+**Split scroll:** authenticated shell is viewport-locked (`h-dvh`); sidebar nav and `main#main` scroll independently (`AdminAppShell`).
+
+**SSR session:** [`getAdminSession`](../src/lib/api/queries/admin/session.queries.ts) preloads on the admin layout; SSR forwards `Cookie` to `GET /admin/auth/check` and seeds [`AdminAuthProvider`](../src/lib/auth/AdminAuthProvider.tsx) so logged-in full loads render the CMS shell on first paint. Client `bootstrap()` revalidates without flashing `unknown`.
+
 ### 3.6 Adding a new color
 
 1. `--siam-*` in `src/styles/tokens.css`  
@@ -239,7 +243,8 @@ type AdminAuthState = {
 ### 5.3 `AdminAuthProvider`
 
 - Wrap **`/admin` layout** only (not public site).
-- On mount: `bootstrap()`.
+- Layout preloads `getAdminSession`; provider receives `initialAdmin` from SSR/hydrated query cache.
+- On mount: `bootstrap()` revalidates (no `unknown` flash when `initialAdmin` was set).
 - Expose: `useAdminAuth()` → `{ status, admin, bootstrap, clear }`.
 
 ### 5.4 Route guards (client)

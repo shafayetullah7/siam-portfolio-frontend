@@ -20,15 +20,15 @@ export default function AdminAppShell(props: { children: JSX.Element }) {
   });
 
   return (
-    <div class="flex min-h-screen w-full bg-canvas">
+    <div class="flex h-dvh w-full overflow-hidden bg-canvas">
       <aside
-        class="hidden w-60 shrink-0 border-r border-border bg-surface md:flex md:flex-col"
+        class="hidden h-full min-h-0 w-60 shrink-0 flex-col overflow-hidden border-r border-border bg-surface md:flex"
         aria-label="Admin sidebar"
       >
         <AdminSidebar />
       </aside>
 
-      <div class="flex min-w-0 flex-1 flex-col">
+      <div class="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <div
           class="flex min-h-14 items-center gap-3 border-b border-border bg-surface px-4 md:hidden"
         >
@@ -59,7 +59,10 @@ export default function AdminAppShell(props: { children: JSX.Element }) {
           </aside>
         </Show>
 
-        <main id="main" class="flex min-w-0 flex-1 flex-col">
+        <main
+          id="main"
+          class="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto overscroll-y-contain"
+        >
           {props.children}
         </main>
       </div>

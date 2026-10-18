@@ -48,7 +48,10 @@ export default function AdminSidebar(props: AdminSidebarProps) {
         </A>
       </div>
 
-      <nav class="flex-1 overflow-y-auto px-3 py-4" aria-label="Admin">
+      <nav
+        class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain px-3 py-4"
+        aria-label="Admin"
+      >
         <Index each={ADMIN_NAV_SECTIONS}>
           {(section, index) => {
             const headingId = `admin-nav-section-${section().id}`;
