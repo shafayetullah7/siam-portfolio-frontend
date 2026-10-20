@@ -4,6 +4,10 @@ import { solidStart } from "@solidjs/start/config";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
+  server: {
+    port: 5001,
+    strictPort: true,
+  },
   plugins: [solidStart({ devOverlay: false }), tailwindcss(), nitro()],
   nitro: {
     routeRules: {

@@ -29,14 +29,14 @@ Single entry point for building **`siam-frontend`**: structure, **theme**, **API
 **Base URL:**
 
 - Set **`VITE_API_BASE`** to the full Nest URL (e.g. `http://localhost:5000/api/v1`). Browser and SSR use the same value.
-- Set **`CORS_ORIGIN`** on `siam-api` to the app URL (e.g. `http://localhost:3000`). Admin cookies + CSRF rely on CORS `credentials: true` ([project-decisions.md](../../docs/project-decisions.md)).
+- Set **`CORS_ORIGIN`** on `siam-api` to the app URL (e.g. `http://localhost:5001`). Admin cookies + CSRF rely on CORS `credentials: true` ([project-decisions.md](../../docs/project-decisions.md)).
 
 Env (convention):
 
 ```bash
 # .env.example (frontend)
 VITE_API_BASE=http://localhost:5000/api/v1
-VITE_SITE_ORIGIN=http://localhost:3000
+VITE_SITE_ORIGIN=http://localhost:5001
 ```
 
 ### Static home (P01, LP0–LP6)

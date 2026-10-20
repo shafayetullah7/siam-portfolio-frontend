@@ -26,7 +26,7 @@ cp .env.example .env
 pnpm dev
 ```
 
-- App: http://localhost:3000
+- App: http://localhost:5001
 - API: `VITE_API_BASE` (default `http://localhost:5000/api/v1`); set matching `CORS_ORIGIN` on `siam-api`
 - API must be running before loading `/` or `/about` (SSR and client fetches use the same base URL)
 - Dev-only **API health** line on home (`ApiStatus`) calls the public health endpoint via `publicClient`
