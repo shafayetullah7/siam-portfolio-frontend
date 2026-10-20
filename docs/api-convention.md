@@ -151,6 +151,8 @@ publicClient.post<T>(path, body?, options?)
 
 **`strictAuth` (default `true`):** when `false`, 401 does **not** run refresh/logout pipeline (auth probe, login, register).
 
+**Media uploads (A10):** Do **not** add `VITE_*` Cloudinary credentials or use the Cloudinary browser widget. Send files with `FormData` and field name `file` to `POST /api/v1/admin/media/upload` (or `/upload/image`) via `adminClient` with `credentials: 'include'` and CSRF headers — see [siam-api/docs/media.md](../../siam-api/docs/media.md). Types: `MediaAdmin` in `lib/api/types/admin.types.ts`.
+
 **Excluded paths** (always `strictAuth: false` — also listed in `config.ts`):
 
 ```ts

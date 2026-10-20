@@ -58,3 +58,18 @@ export interface SitePageAdmin {
   createdAt: string;
   updatedAt: string;
 }
+
+/** Admin media library row (A10). Uploads are server-side only — no Cloudinary keys in the browser. */
+export interface MediaAdmin {
+  id: string;
+  fileName: string;
+  url: string;
+  mimeType: string | null;
+  size: number;
+  alt: string | null;
+  caption: string | null;
+  license: string | null;
+  usesCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
