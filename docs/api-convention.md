@@ -263,7 +263,7 @@ export const route = {
 const data = createAsync(() => getPublicPublications(filters()));
 ```
 
-Admin: same pattern with `adminClient` via `endpoints/admin/*`. Session: [`getAdminSession`](../src/lib/api/queries/admin/session.queries.ts) uses [`fetchAdminSession`](../src/lib/api/server/adminSession.server.ts) (cookie-forwarded `GET /auth/check`) and returns `null` on failure (no throw) for layout guards — browser revalidation still uses `adminAuthApi.check()`.
+Admin: same pattern with `adminClient` via `endpoints/admin/*`. Session: `adminAuthApi.check()` on layout `onMount` (client bootstrap) until cookie-forwarded SSR is added.
 
 ---
 
@@ -306,7 +306,7 @@ Use **Zod 4** consistently with `siam-api` if sharing message style; frontend fo
 - **`VITE_API_BASE`:** Full `http(s)://host/api/v1` for browser and SSR (default `http://localhost:5000/api/v1`). Relative paths are rejected — no frontend `/api` proxy.
 - **Nest:** `CORS_ORIGIN` must equal the app origin (`VITE_SITE_ORIGIN` / where users open the site). `credentials: true` is enabled in `main.ts`; admin uses `credentials: "include"` on `adminClient`.
 - **Optional `VITE_API_SSR_ORIGIN`:** Only when SSR must call a different API host than the browser (rare Docker setups); replaces the origin in `VITE_API_BASE` for server-side `fetch` only.
-- Layout session read: forward incoming `Cookie` via `fetchAdminSession` (`getAdminSession` query). Other server-side `adminClient` mutations still client-only until CSRF forwarding exists.
+- Forward incoming `Cookie` header on server-side `adminClient` calls when admin SSR needs session (future).
 - Forward API `Set-Cookie` to the HTML response (Nitro/Start 2 — implement when needed).
 - Do not store admin profile in module scope on the server.
 

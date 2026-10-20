@@ -36,13 +36,10 @@ sequenceDiagram
 
 [`AdminAuthProvider.tsx`](./AdminAuthProvider.tsx) wraps [`routes/admin.tsx`](../../routes/admin.tsx):
 
-1. Layout [`route.preload`](../../routes/admin.tsx) + [`getAdminSession`](../api/queries/admin/session.queries.ts) (SSR: cookie-forwarded `GET /auth/check`) seeds `AdminAuthProvider` with `initialAdmin` (`profile` or `null`)
-2. `onMount` → `bootstrap()` revalidates via browser `adminAuthApi.check()` without resetting to `unknown` (bounded by [`bootstrapWithTimeout.ts`](./bootstrapWithTimeout.ts), 15s)
-3. While `unknown` only when `initialAdmin` omitted (tests) or Suspense fallback → compact [`PageLoading`](../../components/PageLoading.tsx) **inside** `main#main`; CMS chrome when SSR/client session is authenticated
-4. `anonymous` on protected path → `/admin/login?returnUrl=…`
-5. `authenticated` on public auth path (except `/admin/reset-password`) → `/admin`
-
-**Hydration:** SSR and hydrate share the same layout branch because session comes from `getAdminSession` query cache (see [`adminSession.server.ts`](../api/server/adminSession.server.ts)).
+1. `bootstrap()` → `GET /auth/check` (bounded by [`bootstrapWithTimeout.ts`](./bootstrapWithTimeout.ts), 15s) → `authenticated` or `anonymous`
+2. While `unknown` (or brief `anonymous` on protected path before redirect) → compact [`PageLoading`](../../components/PageLoading.tsx) **inside** `main#main` with the same main layout classes as the upcoming screen (centered for public auth band; CMS chrome appears only after session resolves)
+3. `anonymous` on protected path → `/admin/login?returnUrl=…`
+4. `authenticated` on public auth path (except `/admin/reset-password`) → `/admin`
 
 **Post-login `returnUrl`:** guard encodes the current path; login uses [`safeAdminReturnUrl.ts`](./safeAdminReturnUrl.ts) so only `/admin…` paths are honored after sign-in.
 

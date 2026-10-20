@@ -8,15 +8,9 @@ const authState = vi.hoisted(() => ({
   status: "unknown" as AdminAuthStatus,
 }));
 
-vi.mock("~/lib/api/queries/admin", () => ({
-  getAdminSession: async () => null,
-}));
-
 vi.mock("@solidjs/router", () => ({
   useLocation: () => ({ pathname: "/admin/pages", search: "", hash: "" }),
   useNavigate: () => vi.fn(),
-  query: <T,>(fn: () => T) => fn,
-  createAsync: <T,>(fn: () => T) => fn,
   A: (props: { href: string; children?: JSX.Element }) => (
     <a href={props.href}>{props.children}</a>
   ),

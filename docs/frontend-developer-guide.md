@@ -149,7 +149,7 @@ Same tokens; more `bg-surface` + tables with `border-border`; accents only for s
 
 **Split scroll:** authenticated shell is viewport-locked (`h-dvh`); sidebar nav and `main#main` scroll independently (`AdminAppShell`).
 
-**SSR session:** [`getAdminSession`](../src/lib/api/queries/admin/session.queries.ts) preloads on the admin layout; SSR forwards `Cookie` to `GET /admin/auth/check` and seeds [`AdminAuthProvider`](../src/lib/auth/AdminAuthProvider.tsx) so logged-in full loads render the CMS shell on first paint. Client `bootstrap()` revalidates without flashing `unknown`.
+**Hydration:** CMS chrome is gated until `onMount` `bootstrap()` in [`admin.tsx`](../src/routes/admin.tsx). Root `app.tsx` wraps file routes in `Suspense` so lazy route modules stream into the HTML.
 
 ### 3.6 Adding a new color
 
@@ -243,8 +243,7 @@ type AdminAuthState = {
 ### 5.3 `AdminAuthProvider`
 
 - Wrap **`/admin` layout** only (not public site).
-- Layout preloads `getAdminSession`; provider receives `initialAdmin` from SSR/hydrated query cache.
-- On mount: `bootstrap()` revalidates (no `unknown` flash when `initialAdmin` was set).
+- On mount: `bootstrap()`.
 - Expose: `useAdminAuth()` → `{ status, admin, bootstrap, clear }`.
 
 ### 5.4 Route guards (client)
