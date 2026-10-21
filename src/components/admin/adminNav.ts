@@ -89,7 +89,7 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
         id: "media",
         label: "Media",
         href: "/admin/media",
-        status: "comingSoon",
+        status: "active",
         requirement: "A10",
       },
       {

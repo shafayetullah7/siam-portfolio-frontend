@@ -44,6 +44,7 @@ describe("api errors", () => {
     const err = new ApiError("Invalid", 400, {
       success: false,
       message: "Invalid",
+      statusCode: 400,
       validationErrors: [{ field: "email", message: "Required" }],
     });
     expect(getApiValidationErrors(err)).toEqual([
@@ -77,6 +78,7 @@ describe("api errors", () => {
       new ApiError("Invalid password", 400, {
         success: false,
         message: "Invalid password",
+        statusCode: 400,
       }),
     );
     expect(result.formMessage).toBe("Invalid password");

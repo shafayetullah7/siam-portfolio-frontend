@@ -16,6 +16,8 @@ export interface ApiSuccess<T> {
 export interface ApiFailure {
   success: false;
   message: string;
+  statusCode: number;
+  /** @deprecated Legacy nested shape — prefer top-level validationErrors */
   error?: string | { code?: string; validationErrors?: FieldError[] };
   validationErrors?: FieldError[];
 }
@@ -31,12 +33,17 @@ export class ApiError extends Error {
   }
 }
 
+export interface PaginationMeta {
+  total: number;
+  page: number;
+  /** Requested max items per page. */
+  limit: number;
+  /** Items returned on this page (`items.length`; ≤ limit on the last page). */
+  itemCount: number;
+  totalPages: number;
+}
+
 export interface Paginated<T> {
-  data: T[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-    totalPages: number;
-  };
+  items: T[];
+  meta: PaginationMeta;
 }

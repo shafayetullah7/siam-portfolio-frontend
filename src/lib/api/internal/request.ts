@@ -42,6 +42,10 @@ function isEnvelope<T>(body: unknown): body is ApiSuccess<T> | ApiFailure {
   );
 }
 
+function isApiFailure(body: unknown): body is ApiFailure {
+  return isEnvelope(body) && body.success === false;
+}
+
 export async function executeRequest<T>(config: RequestConfig): Promise<T> {
   const url = buildUrl(
     config.baseUrl,
@@ -109,18 +113,17 @@ export async function executeRequest<T>(config: RequestConfig): Promise<T> {
   }
 
   if (!response.ok) {
-    const failure = isEnvelope(parsed) && !parsed.success
-      ? parsed
-      : undefined;
-    const message =
-      failure?.message ??
-      (typeof parsed === "object" &&
+    const failure = isApiFailure(parsed) ? parsed : undefined;
+    const legacyMessage =
+      typeof parsed === "object" &&
       parsed !== null &&
       "message" in parsed &&
       typeof (parsed as { message: unknown }).message === "string"
         ? (parsed as { message: string }).message
-        : response.statusText);
-    throw new ApiError(message, response.status, failure ?? parsed);
+        : undefined;
+    const message = failure?.message ?? legacyMessage ?? response.statusText;
+    const status = failure?.statusCode ?? response.status;
+    throw new ApiError(message, status, failure ?? parsed);
   }
 
   const unwrap = config.unwrap ?? true;

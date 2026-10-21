@@ -32,6 +32,12 @@ describe("isAdminNavActive", () => {
     const home = itemById("home");
     expect(isAdminNavActive("/admin/home", home)).toBe(false);
   });
+
+  it("matches media library route", () => {
+    const media = itemById("media");
+    expect(isAdminNavActive("/admin/media", media)).toBe(true);
+    expect(isAdminNavActive("/admin/pages", media)).toBe(false);
+  });
 });
 
 describe("ADMIN_NAV_SECTIONS", () => {
@@ -50,8 +56,13 @@ describe("ADMIN_NAV_SECTIONS", () => {
     }
   });
 
-  it("exposes three active routes", () => {
+  it("exposes active implemented routes", () => {
     const active = getActiveAdminNavItems();
-    expect(active.map((i) => i.id).sort()).toEqual(["dashboard", "pages", "site-settings"]);
+    expect(active.map((i) => i.id).sort()).toEqual([
+      "dashboard",
+      "media",
+      "pages",
+      "site-settings",
+    ]);
   });
 });

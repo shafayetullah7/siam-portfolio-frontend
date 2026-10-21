@@ -84,6 +84,9 @@ export interface ApiSuccess<T> {
 export interface ApiFailure {
   success: false;
   message: string;
+  statusCode: number;
+  validationErrors?: FieldError[];
+  /** Legacy nested shape — prefer top-level validationErrors */
   error?: string | { code?: string; validationErrors?: FieldError[] };
 }
 
@@ -104,13 +107,20 @@ export class ApiError extends Error {
 }
 
 export interface Paginated<T> {
-  data: T[];
-  meta: { total: number; page: number; limit: number; totalPages: number };
+  items: T[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    itemCount: number;
+    totalPages: number;
+  };
 }
 ```
 
-- **List with meta:** `adminClient.get<Paginated<Publication>>('/publications', { unwrap: false })` then use full body, or define `PublicationListResponse = Paginated<Publication>`.
-- **Single resource:** `unwrap: true` (default) → returns `data` only.
+- **All JSON routes** (including `GET /public/health`) return `{ success: true, data }` on success and `{ success: false, message, statusCode, … }` on error.
+- **Paginated lists:** `unwrap: true` (default) → `data` is `{ items, meta: { page, limit, itemCount, total, totalPages } }` (`limit` = page size; `itemCount` = items on this page).
+- **Full envelope:** `unwrap: false` when you need `message` or the raw success wrapper.
 
 Wrong API shape = fix types + API contract; catch with tests/e2e, not client-side Zod.
 

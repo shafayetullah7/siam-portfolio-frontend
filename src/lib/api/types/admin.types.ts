@@ -1,3 +1,5 @@
+import type { Paginated } from "./index";
+
 export interface AdminProfile {
   id: string;
   firstName: string;
@@ -73,3 +75,5 @@ export interface MediaAdmin {
   createdAt: string;
   updatedAt: string;
 }
+
+export type MediaListResponse = Paginated<MediaAdmin>;

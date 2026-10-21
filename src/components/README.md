@@ -80,5 +80,6 @@ Wide inner pages use [`PUBLIC_PAGE_WIDE`](./layout/publicPageWidth.ts) (about, c
 | Public API error | Stop API → `RouteErrorFallback` on home |
 | Public 404 (when API returns 404) | Boundary shows not-found UI |
 | Admin list empty | `/admin/pages` with zero rows |
+| Admin media | `/admin/media` — upload, edit alt, delete unused file |
 | Admin error | `/admin` with API down → `HttpErrorNotice` |
 | Boundary | `/dev/error-boundary-test` → `RouteErrorFallback` |
