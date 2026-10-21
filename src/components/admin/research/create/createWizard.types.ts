@@ -60,14 +60,43 @@ const STEP2_FIELDS = new Set([
   "findings",
   "limitations",
   "futureWork",
-  "acknowledgments",
-  "funding",
 ]);
 
-/** Map server fieldErrors to wizard step (1–3). */
+const STEP4_FIELDS = new Set([
+  "acknowledgments",
+  "funding",
+  "seoTitle",
+  "seoDescription",
+  "sortOrder",
+  "linkLabel",
+  "featuredOnHome",
+  "collaborators",
+  "collaboratorsJson",
+  "resources",
+  "resourcesJson",
+]);
+
+export const WIZARD_STEPS_CREATE = ["Basics", "Story", "Review"] as const;
+export const WIZARD_STEPS_EDIT = [
+  "Basics",
+  "Story",
+  "Review",
+  "More",
+] as const;
+
+export function maxWizardStep(isEdit: boolean): number {
+  return isEdit ? 4 : 3;
+}
+
+export function wizardSteps(isEdit: boolean): readonly string[] {
+  return isEdit ? WIZARD_STEPS_EDIT : WIZARD_STEPS_CREATE;
+}
+
+/** Map server fieldErrors to wizard step (1–4 on edit). */
 export function wizardStepForField(field: string): number {
   if (STEP1_FIELDS.has(field)) return 1;
   if (STEP2_FIELDS.has(field)) return 2;
+  if (STEP4_FIELDS.has(field)) return 4;
   return 3;
 }
 
@@ -83,5 +112,14 @@ export function isStep1Valid(draft: ResearchThemeCreateDraft): boolean {
 }
 
 export function isStep2Valid(draft: ResearchThemeCreateDraft): boolean {
-  return draft.problem.trim().length > 0;
+  if (draft.problem.trim().length === 0) return false;
+  if (draft.themeStatus === "ongoing" && draft.objectives.trim().length === 0) {
+    return false;
+  }
+  return true;
+}
+
+/** All required fields for saving a draft (matches wizard required labels). */
+export function isDraftSubmittable(draft: ResearchThemeCreateDraft): boolean {
+  return isStep1Valid(draft) && isStep2Valid(draft);
 }

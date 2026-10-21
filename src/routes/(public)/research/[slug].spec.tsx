@@ -59,6 +59,22 @@ describe("ResearchThemeDetail route", () => {
     expect(screen.getByRole("heading", { name: "Problem" })).toBeTruthy();
   });
 
+  it("renders theme status and last updated in meta", () => {
+    themeResult = {
+      ...mockDetail,
+      tags: ["Safety", "Interpretability"],
+      updatedAt: "2026-10-01",
+    };
+    render(() => (
+      <MetaProvider>
+        <ResearchThemeDetail />
+      </MetaProvider>
+    ));
+    expect(screen.getByText("ongoing")).toBeTruthy();
+    expect(screen.getByText("Safety · Interpretability")).toBeTruthy();
+    expect(screen.getByText(/Last updated October 1, 2026/)).toBeTruthy();
+  });
+
   it("renders prev/next theme links when API provides slugs", () => {
     themeResult = {
       ...mockDetail,

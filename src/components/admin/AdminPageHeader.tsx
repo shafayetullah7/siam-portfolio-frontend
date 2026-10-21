@@ -18,7 +18,9 @@ export default function AdminPageHeader(props: AdminPageHeaderProps) {
         </Show>
       </div>
       <Show when={props.children}>
-        <div class="shrink-0">{props.children}</div>
+        <div class="flex max-w-full shrink-0 flex-wrap items-center justify-end gap-2">
+          {props.children}
+        </div>
       </Show>
     </header>
   );

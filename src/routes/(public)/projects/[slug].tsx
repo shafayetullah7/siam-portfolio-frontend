@@ -64,10 +64,8 @@ export default function ProjectDetail() {
               title={p.title}
               backHref="/projects"
               backLabel="All projects"
-              meta={
-                tags && tags.length > 0 ? (
-                  <span>{tags.join(" · ")}</span>
-                ) : undefined
+              metaLines={
+                tags && tags.length > 0 ? [tags.join(" · ")] : undefined
               }
             >
               <p>{p.summary}</p>

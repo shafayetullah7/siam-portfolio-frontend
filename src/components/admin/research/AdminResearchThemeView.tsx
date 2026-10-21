@@ -5,11 +5,14 @@ import PublishStatusBadge from "~/components/admin/PublishStatusBadge";
 import ResearchThemeDetailView from "~/components/research/ResearchThemeDetailView";
 import type { ResearchThemeAdmin } from "~/lib/api/types/admin.types";
 import type { ResearchThemeDetailPublic } from "~/lib/api/types/research.types";
+import ResearchRevisionsPanel from "./ResearchRevisionsPanel";
+import ResearchThemePublishControls from "./ResearchThemePublishControls";
 
 export type AdminResearchThemeViewProps = {
   themeId: string;
   admin: ResearchThemeAdmin;
   publicDetail: ResearchThemeDetailPublic;
+  onAdminUpdated?: (theme: ResearchThemeAdmin) => void;
 };
 
 function formatWhen(iso: string | null): string | null {
@@ -37,6 +40,12 @@ export default function AdminResearchThemeView(props: AdminResearchThemeViewProp
           >
             Public preview
           </A>
+          <ResearchThemePublishControls
+            themeId={props.themeId}
+            publishStatus={a().publishStatus}
+            variant="bar"
+            onUpdated={props.onAdminUpdated}
+          />
           <Show when={a().publishStatus === "published"}>
             <A
               href={`/research/${a().slug}`}
@@ -81,6 +90,21 @@ export default function AdminResearchThemeView(props: AdminResearchThemeViewProp
           backLabel="All themes"
         />
       </div>
+
+      <section
+        class="mt-10 rounded-xl border border-border bg-surface-container-lowest/60 p-4 sm:p-5"
+      >
+        <h2 class="text-base font-semibold text-ink">Revision history</h2>
+        <p class="mt-1 text-sm text-ink-muted">
+          Only fields that changed on each save are stored; open a row to see those values.
+        </p>
+        <div class="mt-4">
+          <ResearchRevisionsPanel
+            themeId={props.themeId}
+            reloadKey={new Date(a().updatedAt).getTime()}
+          />
+        </div>
+      </section>
     </div>
   );
 }

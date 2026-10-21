@@ -6,6 +6,8 @@ export type AdminDialogProps = {
   onClose: () => void;
   children: JSX.Element;
   footer?: JSX.Element;
+  /** When true, header shows an icon-only dismiss control (no “Close” label). */
+  iconClose?: boolean;
 };
 
 export default function AdminDialog(props: AdminDialogProps) {
@@ -40,10 +42,28 @@ export default function AdminDialog(props: AdminDialogProps) {
             </h2>
             <button
               type="button"
-              class="siam-btn-secondary text-sm"
+              classList={{
+                "flex h-9 w-9 items-center justify-center rounded-md text-ink-muted transition hover:bg-surface-container-high hover:text-ink": true,
+                "siam-btn-secondary text-sm": !props.iconClose,
+              }}
+              aria-label="Close dialog"
               onClick={props.onClose}
             >
-              Close
+              {props.iconClose ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  class="size-5"
+                  aria-hidden="true"
+                >
+                  <path d="M18 6 6 18M6 6l12 12" />
+                </svg>
+              ) : (
+                "Close"
+              )}
             </button>
           </header>
           <div class="min-h-0 flex-1 overflow-y-auto px-4 py-4">{props.children}</div>

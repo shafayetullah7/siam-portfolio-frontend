@@ -61,11 +61,9 @@ export default function PublicationDetail() {
               title={p().title}
               backHref="/publications"
               backLabel="All publications"
-              meta={
-                <span>
-                  {p().authorsShort} · {p().venue} · {p().year}
-                </span>
-              }
+              metaLines={[
+                `${p().authorsShort} · ${p().venue} · ${p().year}`,
+              ]}
             >
               <p class="font-medium text-ink">{p().significance}</p>
               {p().abstract && (

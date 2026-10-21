@@ -56,6 +56,7 @@ export const adminResearchApi = {
       `/research/${id}/revisions`,
     ),
 
+  /** Admin UI is view-only; endpoint kept for API parity. */
   restoreRevision: (id: string, revisionId: string) =>
     adminClient.post<ResearchThemeAdmin>(
       `/research/${id}/revisions/${revisionId}/restore`,

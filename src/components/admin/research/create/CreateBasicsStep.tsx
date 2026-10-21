@@ -43,7 +43,12 @@ export default function CreateBasicsStep(props: CreateBasicsStepProps) {
         </p>
       </div>
 
-      <FormField label="Title" name="title" error={props.fieldErrors.title}>
+      <FormField
+        label="Title"
+        name="title"
+        required
+        error={props.fieldErrors.title}
+      >
         <FormTextInput
           name="title"
           value={d().title}
@@ -52,7 +57,12 @@ export default function CreateBasicsStep(props: CreateBasicsStepProps) {
         />
       </FormField>
 
-      <FormField label="Summary" name="summary" error={props.fieldErrors.summary}>
+      <FormField
+        label="Summary"
+        name="summary"
+        required
+        error={props.fieldErrors.summary}
+      >
         <FormTextarea
           name="summary"
           rows={3}
@@ -68,7 +78,12 @@ export default function CreateBasicsStep(props: CreateBasicsStepProps) {
         </p>
       </FormField>
 
-      <FormField label="Slug" name="slug" error={props.fieldErrors.slug}>
+      <FormField
+        label="Slug"
+        name="slug"
+        required
+        error={props.fieldErrors.slug}
+      >
         <FormTextInput
           name="slug"
           value={d().slug}

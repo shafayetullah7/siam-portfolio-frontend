@@ -1,4 +1,4 @@
-import { For } from "solid-js";
+import { For, Show } from "solid-js";
 
 export type ThemeResourceRow = {
   label: string;
@@ -90,9 +90,12 @@ export default function ThemeResourcesEditor(props: ThemeResourcesEditorProps) {
           </div>
         )}
       </For>
+      <Show when={props.rows.length === 0}>
+        <p class="text-sm text-ink-muted">No resource links yet.</p>
+      </Show>
       <button
         type="button"
-        class="siam-btn-secondary text-sm"
+        class="siam-btn-secondary w-full text-sm sm:w-auto"
         onClick={addRow}
         disabled={props.rows.length >= 20}
       >

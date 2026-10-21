@@ -1,4 +1,4 @@
-import ResearchFocusGrid from "~/components/landing/ResearchFocusGrid";
+import ResearchFocusCard from "~/components/landing/ResearchFocusCard";
 import type { HomeResearchFocusItem } from "~/content";
 import { parseTagsFromInput } from "~/lib/forms/schemas/admin-research-theme.schema";
 import type { ResearchThemeCreateDraft } from "./createWizard.types";
@@ -26,9 +26,11 @@ export default function ResearchThemeCardPreview(
 ) {
   const item = () => draftToPreviewItem(props.draft);
   return (
-    <div aria-label="Hub card preview">
+    <div class="min-w-0" aria-label="Hub card preview">
       <p class="siam-eyebrow mb-3 text-secondary">Hub card preview</p>
-      <ResearchFocusGrid items={[item()]} />
+      <div class="pointer-events-none max-w-md [&_h3]:break-words [&_p]:break-words">
+        <ResearchFocusCard item={item()} themeIndex={1} />
+      </div>
     </div>
   );
 }

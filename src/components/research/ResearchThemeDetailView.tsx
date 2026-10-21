@@ -1,4 +1,5 @@
 import DetailStubLayout from "~/components/catalog/DetailStubLayout";
+import { formatDisplayDate } from "~/lib/utils/formatDisplayDate";
 import type { ResearchThemeDetailPublic } from "~/lib/api/types/research.types";
 import ResearchThemeDetailContent from "./ResearchThemeDetailContent";
 
@@ -8,48 +9,35 @@ export type ResearchThemeDetailViewProps = {
   backLabel: string;
 };
 
+function buildMetaLines(theme: ResearchThemeDetailPublic): string[] {
+  const lines: string[] = [theme.themeStatus];
+  const tags = theme.tags;
+  if (tags && tags.length > 0) {
+    lines.push(tags.join(" · "));
+  }
+  if (theme.updatedAt) {
+    lines.push(`Last updated ${formatDisplayDate(theme.updatedAt)}`);
+  }
+  return lines;
+}
+
 export default function ResearchThemeDetailView(props: ResearchThemeDetailViewProps) {
   const theme = () => props.theme;
-  const tags = () => theme().tags;
-  const themeNav = () => {
-    const t = theme();
-    const prev = t.prevSlug
-      ? { href: `/research/${t.prevSlug}`, label: "Previous theme" }
-      : undefined;
-    const next = t.nextSlug
-      ? { href: `/research/${t.nextSlug}`, label: "Next theme" }
-      : undefined;
-    if (!prev && !next) return undefined;
-    return { prev, next };
-  };
+  const metaLines = () => buildMetaLines(theme());
+
   return (
     <DetailStubLayout
       title={theme().title}
       backHref={props.backHref}
       backLabel={props.backLabel}
-      themeNav={themeNav()}
+      metaLines={metaLines()}
+      metaFirstLineClass="capitalize"
+      prevSlug={theme().prevSlug}
+      nextSlug={theme().nextSlug}
       relatedLinks={[
         { label: "Publications", href: "/publications" },
         { label: "Projects", href: "/projects" },
       ]}
-      meta={
-        <>
-          <span class="capitalize">{theme().themeStatus}</span>
-          {tags() && tags()!.length > 0 && (
-            <span class="mt-2 block">{tags()!.join(" · ")}</span>
-          )}
-          {theme().updatedAt && (
-            <span class="mt-2 block text-sm text-on-surface-variant">
-              Last updated{" "}
-              {new Date(theme().updatedAt!).toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </span>
-          )}
-        </>
-      }
     >
       <ResearchThemeDetailContent theme={theme()} />
     </DetailStubLayout>

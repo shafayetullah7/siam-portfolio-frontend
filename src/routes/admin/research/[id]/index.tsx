@@ -69,6 +69,14 @@ export default function AdminResearchThemeViewPage() {
           themeId={themeId()}
           admin={admin()!}
           publicDetail={publicDetail()!}
+          onAdminUpdated={async (theme) => {
+            setAdmin(theme);
+            try {
+              setPublicDetail(await adminResearchApi.preview(theme.id));
+            } catch {
+              /* keep previous preview */
+            }
+          }}
         />
       </Show>
     </Show>

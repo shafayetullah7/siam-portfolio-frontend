@@ -25,7 +25,12 @@ export default function CreateStoryStep(props: CreateStoryStepProps) {
         </p>
       </div>
 
-      <FormField label="Problem" name="problem" error={props.fieldErrors.problem}>
+      <FormField
+        label="Problem"
+        name="problem"
+        required
+        error={props.fieldErrors.problem}
+      >
         <FormTextarea
           name="problem"
           rows={4}
@@ -52,13 +57,13 @@ export default function CreateStoryStep(props: CreateStoryStepProps) {
 
       <Show when={ongoing()}>
         <div class="rounded-lg border border-border bg-surface-container-lowest p-4">
-          <p class="text-sm font-medium text-ink">Objectives (recommended)</p>
+          <p class="text-sm font-medium text-ink">Objectives</p>
           <p class="mt-1 text-xs text-ink-muted">
             For ongoing themes, state what you are trying to learn — not final
-            findings.
+            findings. Required before publish.
           </p>
           <div class="mt-3">
-          <FormField label="Objectives" name="objectives">
+          <FormField label="Objectives" name="objectives" required>
             <FormTextarea
               name="objectives"
               rows={3}

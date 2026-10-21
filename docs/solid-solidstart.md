@@ -352,7 +352,7 @@ Admin auth pages intentionally mix **flat** modules (single URL) and the **regis
 - No `window` / `document` / `localStorage` in shared module init; use `onMount` or `isServer` guards.
 - Server secrets and DB only in `"use server"` / server utilities — not in client bundles.
 - AuthZ on every privileged read/write; hiding `/admin` in UI is not security.
-- Hydration-safe markup: no random/time-only first paint without strategy.
+- Hydration-safe markup: no random/time-only first paint without strategy; avoid passing JSX fragments as layout props—pass data and render inside the layout (or use `children`).
 - Test concurrent requests — no cross-user leakage via module singletons.
 
 ---

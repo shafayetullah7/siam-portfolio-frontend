@@ -5,6 +5,7 @@ export type FormFieldProps = {
   name: string;
   error?: string;
   hint?: string;
+  required?: boolean;
   children: JSX.Element;
 };
 
@@ -14,7 +15,13 @@ export default function FormField(props: FormFieldProps) {
 
   return (
     <label class="block text-sm font-medium">
-      {props.label}
+      <span class="inline-flex items-center gap-1">
+        {props.label}
+        <Show when={props.required}>
+          <span class="text-error" aria-hidden="true">*</span>
+          <span class="sr-only"> (required)</span>
+        </Show>
+      </span>
       <div class="mt-1">{props.children}</div>
       <Show when={props.hint}>
         <p id={hintId()} class="mt-1 text-sm text-ink-muted">{props.hint}</p>

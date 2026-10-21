@@ -125,7 +125,7 @@ export default function ThemePublicationsEditor(
 
       <button
         type="button"
-        class="siam-btn-secondary"
+        class="siam-btn-secondary w-full sm:w-auto"
         disabled={props.links.length >= 20}
         onClick={() => {
           setPickerOpen(true);
