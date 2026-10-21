@@ -10,6 +10,10 @@ export type DetailStubLayoutProps = {
   backLabel: string;
   children: JSX.Element;
   relatedLinks?: readonly { label: string; href: string }[];
+  themeNav?: {
+    prev?: { href: string; label: string };
+    next?: { href: string; label: string };
+  };
 };
 
 export default function DetailStubLayout(props: DetailStubLayoutProps) {
@@ -27,6 +31,31 @@ export default function DetailStubLayout(props: DetailStubLayoutProps) {
         )}
         <div class="siam-prose mt-8 max-w-3xl text-secondary">{props.children}</div>
       </article>
+      {props.themeNav && (props.themeNav.prev || props.themeNav.next) && (
+        <nav
+          class="mt-12 flex flex-col gap-3 border-t border-border pt-8 sm:flex-row sm:justify-between"
+          aria-label="Theme navigation"
+        >
+          {props.themeNav.prev ? (
+            <A
+              href={props.themeNav.prev.href}
+              class="text-link text-sm font-medium no-underline hover:underline"
+            >
+              ← {props.themeNav.prev.label}
+            </A>
+          ) : (
+            <span />
+          )}
+          {props.themeNav.next ? (
+            <A
+              href={props.themeNav.next.href}
+              class="text-link text-sm font-medium no-underline hover:underline sm:text-right"
+            >
+              {props.themeNav.next.label} →
+            </A>
+          ) : null}
+        </nav>
+      )}
       {props.relatedLinks && props.relatedLinks.length > 0 && (
         <nav class="mt-12 border-t border-border pt-8" aria-label="Related">
           <p class="siam-eyebrow mb-3 text-secondary">Explore</p>

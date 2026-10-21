@@ -9,9 +9,19 @@ export interface PublicSitePayload {
   sitemapPaths: string[];
 }
 
+export interface PublicHomeResearchFocusItem {
+  title: string;
+  description: string;
+  href: string;
+  tags?: string[];
+  coverUrl?: string | null;
+  coverAlt?: string | null;
+}
+
 export interface PublicHomePayload {
   heroTitle: string | null;
   heroSubtitle: string | null;
+  researchFocus: PublicHomeResearchFocusItem[];
 }
 
 export interface PublicAboutPayload {

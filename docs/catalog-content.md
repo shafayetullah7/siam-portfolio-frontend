@@ -4,7 +4,7 @@ Until Phases 10–12 ship public APIs and admin CRUD, the frontend keeps a **sin
 
 | Module | Types | Route |
 |--------|--------|--------|
-| `research.catalog.ts` | `ResearchTheme` | `/research`, `/research/:slug` |
+| `research.catalog.ts` | `ResearchTheme` | **Seed / home only** — public `/research` uses `GET /public/research-themes` |
 | `publications.catalog.ts` | `PublicationRecord` | `/publications`, `/publications/:slug` |
 | `projects.catalog.ts` | `ProjectRecord` | `/projects`, `/projects/:slug` |
 
@@ -12,7 +12,9 @@ Helpers live in `catalog.ts` (`list*`, `get*`, `*ToHomeItem`, `listFeatured*ForH
 
 ## Home page (P01)
 
-`home.content.ts` builds `researchFocus`, `selectedPublications`, and `featuredProjects` from catalog entries with `featuredOnHome: true`. Bounds (3–6 / 2–4 / 2–3) are enforced in `home.validation.ts` and `validateCatalogFeaturedBounds()`.
+`researchFocus` on `/` comes from **`getPublicHome().researchFocus`** (API: published themes with `featuredOnHome`). Static catalog `featuredOnHome` is used only for `validateCatalogFeaturedBounds()` and dev seed alignment.
+
+`home.content.ts` still builds `selectedPublications` and `featuredProjects` from catalog entries with `featuredOnHome: true`. Bounds (3–6 / 2–4 / 2–3) are enforced in `home.validation.ts` and `validateCatalogFeaturedBounds()`.
 
 ## Future CMS / API mapping
 

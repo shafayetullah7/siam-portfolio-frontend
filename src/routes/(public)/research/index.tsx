@@ -1,19 +1,27 @@
 import { createAsync, type RouteDefinition } from "@solidjs/router";
 import { Title, Meta } from "@solidjs/meta";
+import { Show } from "solid-js";
 import CatalogPageShell from "~/components/catalog/CatalogPageShell";
-import ResearchThemeList from "~/components/catalog/ResearchThemeList";
-import { listResearchThemes } from "~/content";
-import { getPublicSite } from "~/lib/api/queries/public";
+import ResearchThemePublicList from "~/components/research/ResearchThemePublicList";
+import {
+  getPublicResearchThemes,
+  getPublicSite,
+} from "~/lib/api/queries/public";
 import { buildPageMeta } from "~/lib/meta/buildPageMeta";
+import { DEFAULT_RESEARCH_HUB_INTRO } from "~/lib/research/default-research-hub-intro";
 
 export const route = {
   preload: () => {
     void getPublicSite();
+    void getPublicResearchThemes();
   },
 } satisfies RouteDefinition;
 
 export default function ResearchIndex() {
   const site = createAsync(() => getPublicSite(), { deferStream: true });
+  const hub = createAsync(() => getPublicResearchThemes(), {
+    deferStream: true,
+  });
 
   const pageMeta = () => {
     const s = site();
@@ -37,13 +45,12 @@ export default function ResearchIndex() {
       <CatalogPageShell
         wide
         title="Research themes"
-        intro="Theoretical rigor met with operational deployments. Each theme links to a detail stub until full P04 pages ship."
+        intro={hub()?.intro ?? DEFAULT_RESEARCH_HUB_INTRO}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Research" }]}
       >
-        <ResearchThemeList />
-        <p class="mt-8 font-mono text-xs text-on-surface-variant">
-          {listResearchThemes().length} themes in catalog
-        </p>
+        <Show when={hub()} fallback={<p class="text-ink-muted">Loading…</p>}>
+          {(data) => <ResearchThemePublicList cards={data().items} />}
+        </Show>
       </CatalogPageShell>
     </>
   );

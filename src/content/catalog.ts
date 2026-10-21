@@ -81,9 +81,7 @@ export function listFeaturedProjectsForHome(): HomeProjectHighlight[] {
 /** Static paths for sitemap.xml until API owns discovery. */
 export function listCatalogSitemapPaths(): string[] {
   const paths = ["/research", "/publications", "/projects"];
-  for (const t of researchThemesCatalog) {
-    paths.push(`/research/${t.slug}`);
-  }
+  // Research theme detail URLs come from GET /public/research-themes (see sitemap.xml.ts).
   for (const p of publicationsCatalog) {
     paths.push(`/publications/${p.slug}`);
   }

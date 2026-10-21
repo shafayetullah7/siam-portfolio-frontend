@@ -1,6 +1,10 @@
 import { action, revalidate } from "@solidjs/router";
 import { adminSiteApi } from "~/lib/api/endpoints/admin/site.api";
-import { getPublicSite } from "~/lib/api/queries/public";
+import {
+  getPublicHome,
+  getPublicResearchThemes,
+  getPublicSite,
+} from "~/lib/api/queries/public";
 import { mapAdminMutationErrorToResult } from "~/lib/forms/mapAdminMutationError";
 import { emptyToNull, parseCheckbox, parseWithSchema } from "~/lib/forms/parseFormData";
 import { adminNavItemSchema } from "~/lib/forms/schemas/admin-nav-item.schema";
@@ -16,6 +20,7 @@ export const saveSiteSettingsAction = action(async (formData: FormData) => {
         fd.get("defaultMetaDescription")?.toString(),
       ),
       footerText: emptyToNull(fd.get("footerText")?.toString()),
+      researchHubIntro: emptyToNull(fd.get("researchHubIntro")?.toString()),
       faviconUrl: emptyToNull(fd.get("faviconUrl")?.toString()),
       faviconMediaId: emptyToNull(fd.get("faviconMediaId")?.toString()),
     }),
@@ -26,6 +31,8 @@ export const saveSiteSettingsAction = action(async (formData: FormData) => {
   try {
     await adminSiteApi.updateSettings(parsed.data);
     revalidate(getPublicSite.key);
+    revalidate(getPublicHome.key);
+    revalidate(getPublicResearchThemes.key);
     return formSuccess();
   } catch (error) {
     return mapAdminMutationErrorToResult(error);

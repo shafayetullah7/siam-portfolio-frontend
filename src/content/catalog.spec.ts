@@ -24,11 +24,12 @@ describe("catalog", () => {
     expect(validateCatalogFeaturedBounds()).toEqual([]);
   });
 
-  it("includes hub and detail paths in sitemap list", () => {
+  it("includes hub paths in sitemap list (research details from API)", () => {
     const paths = listCatalogSitemapPaths();
     expect(paths).toContain("/research");
     expect(paths).toContain("/publications");
     expect(paths).toContain("/projects");
-    expect(paths.some((p) => p.startsWith("/research/"))).toBe(true);
+    expect(paths).toContain("/research");
+    expect(paths.some((p) => p.startsWith("/research/"))).toBe(false);
   });
 });

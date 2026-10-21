@@ -42,6 +42,7 @@ export default function AdminSiteSettings() {
   const [siteName, setSiteName] = createSignal("");
   const [defaultMetaDescription, setDefaultMetaDescription] = createSignal("");
   const [footerText, setFooterText] = createSignal("");
+  const [researchHubIntro, setResearchHubIntro] = createSignal("");
   const [faviconUrl, setFaviconUrl] = createSignal("");
   const [faviconMediaId, setFaviconMediaId] = createSignal<string | null>(null);
   const [faviconPickerOpen, setFaviconPickerOpen] = createSignal(false);
@@ -100,6 +101,7 @@ export default function AdminSiteSettings() {
       setSiteName(settings.siteName);
       setDefaultMetaDescription(settings.defaultMetaDescription ?? "");
       setFooterText(settings.footerText ?? "");
+      setResearchHubIntro(settings.researchHubIntro ?? "");
       setFaviconUrl(settings.faviconUrl ?? "");
       setFaviconMediaId(settings.faviconMediaId ?? null);
       setNavItems(nav);
@@ -187,6 +189,18 @@ export default function AdminSiteSettings() {
               rows={2}
               value={footerText()}
               onInput={(e) => setFooterText(e.currentTarget.value)}
+            />
+          </FormField>
+          <FormField
+            label="Research hub intro"
+            name="researchHubIntro"
+            hint="Shown at the top of /research when set."
+          >
+            <FormTextarea
+              name="researchHubIntro"
+              rows={4}
+              value={researchHubIntro()}
+              onInput={(e) => setResearchHubIntro(e.currentTarget.value)}
             />
           </FormField>
           <FormField label="Favicon" name="favicon">

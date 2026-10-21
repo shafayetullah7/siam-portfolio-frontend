@@ -31,6 +31,7 @@ export interface SiteSettingsAdmin {
   siteName: string;
   defaultMetaDescription: string | null;
   footerText: string | null;
+  researchHubIntro: string | null;
   faviconUrl: string | null;
   faviconMediaId: string | null;
   createdAt: string;
@@ -58,6 +59,49 @@ export interface SitePageAdmin {
   publishedAt: string | null;
   scheduledAt: string | null;
   archivedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Admin research theme (A04; R2+ API). */
+export interface ResearchThemeAdmin {
+  id: string;
+  slug: string;
+  title: string;
+  summary: string;
+  themeStatus: 'ongoing' | 'completed';
+  problem: string;
+  significance: string | null;
+  objectives: string | null;
+  approach: string | null;
+  findings: string | null;
+  limitations: string | null;
+  futureWork: string | null;
+  tags: string[] | null;
+  linkLabel: string | null;
+  coverMediaId: string | null;
+  sortOrder: number;
+  featuredOnHome: boolean;
+  publishStatus: string;
+  publishedAt: string | null;
+  scheduledAt: string | null;
+  archivedAt: string | null;
+  seoTitle: string | null;
+  seoDescription: string | null;
+  collaborators: Array<{
+    name: string;
+    role?: string | null;
+    url?: string | null;
+  }> | null;
+  acknowledgments: string | null;
+  funding: string | null;
+  resources: Array<{
+    id: string;
+    label: string;
+    url: string;
+    resourceType: 'code' | 'data' | 'demo' | 'paper' | 'other';
+    sortOrder: number;
+  }>;
   createdAt: string;
   updatedAt: string;
 }

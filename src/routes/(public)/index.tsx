@@ -4,18 +4,27 @@ import { Show } from "solid-js";
 import ApiStatus from "~/components/ApiStatus";
 import LandingPage from "~/components/landing/LandingPage";
 import { homeContent } from "~/content";
-import { getPublicSite } from "~/lib/api/queries/public";
+import type { HomePageContent } from "~/content/home.types";
+import { getPublicHome, getPublicSite } from "~/lib/api/queries/public";
 import { buildPageMeta } from "~/lib/meta/buildPageMeta";
 import { getSiteOrigin } from "~/lib/site/siteOrigin";
 
 export const route = {
   preload: () => {
     void getPublicSite();
+    void getPublicHome();
   },
 } satisfies RouteDefinition;
 
 export default function Home() {
   const site = createAsync(() => getPublicSite(), { deferStream: true });
+  const homeApi = createAsync(() => getPublicHome(), { deferStream: true });
+
+  const landingContent = (): HomePageContent => {
+    const focus = homeApi()?.researchFocus;
+    if (!focus?.length) return homeContent;
+    return { ...homeContent, researchFocus: focus };
+  };
 
   const pageMeta = () => {
     const s = site();
@@ -45,7 +54,7 @@ export default function Home() {
       />
       <Link rel="canonical" href={canonicalUrl()} />
       <LandingPage
-        content={homeContent}
+        content={landingContent()}
         devFooter={
           <Show when={import.meta.env.DEV}>
             <div class="flex flex-col gap-4 border-t border-border pt-8">

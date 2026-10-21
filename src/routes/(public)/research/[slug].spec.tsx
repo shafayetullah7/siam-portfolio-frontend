@@ -12,9 +12,21 @@ const mockSite = {
   footerText: "",
 };
 
+const mockDetail = {
+  slug: "live-theme",
+  title: "Live theme",
+  summary: "Summary",
+  themeStatus: "ongoing" as const,
+  tags: null,
+  problem: "Problem text",
+  seo: { title: "Live theme", description: "Summary" },
+};
+
+let themeResult: typeof mockDetail | null = null;
+
 vi.mock("@solidjs/router", () => ({
-  createAsync: () => () => mockSite,
-  useParams: () => ({ slug: "bogus-slug-xyz" }),
+  createAsync: () => () => themeResult,
+  useParams: () => ({ slug: "live-theme" }),
   A: (props: { href: string; children?: JSX.Element }) => (
     <a href={props.href}>{props.children}</a>
   ),
@@ -22,15 +34,47 @@ vi.mock("@solidjs/router", () => ({
 
 vi.mock("~/lib/api/queries/public", () => ({
   getPublicSite: () => Promise.resolve(mockSite),
+  getPublicResearchTheme: () => Promise.resolve(themeResult),
 }));
 
 describe("ResearchThemeDetail route", () => {
-  it("shows not found for unknown slug", () => {
+  it("shows not found when API returns null", () => {
+    themeResult = null;
     render(() => (
       <MetaProvider>
         <ResearchThemeDetail />
       </MetaProvider>
     ));
     expect(screen.getByRole("heading", { name: /Theme not found/i })).toBeTruthy();
+  });
+
+  it("renders theme title from API", () => {
+    themeResult = mockDetail;
+    render(() => (
+      <MetaProvider>
+        <ResearchThemeDetail />
+      </MetaProvider>
+    ));
+    expect(screen.getByRole("heading", { level: 1, name: "Live theme" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "Problem" })).toBeTruthy();
+  });
+
+  it("renders prev/next theme links when API provides slugs", () => {
+    themeResult = {
+      ...mockDetail,
+      prevSlug: "first-theme",
+      nextSlug: "third-theme",
+    };
+    render(() => (
+      <MetaProvider>
+        <ResearchThemeDetail />
+      </MetaProvider>
+    ));
+    expect(screen.getByRole("link", { name: /Previous theme/i }).getAttribute("href")).toBe(
+      "/research/first-theme",
+    );
+    expect(screen.getByRole("link", { name: /Next theme/i }).getAttribute("href")).toBe(
+      "/research/third-theme",
+    );
   });
 });

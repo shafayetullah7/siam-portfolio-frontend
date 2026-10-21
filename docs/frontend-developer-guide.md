@@ -41,7 +41,7 @@ VITE_SITE_ORIGIN=http://localhost:5001
 
 ### Static home (P01, LP0–LP6)
 
-Until CMS homepage (LP7 / Phase 9), `/` is driven by static content, not `getPublicHome()`:
+Until full CMS homepage (LP7 / Phase 9), `/` body sections are mostly static `homeContent`, except **`researchFocus`** from `getPublicHome()` (R11):
 
 | Layer | Location |
 |--------|----------|
@@ -352,6 +352,15 @@ Helpers in [`src/lib/api/errors.ts`](../src/lib/api/errors.ts):
 |---------|----------|
 | [`routes/admin/login.tsx`](../src/routes/admin/login.tsx) | `reason=session_expired` banner; `getAuthFormErrorMessage` on failed login |
 | [`routes/admin/pages/[id].tsx`](../src/routes/admin/pages/[id].tsx) | Load 404 → `EmptyState`; save/publish 400/403 → `siam-alert-error` + field hints |
+| [`routes/admin/research/`](../src/routes/admin/research/) | List + editor (`[id]/index.tsx`, including `new`) via `adminResearchApi` and lifecycle actions |
+| [`routes/admin/research/[id]/preview.tsx`](../src/routes/admin/research/[id]/preview.tsx) | Admin preview (`adminResearchApi.preview`); public detail shape + draft banner |
+| Research editor revision panel | [`ResearchRevisionsPanel`](../src/components/admin/research/ResearchRevisionsPanel.tsx) — `listRevisions` / `restoreRevision` with confirm |
+| Research editor cover | `MediaPicker` (`imagesOnly`) + hidden `coverMediaId`; public `cover` / `coverUrl` use media library alt text |
+| Research editor people / resources | Fieldsets **People and support** (`CollaboratorsEditor`, acknowledgments, funding) and **Resources** (`ThemeResourcesEditor`); JSON hidden fields `collaboratorsJson` / `resourcesJson` on save |
+| Research publish checklist | Publish runs `adminResearchApi.getPublishCheck` then [`ResearchPublishChecklistDialog`](../src/components/admin/research/ResearchPublishChecklistDialog.tsx); `publishResearchThemeAction` sends `confirmWarnings` when needed |
+| Research list sort order | Inline **Order** input on [`admin/research`](../src/routes/admin/research/index.tsx) → `PATCH` `{ sortOrder }` |
+| Public `/research` | `getPublicResearchThemes` → `{ intro, items }` (intro from site settings; fallback in `default-research-hub-intro.ts`) |
+| Home research focus | `getPublicHome().researchFocus` from API (3–6 visible per `home.validation`); static `homeContent` no longer seeds `researchFocus` |
 | Public SSR | 404 → `RouteErrorFallback` (F3) |
 | `adminClient` 401 on protected routes | Refresh → `forceLogout` → login with `session_expired` |
 | `publicClient` | Never `forceLogout` |

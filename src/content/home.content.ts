@@ -5,7 +5,6 @@
 import {
   listFeaturedProjectsForHome,
   listFeaturedPublicationsForHome,
-  listFeaturedResearchForHome,
 } from "./catalog";
 import type { HomePageContent } from "./home.types";
 
@@ -35,7 +34,6 @@ export const homeContent: HomePageContent = {
     organization: "[Organization]",
     location: "[City, Country]",
   },
-  researchFocus: listFeaturedResearchForHome(),
   selectedPublications: listFeaturedPublicationsForHome(),
   featuredProjects: listFeaturedProjectsForHome(),
   highlights: [

@@ -49,6 +49,10 @@ export type HomeResearchFocusItem = {
   href: string;
   tags?: readonly string[];
   linkLabel?: string;
+  coverUrl?: string | null;
+  coverAlt?: string | null;
+  relatedPublicationCount?: number;
+  relatedProjectCount?: number;
 };
 
 export type HomePublicationHighlight = {

@@ -17,8 +17,15 @@ export default function ResearchFocusCard(props: ResearchFocusCardProps) {
     <A
       href={item.href}
       aria-label={`Research area: ${item.title}`}
-      class="group relative flex h-full flex-col justify-between rounded-xl bg-surface-container-lowest p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md no-underline"
+      class="group relative flex h-full flex-col justify-between overflow-hidden rounded-xl bg-surface-container-lowest p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md no-underline"
     >
+      <Show when={item.coverUrl}>
+        <img
+          src={item.coverUrl!}
+          alt={item.coverAlt ?? ""}
+          class="-mx-6 -mt-6 mb-4 aspect-[16/9] w-[calc(100%+3rem)] object-cover"
+        />
+      </Show>
       <div class="flex flex-col">
         <div class="mb-3 flex items-center justify-between">
           <span
@@ -51,6 +58,18 @@ export default function ResearchFocusCard(props: ResearchFocusCardProps) {
               )}
             </For>
           </ul>
+        </Show>
+        <Show when={item.relatedPublicationCount && item.relatedPublicationCount! > 0}>
+          <p class="mb-2 text-sm text-on-surface-variant">
+            {item.relatedPublicationCount}{" "}
+            {item.relatedPublicationCount === 1 ? "publication" : "publications"}
+          </p>
+        </Show>
+        <Show when={item.relatedProjectCount && item.relatedProjectCount! > 0}>
+          <p class="mb-2 text-sm text-on-surface-variant">
+            {item.relatedProjectCount}{" "}
+            {item.relatedProjectCount === 1 ? "project" : "projects"}
+          </p>
         </Show>
       </div>
       <span

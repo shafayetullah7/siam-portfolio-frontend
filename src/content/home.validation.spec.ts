@@ -16,7 +16,10 @@ describe("home.validation", () => {
   it("rejects researchFocus with 2 items", () => {
     const bad: HomePageContent = {
       ...homeContent,
-      researchFocus: homeContent.researchFocus!.slice(0, 2),
+      researchFocus: [
+        { title: "A", description: "a", href: "/research/a" },
+        { title: "B", description: "b", href: "/research/b" },
+      ],
     };
     const errors = validateHomeContentBounds(bad);
     expect(errors.some((e) => e.includes("researchFocus"))).toBe(true);
