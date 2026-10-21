@@ -1,5 +1,6 @@
 import { useLocation } from "@solidjs/router";
 import { createEffect, createSignal, onCleanup, Show, type JSX } from "solid-js";
+import { Menu } from "~/icons";
 import AdminSidebar from "./AdminSidebar";
 
 export default function AdminAppShell(props: { children: JSX.Element }) {
@@ -34,12 +35,13 @@ export default function AdminAppShell(props: { children: JSX.Element }) {
         >
           <button
             type="button"
-            class="siam-btn-secondary px-3 py-1.5 text-sm"
+            class="siam-btn-secondary inline-flex items-center justify-center p-2"
             aria-expanded={drawerOpen()}
             aria-controls="admin-mobile-drawer"
+            aria-label={drawerOpen() ? "Close menu" : "Open menu"}
             onClick={() => setDrawerOpen((open) => !open)}
           >
-            Menu
+            <Menu class="size-5" />
           </button>
           <span class="font-semibold text-brand-deep">SIAM Admin</span>
         </div>

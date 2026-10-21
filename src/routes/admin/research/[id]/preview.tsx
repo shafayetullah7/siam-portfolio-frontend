@@ -62,7 +62,7 @@ export default function AdminResearchPreview() {
             <ResearchThemeDetailView
               theme={t()}
               backHref={`/admin/research/${themeId()}`}
-              backLabel="Back to editor"
+              backLabel="Back to theme"
             />
           </div>
         )}

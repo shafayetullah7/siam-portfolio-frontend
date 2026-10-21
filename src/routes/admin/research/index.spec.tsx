@@ -6,6 +6,7 @@ vi.mock("@solidjs/router", () => ({
   A: (props: { href: string; children?: unknown; class?: string }) => (
     <a href={props.href} class={props.class}>{props.children}</a>
   ),
+  useNavigate: () => vi.fn(),
 }));
 
 vi.mock("~/lib/api/endpoints/admin/research.api", () => ({

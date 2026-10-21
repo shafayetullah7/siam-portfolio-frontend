@@ -352,7 +352,9 @@ Helpers in [`src/lib/api/errors.ts`](../src/lib/api/errors.ts):
 |---------|----------|
 | [`routes/admin/login.tsx`](../src/routes/admin/login.tsx) | `reason=session_expired` banner; `getAuthFormErrorMessage` on failed login |
 | [`routes/admin/pages/[id].tsx`](../src/routes/admin/pages/[id].tsx) | Load 404 → `EmptyState`; save/publish 400/403 → `siam-alert-error` + field hints |
-| [`routes/admin/research/`](../src/routes/admin/research/) | List + editor (`[id]/index.tsx`, including `new`) via `adminResearchApi` and lifecycle actions |
+| [`routes/admin/research/new.tsx`](../src/routes/admin/research/new.tsx) | **Create** flow — 3-step wizard (`ResearchThemeCreateWizard`), then redirect to editor after first save |
+| [`routes/admin/research/[id]/index.tsx`](../src/routes/admin/research/[id]/index.tsx) | **View** theme — admin meta + `ResearchThemeDetailView` from preview API; list rows link here |
+| [`routes/admin/research/[id]/edit.tsx`](../src/routes/admin/research/[id]/edit.tsx) | **Edit** full theme editor via `adminResearchApi` and lifecycle actions |
 | [`routes/admin/research/[id]/preview.tsx`](../src/routes/admin/research/[id]/preview.tsx) | Admin preview (`adminResearchApi.preview`); public detail shape + draft banner |
 | Research editor revision panel | [`ResearchRevisionsPanel`](../src/components/admin/research/ResearchRevisionsPanel.tsx) — `listRevisions` / `restoreRevision` with confirm |
 | Research editor cover | `MediaPicker` (`imagesOnly`) + hidden `coverMediaId`; public `cover` / `coverUrl` use media library alt text |

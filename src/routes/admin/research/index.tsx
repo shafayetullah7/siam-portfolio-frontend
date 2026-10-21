@@ -1,4 +1,4 @@
-import { A } from "@solidjs/router";
+import { A, useNavigate } from "@solidjs/router";
 import { Title } from "@solidjs/meta";
 import { createResource, createSignal, For, Show } from "solid-js";
 import AdminPageHeader from "~/components/admin/AdminPageHeader";
@@ -7,6 +7,7 @@ import ResourceRequest from "~/components/ResourceRequest";
 import { adminResearchApi } from "~/lib/api/endpoints/admin/research.api";
 import { getApiErrorMessage } from "~/lib/api/errors";
 import type { ResearchThemeAdmin } from "~/lib/api/types/admin.types";
+import { ChevronRight } from "~/icons";
 
 function formatUpdated(iso: string): string {
   const d = new Date(iso);
@@ -14,6 +15,7 @@ function formatUpdated(iso: string): string {
 }
 
 export default function AdminResearchList() {
+  const navigate = useNavigate();
   const [q, setQ] = createSignal("");
   const [appliedQ, setAppliedQ] = createSignal("");
   const [publishStatus, setPublishStatus] = createSignal<string>("");
@@ -164,13 +166,27 @@ export default function AdminResearchList() {
                     <th class="py-2 pr-4 font-medium">Featured</th>
                     <th class="py-2 pr-4 font-medium">Order</th>
                     <th class="py-2 pr-4 font-medium">Updated</th>
-                    <th class="py-2 font-medium"> </th>
+                    <th class="w-10 py-2 font-medium" aria-label="Open" />
                   </tr>
                 </thead>
                 <tbody>
                   <For each={themes}>
                     {(theme: ResearchThemeAdmin) => (
-                      <tr class="border-b border-border">
+                      <tr
+                        class="border-b border-border cursor-pointer transition-colors hover:bg-surface-container-lowest"
+                        tabIndex={0}
+                        role="link"
+                        aria-label={`View ${theme.title}`}
+                        onClick={() =>
+                          navigate(`/admin/research/${theme.id}`)
+                        }
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            navigate(`/admin/research/${theme.id}`);
+                          }
+                        }}
+                      >
                         <td class="py-3 pr-4 font-medium text-ink">{theme.title}</td>
                         <td class="py-3 pr-4 text-ink-muted">{theme.slug}</td>
                         <td class="py-3 pr-4">{theme.publishStatus}</td>
@@ -186,6 +202,7 @@ export default function AdminResearchList() {
                               sortOrderDraft()[theme.id] ??
                               String(theme.sortOrder)
                             }
+                            onClick={(e) => e.stopPropagation()}
                             onInput={(e) =>
                               setSortOrderDraft((prev) => ({
                                 ...prev,
@@ -194,7 +211,9 @@ export default function AdminResearchList() {
                             }
                             onBlur={() => void commitSortOrder(theme)}
                             onKeyDown={(e) => {
+                              e.stopPropagation();
                               if (e.key === "Enter") {
+                                e.preventDefault();
                                 e.currentTarget.blur();
                               }
                             }}
@@ -203,13 +222,8 @@ export default function AdminResearchList() {
                         <td class="py-3 pr-4 text-ink-muted">
                           {formatUpdated(theme.updatedAt)}
                         </td>
-                        <td class="py-3">
-                          <A
-                            href={`/admin/research/${theme.id}`}
-                            class="text-link"
-                          >
-                            Edit
-                          </A>
+                        <td class="py-3 text-ink-muted">
+                          <ChevronRight class="size-4" aria-hidden="true" />
                         </td>
                       </tr>
                     )}

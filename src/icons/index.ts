@@ -9,3 +9,4 @@ export { ChevronRight } from "./ChevronRight";
 export { Circle } from "./Circle";
 export { Eye } from "./Eye";
 export { EyeOff } from "./EyeOff";
+export { Menu } from "./Menu";
