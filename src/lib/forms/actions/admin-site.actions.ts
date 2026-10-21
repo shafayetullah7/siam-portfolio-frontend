@@ -17,6 +17,7 @@ export const saveSiteSettingsAction = action(async (formData: FormData) => {
       ),
       footerText: emptyToNull(fd.get("footerText")?.toString()),
       faviconUrl: emptyToNull(fd.get("faviconUrl")?.toString()),
+      faviconMediaId: emptyToNull(fd.get("faviconMediaId")?.toString()),
     }),
     adminSiteSettingsSchema,
   );

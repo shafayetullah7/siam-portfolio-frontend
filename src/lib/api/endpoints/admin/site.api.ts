@@ -9,6 +9,7 @@ export const adminSiteApi = {
     defaultMetaDescription?: string | null;
     footerText?: string | null;
     faviconUrl?: string | null;
+    faviconMediaId?: string | null;
   }) => adminClient.patch<SiteSettingsAdmin>("/site/settings", body),
 
   listNav: () => adminClient.get<NavItemAdmin[]>("/site/nav"),

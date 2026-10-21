@@ -2,11 +2,14 @@ import { createSignal, Show } from "solid-js";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
 import { getApiErrorMessage } from "~/lib/api/errors";
 import type { MediaAdmin } from "~/lib/api/types/admin.types";
-import { MEDIA_ACCEPT, uploadMediaFile } from "./media-upload";
+import { adminMediaApi } from "~/lib/api/endpoints/admin/media.api";
+import { IMAGE_ACCEPT, MEDIA_ACCEPT, uploadMediaFile } from "./media-upload";
 
 export type MediaUploadZoneProps = {
   onUploaded: (item: MediaAdmin) => void;
   disabled?: boolean;
+  /** When true, only image uploads (3MB) via upload/image. */
+  imageOnly?: boolean;
 };
 
 export default function MediaUploadZone(props: MediaUploadZoneProps) {
@@ -20,7 +23,9 @@ export default function MediaUploadZone(props: MediaUploadZoneProps) {
     setError(null);
     setUploading(true);
     try {
-      const item = await uploadMediaFile(file);
+      const item = props.imageOnly
+        ? await adminMediaApi.uploadImage(file)
+        : await uploadMediaFile(file);
       props.onUploaded(item);
     } catch (err) {
       setError(getApiErrorMessage(err));
@@ -57,14 +62,19 @@ export default function MediaUploadZone(props: MediaUploadZoneProps) {
           </Show>
         </p>
         <p class="mt-1 text-xs text-ink-muted">
-          Images up to 3 MB · Images or PDF up to 10 MB
+          <Show
+            when={props.imageOnly}
+            fallback="Images up to 3 MB · Images or PDF up to 10 MB"
+          >
+            Images up to 3 MB
+          </Show>
         </p>
         <label class="mt-4 inline-block">
           <span class="siam-btn-secondary cursor-pointer text-sm">Choose file</span>
           <input
             type="file"
             class="sr-only"
-            accept={MEDIA_ACCEPT}
+            accept={props.imageOnly ? IMAGE_ACCEPT : MEDIA_ACCEPT}
             disabled={props.disabled || uploading()}
             onChange={(e) => {
               handleFiles(e.currentTarget.files);

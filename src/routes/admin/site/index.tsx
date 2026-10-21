@@ -2,6 +2,8 @@ import { useSubmission } from "@solidjs/router";
 import { Title } from "@solidjs/meta";
 import { createEffect, createSignal, For, onMount, Show } from "solid-js";
 import AdminPageHeader from "~/components/admin/AdminPageHeader";
+import MediaPicker from "~/components/admin/media/MediaPicker";
+import type { MediaPickerSelection } from "~/components/admin/media/media-picker.types";
 import { adminPagesApi } from "~/lib/api/endpoints/admin/pages.api";
 import { adminSiteApi } from "~/lib/api/endpoints/admin/site.api";
 import type { NavItemAdmin } from "~/lib/api/types/admin.types";
@@ -41,6 +43,8 @@ export default function AdminSiteSettings() {
   const [defaultMetaDescription, setDefaultMetaDescription] = createSignal("");
   const [footerText, setFooterText] = createSignal("");
   const [faviconUrl, setFaviconUrl] = createSignal("");
+  const [faviconMediaId, setFaviconMediaId] = createSignal<string | null>(null);
+  const [faviconPickerOpen, setFaviconPickerOpen] = createSignal(false);
   const [dirty, setDirty] = createSignal(false);
   const [settingsSaved, setSettingsSaved] = createSignal(false);
 
@@ -97,6 +101,7 @@ export default function AdminSiteSettings() {
       setDefaultMetaDescription(settings.defaultMetaDescription ?? "");
       setFooterText(settings.footerText ?? "");
       setFaviconUrl(settings.faviconUrl ?? "");
+      setFaviconMediaId(settings.faviconMediaId ?? null);
       setNavItems(nav);
       setPublishedSlugs(
         new Set(
@@ -184,13 +189,75 @@ export default function AdminSiteSettings() {
               onInput={(e) => setFooterText(e.currentTarget.value)}
             />
           </FormField>
-          <FormField label="Favicon URL" name="faviconUrl">
-            <FormTextInput
-              name="faviconUrl"
-              value={faviconUrl()}
-              onInput={(e) => setFaviconUrl(e.currentTarget.value)}
-            />
+          <FormField label="Favicon" name="favicon">
+            <div class="space-y-3">
+              <Show when={faviconUrl()}>
+                <img
+                  src={faviconUrl()!}
+                  alt=""
+                  class="h-10 w-10 rounded border border-border object-contain bg-surface"
+                />
+              </Show>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  class="siam-btn-secondary text-sm"
+                  onClick={() => setFaviconPickerOpen(true)}
+                >
+                  Choose from library
+                </button>
+                <Show when={faviconMediaId()}>
+                  <button
+                    type="button"
+                    class="siam-btn-secondary text-sm"
+                    onClick={() => {
+                      setFaviconMediaId(null);
+                      setDirty(true);
+                      setSettingsSaved(false);
+                    }}
+                  >
+                    Clear library pick
+                  </button>
+                </Show>
+              </div>
+              <input
+                type="hidden"
+                name="faviconMediaId"
+                value={faviconMediaId() ?? ""}
+              />
+              <details class="text-sm">
+                <summary class="cursor-pointer text-ink-muted">
+                  External favicon URL (optional)
+                </summary>
+                <div class="mt-2">
+                  <FormTextInput
+                    name="faviconUrl"
+                    value={faviconUrl()}
+                    onInput={(e) => {
+                      setFaviconUrl(e.currentTarget.value);
+                      setFaviconMediaId(null);
+                    }}
+                  />
+                  <p class="mt-1 text-xs text-ink-muted">
+                    Used when no library image is selected. Library pick overrides
+                    this on save.
+                  </p>
+                </div>
+              </details>
+            </div>
           </FormField>
+          <MediaPicker
+            open={faviconPickerOpen()}
+            imagesOnly
+            onClose={() => setFaviconPickerOpen(false)}
+            onSelect={(selection: MediaPickerSelection) => {
+              setFaviconMediaId(selection.id);
+              setFaviconUrl(selection.url);
+              setFaviconPickerOpen(false);
+              setDirty(true);
+              setSettingsSaved(false);
+            }}
+          />
           <FormErrorAlert message={settingsMessage()} />
           <FormSuccessNotice
             message={settingsSaved() ? "Settings saved." : null}

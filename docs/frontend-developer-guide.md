@@ -189,6 +189,20 @@ Same tokens; more `bg-surface` + tables with `border-border`; accents only for s
 
 `FormData` field `file` → `adminClient.post('/media/upload', formData)` — [media.md](../../siam-api/docs/media.md).
 
+### 4.3b Media library picker (P5)
+
+Reuse assets in admin forms without re-uploading:
+
+| Piece | Location |
+|--------|----------|
+| Modal picker | [`MediaPicker.tsx`](../src/components/admin/media/MediaPicker.tsx) — `open`, `onClose`, `onSelect({ id, url, alt })` |
+| Browse UI | [`MediaLibraryBrowser.tsx`](../src/components/admin/media/MediaLibraryBrowser.tsx) — also used on `/admin/media` |
+| Types | [`media-picker.types.ts`](../src/components/admin/media/media-picker.types.ts) |
+
+**Props:** `imagesOnly` (default `true`) sets `imagesOnly` on `GET /admin/media`; `allowUpload` (default `true`) shows in-modal `MediaUploadZone` (`upload/image` when images only).
+
+**Favicon (site settings):** store `faviconMediaId` on save; API resolves `faviconUrl` from the media row. Public site still reads `faviconUrl` only. Manual external URL remains when `faviconMediaId` is null.
+
 ### 4.4 Forms stack (F7)
 
 | Step | Detail |

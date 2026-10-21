@@ -5,6 +5,7 @@ export const adminSiteSettingsSchema = z.object({
   defaultMetaDescription: z.string().max(320).nullable().optional(),
   footerText: z.string().nullable().optional(),
   faviconUrl: z.string().max(500).nullable().optional(),
+  faviconMediaId: z.string().uuid().nullable().optional(),
 });
 
 export type AdminSiteSettingsInput = z.infer<typeof adminSiteSettingsSchema>;

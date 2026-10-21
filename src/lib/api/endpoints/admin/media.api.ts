@@ -20,6 +20,7 @@ export const adminMediaApi = {
   list: (params?: {
     q?: string;
     mime?: string;
+    imagesOnly?: boolean;
     page?: number;
     limit?: number;
   }) => adminClient.get<MediaListResponse>("/media", { params }),

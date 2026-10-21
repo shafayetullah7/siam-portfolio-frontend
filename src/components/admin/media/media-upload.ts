@@ -20,6 +20,8 @@ export async function uploadMediaFile(file: File): Promise<MediaAdmin> {
 export const MEDIA_ACCEPT =
   "image/jpeg,image/png,image/webp,image/gif,application/pdf";
 
+export const IMAGE_ACCEPT = "image/jpeg,image/png,image/webp,image/gif";
+
 export function formatMediaBytes(size: number): string {
   if (size < 1024) return `${size} B`;
   if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
