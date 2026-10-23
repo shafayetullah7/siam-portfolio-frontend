@@ -1,4 +1,5 @@
 import { Show } from "solid-js";
+import ArticleMarkdownBody from "~/components/writing/ArticleMarkdownBody";
 
 export type WritingPreviewPaneProps = {
   body: string;
@@ -7,19 +8,10 @@ export type WritingPreviewPaneProps = {
 
 export default function WritingPreviewPane(props: WritingPreviewPaneProps) {
   return (
-    <Show
-      when={props.showPreview}
-      fallback={
-        <p class="text-sm text-ink-muted">
-          Preview shows raw Markdown until rich rendering ships (WRIT9).
-        </p>
-      }
-    >
-      <pre
-        class="max-h-[32rem] overflow-auto whitespace-pre-wrap rounded-md border border-border bg-surface-container-lowest p-4 font-mono text-sm text-ink"
-      >
-        {props.body || "(empty)"}
-      </pre>
+    <Show when={props.showPreview}>
+      <div class="max-h-[32rem] min-h-[12rem] overflow-auto rounded-md border border-border bg-surface-container-lowest p-4">
+        <ArticleMarkdownBody markdown={props.body} />
+      </div>
     </Show>
   );
 }

@@ -104,4 +104,6 @@ export type WritingPublicDetail = WritingPublicCard & {
   related: WritingPublicRelated;
   seoTitle?: string | null;
   seoDescription?: string | null;
+  prevSlug?: string;
+  nextSlug?: string;
 };

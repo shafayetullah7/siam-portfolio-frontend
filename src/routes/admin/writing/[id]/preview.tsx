@@ -6,12 +6,14 @@ import EmptyState from "~/components/EmptyState";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
 import { adminWritingApi } from "~/lib/api/endpoints/admin/writing.api";
 import { getApiErrorMessage, isApiError } from "~/lib/api/errors";
+import { getPublicSite } from "~/lib/api/queries/public";
 import type { WritingPublicDetail } from "~/lib/api/types/writing.types";
 
 export default function AdminWritingPreview() {
   const params = useParams();
   const articleId = () => params.id ?? "";
   const [detail, setDetail] = createSignal<WritingPublicDetail | null>(null);
+  const [defaultAuthor, setDefaultAuthor] = createSignal<string | undefined>();
   const [notFound, setNotFound] = createSignal(false);
   const [loadError, setLoadError] = createSignal<string | null>(null);
 
@@ -19,6 +21,8 @@ export default function AdminWritingPreview() {
     const id = articleId();
     if (!id) return;
     try {
+      const site = await getPublicSite();
+      setDefaultAuthor(site.siteName);
       setDetail(await adminWritingApi.preview(id));
     } catch (error) {
       if (isApiError(error) && error.status === 404) {
@@ -64,6 +68,7 @@ export default function AdminWritingPreview() {
               backHref={`/admin/writing/${articleId()}`}
               backLabel="Back to article"
               showPermalink
+              defaultAuthor={defaultAuthor()}
             />
           </div>
         )}

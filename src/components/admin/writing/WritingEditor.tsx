@@ -60,6 +60,7 @@ export default function WritingEditor(props: WritingEditorProps) {
   const [loadError, setLoadError] = createSignal<string | null>(null);
   const [publishStatus, setPublishStatus] = createSignal("draft");
   const [showPreview, setShowPreview] = createSignal(false);
+  const [pasteNotice, setPasteNotice] = createSignal<string | null>(null);
   const [autosaveState, setAutosaveState] = createSignal<AutosaveState>({
     status: "idle",
   });
@@ -215,6 +216,18 @@ export default function WritingEditor(props: WritingEditorProps) {
               />
 
               <div class="siam-card flex min-h-0 flex-col gap-4 p-5">
+                <Show when={pasteNotice()}>
+                  <p class="rounded-md border border-border bg-surface-container-low px-3 py-2 text-sm text-ink-muted" role="status">
+                    {pasteNotice()}
+                    <button
+                      type="button"
+                      class="ml-2 text-ink underline"
+                      onClick={() => setPasteNotice(null)}
+                    >
+                      Dismiss
+                    </button>
+                  </p>
+                </Show>
                 <div class="flex flex-wrap items-center justify-between gap-2">
                   <h2 class="text-sm font-semibold text-ink">Content</h2>
                   <button
@@ -241,6 +254,11 @@ export default function WritingEditor(props: WritingEditorProps) {
                       patchDraft(patch);
                     }}
                     error={fieldErrors().body}
+                    onPasteSanitized={() =>
+                      setPasteNotice(
+                        "Pasted formatting was removed for safety.",
+                      )
+                    }
                   />
                 </Show>
               </div>

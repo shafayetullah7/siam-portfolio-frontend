@@ -1,5 +1,6 @@
 import { A } from "@solidjs/router";
 import { Show } from "solid-js";
+import ArticleMarkdownBody from "~/components/writing/ArticleMarkdownBody";
 import type { WritingPublicDetail } from "~/lib/api/types/writing.types";
 
 export type WritingArticleDetailViewProps = {
@@ -7,6 +8,8 @@ export type WritingArticleDetailViewProps = {
   backHref: string;
   backLabel: string;
   showPermalink?: boolean;
+  /** Shown when `detail.byline` is empty (e.g. site owner name). */
+  defaultAuthor?: string;
 };
 
 function formatWhen(iso: string | null | undefined): string | null {
@@ -15,10 +18,23 @@ function formatWhen(iso: string | null | undefined): string | null {
   return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString();
 }
 
+function authorLine(
+  byline: string | null | undefined,
+  defaultAuthor?: string,
+): string | null {
+  const trimmed = byline?.trim();
+  if (trimmed) return trimmed;
+  const fallback = defaultAuthor?.trim();
+  return fallback || null;
+}
+
 export default function WritingArticleDetailView(
   props: WritingArticleDetailViewProps,
 ) {
   const d = () => props.detail;
+  const updatedLabel = () =>
+    formatWhen(d().materiallyUpdatedAt ?? d().updatedAt);
+  const showNav = () => Boolean(d().prevSlug || d().nextSlug);
 
   return (
     <article class="max-w-3xl min-w-0">
@@ -33,8 +49,8 @@ export default function WritingArticleDetailView(
         <Show when={d().subtitle?.trim()}>
           <p class="text-lg text-ink-muted">{d().subtitle}</p>
         </Show>
-        <Show when={d().byline?.trim()}>
-          <p class="text-sm text-ink-muted">{d().byline}</p>
+        <Show when={authorLine(d().byline, props.defaultAuthor)}>
+          {(name) => <p class="text-sm text-ink-muted">{name()}</p>}
         </Show>
         <p class="text-base text-ink">{d().summary}</p>
         <div class="flex flex-wrap gap-3 text-sm text-ink-muted">
@@ -44,8 +60,8 @@ export default function WritingArticleDetailView(
           <Show when={formatWhen(d().publishedAt)}>
             <span>Published {formatWhen(d().publishedAt)}</span>
           </Show>
-          <Show when={formatWhen(d().updatedAt)}>
-            <span>Updated {formatWhen(d().updatedAt)}</span>
+          <Show when={updatedLabel()}>
+            <span>Updated {updatedLabel()}</span>
           </Show>
         </div>
         <Show when={d().tags && d().tags!.length > 0}>
@@ -69,15 +85,39 @@ export default function WritingArticleDetailView(
       </header>
 
       <div class="mt-8">
-        <p class="mb-3 text-sm text-ink-muted">
-          Body preview uses plain Markdown source until rich rendering ships (WRIT9).
-        </p>
-        <pre
-          class="whitespace-pre-wrap rounded-lg border border-border bg-surface-container-lowest p-4 font-mono text-sm text-ink"
-        >
-          {d().body || "(empty)"}
-        </pre>
+        <ArticleMarkdownBody markdown={d().body || ""} />
       </div>
+
+      <Show when={showNav()}>
+        <nav
+          class="mt-12 flex flex-col gap-3 border-t border-border pt-8 sm:flex-row sm:justify-between"
+          aria-label="Article navigation"
+        >
+          <Show
+            when={d().prevSlug}
+            fallback={<div class="hidden sm:block sm:flex-1" aria-hidden="true" />}
+          >
+            {(slug) => (
+              <A
+                href={`/writing/${slug()}`}
+                class="text-sm font-medium text-ink no-underline hover:underline"
+              >
+                ← Previous article
+              </A>
+            )}
+          </Show>
+          <Show when={d().nextSlug}>
+            {(slug) => (
+              <A
+                href={`/writing/${slug()}`}
+                class="text-sm font-medium text-ink no-underline hover:underline sm:text-right"
+              >
+                Next article →
+              </A>
+            )}
+          </Show>
+        </nav>
+      </Show>
     </article>
   );
 }

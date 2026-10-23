@@ -19,16 +19,30 @@ export const PUBLIC_HUB_NAV: readonly PrimaryNavItem[] = [
   { label: "Projects", href: "/projects", matchPath: "/projects", kind: "hub" },
 ];
 
+export const PUBLIC_WRITING_HUB: PrimaryNavItem = {
+  label: "Writing",
+  href: "/writing",
+  matchPath: "/writing",
+  kind: "hub",
+};
+
 export const PUBLIC_FOCUS_NAV: PrimaryNavItem = {
   label: "Focus",
   href: `/#${FOCUS_SECTION_ID}`,
   kind: "focus",
 };
 
-const HUB_PATHS = new Set(PUBLIC_HUB_NAV.map((item) => item.href));
+const HUB_PATHS = new Set([
+  ...PUBLIC_HUB_NAV.map((item) => item.href),
+  PUBLIC_WRITING_HUB.href,
+]);
 
 export function buildPrimaryNavItems(site: PublicSitePayload | null | undefined): PrimaryNavItem[] {
-  const items: PrimaryNavItem[] = [...PUBLIC_HUB_NAV, PUBLIC_FOCUS_NAV];
+  const items: PrimaryNavItem[] = [...PUBLIC_HUB_NAV];
+  if (site?.sitemapPaths.includes("/writing")) {
+    items.push(PUBLIC_WRITING_HUB);
+  }
+  items.push(PUBLIC_FOCUS_NAV);
   const seen = new Set(items.map((i) => i.href));
 
   if (site) {

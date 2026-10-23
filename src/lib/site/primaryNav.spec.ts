@@ -74,4 +74,20 @@ describe("primaryNav", () => {
       "About",
     ]);
   });
+
+  it("includes Writing hub when sitemap lists /writing", () => {
+    const siteWithWriting = {
+      ...mockSite,
+      sitemapPaths: ["/", "/about", "/writing"],
+    };
+    const labels = buildPrimaryNavItems(siteWithWriting).map((i) => i.label);
+    expect(labels).toContain("Writing");
+    expect(labels.indexOf("Writing")).toBeLessThan(labels.indexOf("Focus"));
+  });
+
+  it("omits Writing hub when sitemap has no /writing", () => {
+    expect(
+      buildPrimaryNavItems(mockSite).map((i) => i.label),
+    ).not.toContain("Writing");
+  });
 });

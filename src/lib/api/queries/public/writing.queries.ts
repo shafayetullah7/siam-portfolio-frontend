@@ -3,6 +3,7 @@ import {
   writingPublicApi,
   type PublicWritingListParams,
 } from "../../endpoints/public/writing.api";
+import { isApiError } from "../../errors";
 
 function writingListCacheKey(params: PublicWritingListParams = {}) {
   return JSON.stringify({
@@ -24,3 +25,16 @@ export const getPublicWriting = query(
 
 getPublicWriting.keyFor = (params: PublicWritingListParams = {}) =>
   `public-writing:${writingListCacheKey(params)}`;
+
+export const getPublicWritingBySlug = query(async (slug: string) => {
+  try {
+    return await writingPublicApi.bySlug(slug);
+  } catch (error) {
+    if (isApiError(error) && error.status === 404) {
+      return null;
+    }
+    throw error;
+  }
+}, "public-writing-slug");
+
+getPublicWritingBySlug.keyFor = (slug: string) => `public-writing-slug:${slug}`;
