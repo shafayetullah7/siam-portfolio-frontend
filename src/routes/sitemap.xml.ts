@@ -3,6 +3,7 @@ import { listCatalogSitemapPaths } from "~/content/catalog";
 import { projectsPublicApi } from "~/lib/api/endpoints/public/projects.api";
 import { publicationsPublicApi } from "~/lib/api/endpoints/public/publications.api";
 import { researchPublicApi } from "~/lib/api/endpoints/public/research.api";
+import { timelinePublicApi } from "~/lib/api/endpoints/public/timeline.api";
 import { writingPublicApi } from "~/lib/api/endpoints/public/writing.api";
 import { sitePublicApi } from "~/lib/api/endpoints/public/site.api";
 import { getSiteOrigin } from "~/lib/site/siteOrigin";
@@ -63,6 +64,25 @@ export async function GET(_event: APIEvent) {
     ];
   } catch {
     // omit writing slugs when API offline
+  }
+  try {
+    const achievements = await timelinePublicApi.listAchievements({ limit: 100 });
+    const achievementSlugs = achievements.sections.flatMap((section) =>
+      section.items
+        .map((item) => item.href?.replace(/^\/achievements\//, "") ?? "")
+        .filter(Boolean),
+    );
+    if (achievementSlugs.length > 0) {
+      paths = [
+        ...new Set([
+          ...paths,
+          "/achievements",
+          ...achievementSlugs.map((s) => `/achievements/${s}`),
+        ]),
+      ];
+    }
+  } catch {
+    // omit achievement slugs when API offline
   }
   const origin = getSiteOrigin();
   const urls = paths

@@ -26,6 +26,13 @@ export const PUBLIC_WRITING_HUB: PrimaryNavItem = {
   kind: "hub",
 };
 
+export const PUBLIC_ACHIEVEMENTS_HUB: PrimaryNavItem = {
+  label: "Achievements",
+  href: "/achievements",
+  matchPath: "/achievements",
+  kind: "hub",
+};
+
 export const PUBLIC_FOCUS_NAV: PrimaryNavItem = {
   label: "Focus",
   href: `/#${FOCUS_SECTION_ID}`,
@@ -35,12 +42,16 @@ export const PUBLIC_FOCUS_NAV: PrimaryNavItem = {
 const HUB_PATHS = new Set([
   ...PUBLIC_HUB_NAV.map((item) => item.href),
   PUBLIC_WRITING_HUB.href,
+  PUBLIC_ACHIEVEMENTS_HUB.href,
 ]);
 
 export function buildPrimaryNavItems(site: PublicSitePayload | null | undefined): PrimaryNavItem[] {
   const items: PrimaryNavItem[] = [...PUBLIC_HUB_NAV];
   if (site?.sitemapPaths.includes("/writing")) {
     items.push(PUBLIC_WRITING_HUB);
+  }
+  if (site?.sitemapPaths.includes("/achievements")) {
+    items.push(PUBLIC_ACHIEVEMENTS_HUB);
   }
   items.push(PUBLIC_FOCUS_NAV);
   const seen = new Set(items.map((i) => i.href));

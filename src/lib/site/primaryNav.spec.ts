@@ -90,4 +90,24 @@ describe("primaryNav", () => {
       buildPrimaryNavItems(mockSite).map((i) => i.label),
     ).not.toContain("Writing");
   });
+
+  it("includes Achievements hub when sitemap lists /achievements", () => {
+    const siteWithAchievements = {
+      ...mockSite,
+      sitemapPaths: ["/", "/about", "/achievements"],
+    };
+    const labels = buildPrimaryNavItems(siteWithAchievements).map(
+      (i) => i.label,
+    );
+    expect(labels).toContain("Achievements");
+    expect(labels.indexOf("Achievements")).toBeLessThan(
+      labels.indexOf("Focus"),
+    );
+  });
+
+  it("omits Achievements hub when sitemap has no /achievements", () => {
+    expect(
+      buildPrimaryNavItems(mockSite).map((i) => i.label),
+    ).not.toContain("Achievements");
+  });
 });

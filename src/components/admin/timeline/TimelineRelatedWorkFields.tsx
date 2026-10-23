@@ -11,12 +11,12 @@ export type TimelineRelatedWorkFieldsProps = {
 export default function TimelineRelatedWorkFields(
   props: TimelineRelatedWorkFieldsProps,
 ) {
-  const publicationsResource = createResource(async () => {
+  const [publications] = createResource(async () => {
     const rows = await adminPublicationsApi.list({ limit: 100 });
     return rows.filter((row) => row.publishStatus === "published");
   });
 
-  const projectsResource = createResource(async () => {
+  const [projects] = createResource(async () => {
     const rows = await adminProjectsApi.list({ limit: 100 });
     return rows.filter((row) => row.publishStatus === "published");
   });
@@ -35,11 +35,11 @@ export default function TimelineRelatedWorkFields(
           }
         >
           <option value="">None</option>
-          <Show when={!publicationsResource.loading} fallback={<option disabled>Loading…</option>}>
-            <Show when={publicationsResource.error}>
+          <Show when={!publications.loading} fallback={<option disabled>Loading…</option>}>
+            <Show when={publications.error}>
               <option disabled>Could not load publications</option>
             </Show>
-            <For each={publicationsResource() ?? []}>
+            <For each={publications() ?? []}>
               {(row) => (
                 <option value={row.id}>
                   {row.title} ({row.year})
@@ -62,11 +62,11 @@ export default function TimelineRelatedWorkFields(
           }
         >
           <option value="">None</option>
-          <Show when={!projectsResource.loading} fallback={<option disabled>Loading…</option>}>
-            <Show when={projectsResource.error}>
+          <Show when={!projects.loading} fallback={<option disabled>Loading…</option>}>
+            <Show when={projects.error}>
               <option disabled>Could not load projects</option>
             </Show>
-            <For each={projectsResource() ?? []}>
+            <For each={projects() ?? []}>
               {(row) => <option value={row.id}>{row.title}</option>}
             </For>
           </Show>

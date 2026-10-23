@@ -25,6 +25,12 @@ interface DashboardCounts {
     scheduled: number;
     archived: number;
   };
+  timeline: {
+    draft: number;
+    published: number;
+    scheduled: number;
+    archived: number;
+  };
   media: number;
 }
 
@@ -84,6 +90,18 @@ export default function AdminHome() {
                 {counts.writing.draft} draft
               </p>
             </A>
+            <A
+              href="/admin/achievements"
+              class="siam-card block p-4 no-underline transition-colors hover:border-primary"
+            >
+              <dt class="text-sm text-ink-muted">Published timeline entries</dt>
+              <dd class="text-2xl font-semibold text-ink">
+                {counts.timeline.published}
+              </dd>
+              <p class="mt-1 text-xs text-ink-muted">
+                {counts.timeline.draft} draft
+              </p>
+            </A>
             <A href="/admin/media" class="siam-card block p-4 no-underline transition-colors hover:border-primary">
               <dt class="text-sm text-ink-muted">Media files</dt>
               <dd class="text-2xl font-semibold text-ink">{counts.media}</dd>
@@ -99,6 +117,9 @@ export default function AdminHome() {
             </A>
             <A href="/admin/writing" class="siam-btn-secondary no-underline">
               Writing
+            </A>
+            <A href="/admin/achievements" class="siam-btn-secondary no-underline">
+              Achievements & timeline
             </A>
             <A href="/admin/media" class="siam-btn-secondary no-underline">Media library</A>
           </div>
