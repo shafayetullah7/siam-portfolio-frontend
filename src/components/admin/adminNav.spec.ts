@@ -79,6 +79,7 @@ describe("ADMIN_NAV_SECTIONS", () => {
       "dashboard",
       "media",
       "pages",
+      "projects",
       "publications",
       "research",
       "site-settings",
