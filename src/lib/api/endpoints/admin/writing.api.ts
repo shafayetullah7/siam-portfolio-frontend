@@ -1,6 +1,7 @@
 import { adminClient } from "../../admin-client";
 import type { Paginated } from "../../types";
 import type {
+  ArticleRelations,
   WritingAdminDetail,
   WritingAdminSummary,
   WritingPublishChecklist,
@@ -51,4 +52,10 @@ export const adminWritingApi = {
 
   schedule: (id: string, body: { scheduledAt: string }) =>
     adminClient.post<WritingAdminDetail>(`/writing/${id}/schedule`, body),
+
+  getRelations: (id: string) =>
+    adminClient.get<ArticleRelations>(`/writing/${id}/relations`),
+
+  putRelations: (id: string, body: Partial<ArticleRelations>) =>
+    adminClient.put<ArticleRelations>(`/writing/${id}/relations`, body),
 };

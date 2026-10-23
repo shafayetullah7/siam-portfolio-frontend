@@ -3,6 +3,7 @@ import { Show } from "solid-js";
 import AdminPageHeader from "~/components/admin/AdminPageHeader";
 import PublishStatusBadge from "~/components/admin/PublishStatusBadge";
 import WritingPublishControls from "~/components/admin/writing/WritingPublishControls";
+import WritingRelatedPanel from "~/components/admin/writing/WritingRelatedPanel";
 import type { WritingAdminDetail } from "~/lib/api/types/writing.types";
 
 export type AdminWritingViewProps = {
@@ -81,6 +82,8 @@ export default function AdminWritingView(props: AdminWritingViewProps) {
           </pre>
         </div>
       </div>
+
+      <WritingRelatedPanel articleId={a().id} excludeArticleId={a().id} />
     </div>
   );
 }

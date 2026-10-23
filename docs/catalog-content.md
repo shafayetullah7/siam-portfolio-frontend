@@ -8,6 +8,8 @@ Until Phases 10–12 ship public APIs and admin CRUD, the frontend keeps a **sin
 | `publications.catalog.ts` | `PublicationRecord` | **Seed / validation only** — public `/publications` uses `GET /public/publications` |
 | `projects.catalog.ts` | `ProjectRecord` | **Seed / validation only** — public `/projects` uses `GET /public/projects` |
 
+Writing has **no** static frontend catalog. Public `/writing` and `/writing/[slug]` use `GET /public/writing` APIs. Dev article rows come from `siam-api/src/db/seed/writing.catalog.ts` only.
+
 Helpers live in `catalog.ts` (`list*`, `get*`, `*ToHomeItem`, `listFeatured*ForHome`, `listCatalogSitemapPaths`).
 
 ## Home page (P01)
@@ -18,7 +20,7 @@ Helpers live in `catalog.ts` (`list*`, `get*`, `*ToHomeItem`, `listFeatured*ForH
 
 `featuredProjects` on `/` comes from **`getPublicHome().selectedProjects`** when the API returns published rows with `featuredOnHome` (max 3, cover when media alt is set). No static catalog fallback on the home page.
 
-Publication and project detail URLs in `sitemap.xml` come from **`getPublicSite().sitemapPaths`** and public list APIs (not static catalog slugs). Bounds (3–6 / 2–4 / 2–3) are enforced in `home.validation.ts` and `validateCatalogFeaturedBounds()`.
+Publication, project, and writing detail URLs in `sitemap.xml` come from **`getPublicSite().sitemapPaths`** and public list API fallbacks (`publicationsPublicApi`, `projectsPublicApi`, `writingPublicApi`) — not static catalog slugs. Bounds (3–6 / 2–4 / 2–3) are enforced in `home.validation.ts` and `validateCatalogFeaturedBounds()`.
 
 ## Future CMS / API mapping
 

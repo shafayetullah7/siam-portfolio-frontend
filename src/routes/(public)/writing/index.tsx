@@ -102,7 +102,12 @@ export default function WritingIndex() {
       <Meta name="description" content={pageMeta()?.description ?? ""} />
       <Meta property="og:title" content={pageMeta()?.ogTitle ?? "Writing"} />
       <Meta property="og:description" content={pageMeta()?.ogDescription ?? ""} />
-      {/* WRIT11: rel=alternate RSS when feed.xml ships */}
+      <link
+        rel="alternate"
+        type="application/rss+xml"
+        title="Writing feed"
+        href="/writing/feed.xml"
+      />
       <CatalogPageShell
         wide
         title="Writing"

@@ -11,6 +11,7 @@ import remarkMath from "remark-math";
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
+import { injectHeadingIds } from "./articleHeadings";
 import { articleMarkdownSanitizeSchema } from "./articleMarkdownSanitizeSchema";
 
 const articleMarkdownProcessor = unified()
@@ -24,5 +25,6 @@ const articleMarkdownProcessor = unified()
 
 export function renderArticleMarkdown(markdown: string): string {
   if (!markdown) return "";
-  return String(articleMarkdownProcessor.processSync(markdown));
+  const html = String(articleMarkdownProcessor.processSync(markdown));
+  return injectHeadingIds(html, markdown);
 }

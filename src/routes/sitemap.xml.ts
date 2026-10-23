@@ -3,6 +3,7 @@ import { listCatalogSitemapPaths } from "~/content/catalog";
 import { projectsPublicApi } from "~/lib/api/endpoints/public/projects.api";
 import { publicationsPublicApi } from "~/lib/api/endpoints/public/publications.api";
 import { researchPublicApi } from "~/lib/api/endpoints/public/research.api";
+import { writingPublicApi } from "~/lib/api/endpoints/public/writing.api";
 import { sitePublicApi } from "~/lib/api/endpoints/public/site.api";
 import { getSiteOrigin } from "~/lib/site/siteOrigin";
 
@@ -50,6 +51,18 @@ export async function GET(_event: APIEvent) {
     ];
   } catch {
     // omit project slugs when API offline
+  }
+  try {
+    const writing = await writingPublicApi.list({ limit: 100 });
+    paths = [
+      ...new Set([
+        ...paths,
+        "/writing",
+        ...writing.items.map((a) => `/writing/${a.slug}`),
+      ]),
+    ];
+  } catch {
+    // omit writing slugs when API offline
   }
   const origin = getSiteOrigin();
   const urls = paths

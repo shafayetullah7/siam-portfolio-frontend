@@ -1,6 +1,8 @@
 import { A } from "@solidjs/router";
 import { Show } from "solid-js";
 import ArticleMarkdownBody from "~/components/writing/ArticleMarkdownBody";
+import ArticleTableOfContents from "~/components/writing/ArticleTableOfContents";
+import WritingArticleRelatedSection from "~/components/writing/WritingArticleRelatedSection";
 import type { WritingPublicDetail } from "~/lib/api/types/writing.types";
 
 export type WritingArticleDetailViewProps = {
@@ -35,9 +37,11 @@ export default function WritingArticleDetailView(
   const updatedLabel = () =>
     formatWhen(d().materiallyUpdatedAt ?? d().updatedAt);
   const showNav = () => Boolean(d().prevSlug || d().nextSlug);
+  const showSeriesNav = () =>
+    Boolean(d().seriesPrevSlug || d().seriesNextSlug);
 
   return (
-    <article class="max-w-3xl min-w-0">
+    <article class="max-w-3xl min-w-0 lg:max-w-5xl">
       <p class="mb-6">
         <A href={props.backHref} class="text-sm text-ink-muted no-underline hover:text-ink">
           ← {props.backLabel}
@@ -84,9 +88,62 @@ export default function WritingArticleDetailView(
         </Show>
       </header>
 
-      <div class="mt-8">
-        <ArticleMarkdownBody markdown={d().body || ""} />
+      <div class="mt-8 lg:grid lg:grid-cols-[minmax(0,1fr)_14rem] lg:gap-10">
+        <div class="min-w-0">
+          <ArticleMarkdownBody markdown={d().body || ""} />
+        </div>
+        <aside class="hidden lg:block">
+          <ArticleTableOfContents
+            markdown={d().body || ""}
+            wordCount={d().wordCount}
+          />
+        </aside>
       </div>
+
+      <div class="mt-6 lg:hidden">
+        <ArticleTableOfContents
+          markdown={d().body || ""}
+          wordCount={d().wordCount}
+        />
+      </div>
+
+      <WritingArticleRelatedSection related={d().related} />
+
+      <Show when={showSeriesNav()}>
+        <nav
+          class="mt-10 flex flex-col gap-3 border-t border-border pt-8 sm:flex-row sm:justify-between"
+          aria-label="Series navigation"
+        >
+          <Show when={d().series?.title}>
+            <p class="w-full text-sm text-ink-muted sm:order-first sm:w-auto">
+              Series: {d().series!.title}
+            </p>
+          </Show>
+          <Show
+            when={d().seriesPrevSlug}
+            fallback={<div class="hidden sm:block sm:flex-1" aria-hidden="true" />}
+          >
+            {(slug) => (
+              <A
+                href={`/writing/${slug()}`}
+                class="text-sm font-medium text-ink no-underline hover:underline"
+              >
+                ← Previous in series
+              </A>
+            )}
+          </Show>
+          <Show when={d().seriesNextSlug}>
+            {(slug) => (
+              <A
+                href={`/writing/${slug()}`}
+                class="text-sm font-medium text-ink no-underline hover:underline sm:text-right"
+              >
+                Next in series →
+              </A>
+            )}
+          </Show>
+        </nav>
+      </Show>
 
       <Show when={showNav()}>
         <nav

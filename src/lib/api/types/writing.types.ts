@@ -1,4 +1,7 @@
 import type { PublishChecklistItem } from "./research.types";
+import type { ResearchPublicationCardPublic } from "./research.types";
+import type { ResearchProjectCardPublic } from "./research.types";
+import type { ResearchThemeCardPublic } from "./research.types";
 
 export type WritingPublishChecklist = {
   errors: PublishChecklistItem[];
@@ -84,11 +87,23 @@ export type WritingPublicCard = {
   coverAlt?: string | null;
 };
 
+export type WritingThemeRelatedCard = Pick<
+  ResearchThemeCardPublic,
+  "slug" | "title" | "summary" | "href"
+>;
+
 export type WritingPublicRelated = {
-  articles: [];
-  publications: [];
-  projects: [];
-  themes: [];
+  articles: WritingPublicCard[];
+  publications: ResearchPublicationCardPublic[];
+  projects: ResearchProjectCardPublic[];
+  themes: WritingThemeRelatedCard[];
+};
+
+export type ArticleRelations = {
+  publicationIds: string[];
+  projectIds: string[];
+  themeIds: string[];
+  relatedArticleIds: string[];
 };
 
 export type WritingPublicSeriesSection = {
@@ -108,10 +123,14 @@ export type WritingPublicList = {
 export type WritingPublicDetail = WritingPublicCard & {
   subtitle?: string | null;
   body: string;
+  wordCount?: number | null;
   byline?: string | null;
   related: WritingPublicRelated;
   seoTitle?: string | null;
   seoDescription?: string | null;
   prevSlug?: string;
   nextSlug?: string;
+  seriesPrevSlug?: string;
+  seriesNextSlug?: string;
+  series?: { slug: string; title: string };
 };
