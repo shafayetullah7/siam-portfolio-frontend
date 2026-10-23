@@ -1,3 +1,10 @@
+import type { PublishChecklistItem } from "./research.types";
+
+export type WritingPublishChecklist = {
+  errors: PublishChecklistItem[];
+  warnings: PublishChecklistItem[];
+};
+
 export type WritingPublishStatus =
   | "draft"
   | "scheduled"
@@ -73,10 +80,28 @@ export type WritingPublicCard = {
   updatedAt?: string | null;
   materiallyUpdatedAt?: string | null;
   featuredOnHub?: boolean;
+  coverUrl?: string | null;
+  coverAlt?: string | null;
+};
+
+export type WritingPublicRelated = {
+  articles: [];
+  publications: [];
+  projects: [];
+  themes: [];
+};
+
+export type WritingPublicList = {
+  intro: string | null;
+  items: WritingPublicCard[];
+  meta: import("./index").PaginationMeta;
 };
 
 export type WritingPublicDetail = WritingPublicCard & {
   subtitle?: string | null;
   body: string;
   byline?: string | null;
+  related: WritingPublicRelated;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
 };

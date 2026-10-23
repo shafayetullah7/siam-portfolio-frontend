@@ -31,6 +31,29 @@ export const writingWriteSchema = z.object({
 
 export type WritingWriteInput = z.infer<typeof writingWriteSchema>;
 
+export function writingDraftFromAdmin(
+  row: import("~/lib/api/types/writing.types").WritingAdminDetail,
+): WritingWriteInput {
+  return {
+    slug: row.slug,
+    title: row.title,
+    summary: row.summary,
+    subtitle: row.subtitle,
+    body: row.body,
+    tags: row.tags ?? [],
+    seriesId: row.seriesId,
+    seriesSortOrder: row.seriesSortOrder,
+    coverMediaId: row.coverMediaId,
+    byline: row.byline,
+    featuredOnHub: row.featuredOnHub,
+    featured: row.featured,
+    sortOrder: row.sortOrder,
+    seoTitle: row.seoTitle,
+    seoDescription: row.seoDescription,
+    hideFromSearch: row.hideFromSearch,
+  };
+}
+
 export function emptyWritingDraft(): WritingWriteInput {
   return {
     slug: "",

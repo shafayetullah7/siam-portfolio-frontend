@@ -70,7 +70,7 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
         id: "writing",
         label: "Writing",
         href: "/admin/writing",
-        status: "comingSoon",
+        status: "active",
         requirement: "A08",
       },
       {

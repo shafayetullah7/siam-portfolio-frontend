@@ -12,3 +12,4 @@ export {
   getPublicProjectBySlug,
   getPublicProjects,
 } from "./projects.queries";
+export { getPublicWriting } from "./writing.queries";

@@ -37,7 +37,7 @@ export const saveWritingAction = action(
     try {
       if (articleId === "new") {
         const created = await adminWritingApi.create(body);
-        return redirect(`/admin/writing/${created.id}`);
+        return redirect(`/admin/writing/${created.id}/edit`);
       }
       await adminWritingApi.update(articleId, body);
       return formSuccess();

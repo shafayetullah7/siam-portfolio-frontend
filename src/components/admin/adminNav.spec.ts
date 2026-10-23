@@ -45,6 +45,14 @@ describe("isAdminNavActive", () => {
     expect(isAdminNavActive("/admin/research", publications)).toBe(false);
   });
 
+  it("matches writing section and nested editor routes", () => {
+    const writing = itemById("writing");
+    expect(isAdminNavActive("/admin/writing", writing)).toBe(true);
+    expect(isAdminNavActive("/admin/writing/abc", writing)).toBe(true);
+    expect(isAdminNavActive("/admin/writing/abc/edit", writing)).toBe(true);
+    expect(isAdminNavActive("/admin/projects", writing)).toBe(false);
+  });
+
   it("does not match comingSoon items", () => {
     const home = itemById("home");
     expect(isAdminNavActive("/admin/home", home)).toBe(false);
@@ -83,6 +91,7 @@ describe("ADMIN_NAV_SECTIONS", () => {
       "publications",
       "research",
       "site-settings",
+      "writing",
     ]);
   });
 });
