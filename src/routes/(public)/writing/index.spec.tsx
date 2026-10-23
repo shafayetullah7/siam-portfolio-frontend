@@ -52,6 +52,7 @@ vi.mock("@solidjs/router", () => ({
     }
     return () => mockMainList;
   },
+  useSearchParams: () => [{}, vi.fn()],
   A: (props: { href: string; children?: JSX.Element }) => (
     <a href={props.href}>{props.children}</a>
   ),

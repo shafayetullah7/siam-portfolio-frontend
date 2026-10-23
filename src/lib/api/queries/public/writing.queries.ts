@@ -9,6 +9,8 @@ function writingListCacheKey(params: PublicWritingListParams = {}) {
   return JSON.stringify({
     q: params.q ?? "",
     tag: params.tag ?? "",
+    series: params.series ?? "",
+    sort: params.sort ?? "",
     featuredOnHub: params.featuredOnHub ?? "",
     excludeFeaturedOnHub: params.excludeFeaturedOnHub ?? "",
     page: params.page ?? "",

@@ -7,6 +7,8 @@ import type {
 export type PublicWritingListParams = {
   q?: string;
   tag?: string;
+  series?: string;
+  sort?: "publishedAtDesc" | "titleAsc";
   featuredOnHub?: boolean;
   excludeFeaturedOnHub?: boolean;
   page?: number;

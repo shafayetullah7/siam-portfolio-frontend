@@ -7,6 +7,7 @@ import type { WritingPublicCard } from "~/lib/api/types/writing.types";
 export type WritingArticlePublicListProps = {
   featuredItem?: WritingPublicCard | null;
   items: WritingPublicCard[];
+  hasActiveFilters?: boolean;
 };
 
 export default function WritingArticlePublicList(
@@ -23,8 +24,16 @@ export default function WritingArticlePublicList(
       fallback={
         <EmptyState
           variant="list"
-          title="No articles published yet"
-          description="Published writing will appear here when articles go live."
+          title={
+            props.hasActiveFilters
+              ? "No articles match your filters"
+              : "No articles published yet"
+          }
+          description={
+            props.hasActiveFilters
+              ? "Try clearing filters or broadening your search."
+              : "Published writing will appear here when articles go live."
+          }
         >
           <div class="flex flex-wrap justify-center gap-2">
             <A href="/research" class="siam-btn-secondary no-underline">

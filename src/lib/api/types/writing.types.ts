@@ -91,10 +91,18 @@ export type WritingPublicRelated = {
   themes: [];
 };
 
+export type WritingPublicSeriesSection = {
+  slug: string;
+  title: string;
+  summary?: string | null;
+  items: WritingPublicCard[];
+};
+
 export type WritingPublicList = {
   intro: string | null;
   items: WritingPublicCard[];
   meta: import("./index").PaginationMeta;
+  seriesSections?: WritingPublicSeriesSection[];
 };
 
 export type WritingPublicDetail = WritingPublicCard & {

@@ -1,35 +1,74 @@
-import { createAsync, type RouteDefinition } from "@solidjs/router";
+import {
+  createAsync,
+  useSearchParams,
+  type RouteDefinition,
+} from "@solidjs/router";
 import { Title, Meta } from "@solidjs/meta";
 import { Show } from "solid-js";
 import CatalogPageShell from "~/components/catalog/CatalogPageShell";
+import PublicationListPagination from "~/components/publications/PublicationListPagination";
 import WritingHubPage from "~/components/writing/WritingHubPage";
+import WritingListFilters from "~/components/writing/WritingListFilters";
 import { getPublicSite, getPublicWriting } from "~/lib/api/queries/public";
 import { buildPageMeta } from "~/lib/meta/buildPageMeta";
 import { DEFAULT_WRITING_HUB_INTRO } from "~/lib/writing/default-writing-hub-intro";
+import {
+  parseWritingListSearchParams,
+  writingListHasActiveFilters,
+  writingListPageNumber,
+  writingListSearchParamsToApi,
+  setWritingListPage,
+} from "~/lib/writing/writing-list-search-params";
 
 export const route = {
-  preload: () => {
+  preload: ({ location }) => {
     void getPublicSite();
-    void getPublicWriting({ featuredOnHub: true, limit: 1 });
-    void getPublicWriting({ excludeFeaturedOnHub: true, page: 1, limit: 24 });
+    const params = parseWritingListSearchParams(
+      Object.fromEntries(new URLSearchParams(location.search)),
+    );
+    const showFeaturedBand =
+      !writingListHasActiveFilters(params) && writingListPageNumber(params) === 1;
+    void getPublicWriting(
+      writingListSearchParamsToApi(params, {
+        excludeFeaturedOnHub: showFeaturedBand,
+        limit: 24,
+      }),
+    );
+    if (showFeaturedBand) {
+      void getPublicWriting({ featuredOnHub: true, limit: 1 });
+    }
   },
 } satisfies RouteDefinition;
 
 export default function WritingIndex() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const site = createAsync(() => getPublicSite(), { deferStream: true });
 
+  const filters = () =>
+    parseWritingListSearchParams(searchParams as Record<string, string>);
+
+  const showFeaturedBand = () =>
+    !writingListHasActiveFilters(filters()) &&
+    writingListPageNumber(filters()) === 1;
+
   const featuredList = createAsync(
-    () => getPublicWriting({ featuredOnHub: true, limit: 1 }),
+    () => {
+      if (!showFeaturedBand()) {
+        return Promise.resolve(null);
+      }
+      return getPublicWriting({ featuredOnHub: true, limit: 1 });
+    },
     { deferStream: true },
   );
 
   const mainList = createAsync(
     () =>
-      getPublicWriting({
-        excludeFeaturedOnHub: true,
-        page: 1,
-        limit: 24,
-      }),
+      getPublicWriting(
+        writingListSearchParamsToApi(filters(), {
+          excludeFeaturedOnHub: showFeaturedBand(),
+          limit: 24,
+        }),
+      ),
     { deferStream: true },
   );
 
@@ -54,6 +93,9 @@ export default function WritingIndex() {
 
   const featuredItem = () => featuredList()?.items[0] ?? null;
 
+  const showSeriesSections = () =>
+    showFeaturedBand() && !filters().series;
+
   return (
     <>
       <Title>{pageMeta()?.title ?? "Writing"}</Title>
@@ -67,15 +109,33 @@ export default function WritingIndex() {
         intro={hubIntro()}
         breadcrumbs={[{ label: "Home", href: "/" }, { label: "Writing" }]}
       >
-        <Show when={mainList()} fallback={<p class="text-ink-muted">Loading…</p>}>
-          {(data) => (
-            <WritingHubPage
-              featuredItem={featuredItem()}
-              items={data().items}
-              meta={data().meta}
-            />
-          )}
-        </Show>
+        <div class="flex flex-col gap-6">
+          <WritingListFilters
+            params={filters()}
+            setSearchParams={setSearchParams}
+          />
+          <Show when={mainList()} fallback={<p class="text-ink-muted">Loading…</p>}>
+            {(data) => (
+              <>
+                <WritingHubPage
+                  featuredItem={featuredItem()}
+                  seriesSections={data().seriesSections}
+                  items={data().items}
+                  meta={data().meta}
+                  hasActiveFilters={writingListHasActiveFilters(filters())}
+                  showSeriesSections={showSeriesSections()}
+                />
+                <PublicationListPagination
+                  meta={data().meta}
+                  ariaLabel="Writing pagination"
+                  onPageChange={(page) =>
+                    setWritingListPage(setSearchParams, page)
+                  }
+                />
+              </>
+            )}
+          </Show>
+        </div>
       </CatalogPageShell>
     </>
   );

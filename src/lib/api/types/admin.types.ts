@@ -33,6 +33,7 @@ export interface SiteSettingsAdmin {
   footerText: string | null;
   researchHubIntro: string | null;
   projectsHubIntro: string | null;
+  writingHubIntro: string | null;
   faviconUrl: string | null;
   faviconMediaId: string | null;
   createdAt: string;

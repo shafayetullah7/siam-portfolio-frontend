@@ -44,6 +44,7 @@ export default function AdminSiteSettings() {
   const [footerText, setFooterText] = createSignal("");
   const [researchHubIntro, setResearchHubIntro] = createSignal("");
   const [projectsHubIntro, setProjectsHubIntro] = createSignal("");
+  const [writingHubIntro, setWritingHubIntro] = createSignal("");
   const [faviconUrl, setFaviconUrl] = createSignal("");
   const [faviconMediaId, setFaviconMediaId] = createSignal<string | null>(null);
   const [faviconPickerOpen, setFaviconPickerOpen] = createSignal(false);
@@ -104,6 +105,7 @@ export default function AdminSiteSettings() {
       setFooterText(settings.footerText ?? "");
       setResearchHubIntro(settings.researchHubIntro ?? "");
       setProjectsHubIntro(settings.projectsHubIntro ?? "");
+      setWritingHubIntro(settings.writingHubIntro ?? "");
       setFaviconUrl(settings.faviconUrl ?? "");
       setFaviconMediaId(settings.faviconMediaId ?? null);
       setNavItems(nav);
@@ -215,6 +217,18 @@ export default function AdminSiteSettings() {
               rows={4}
               value={projectsHubIntro()}
               onInput={(e) => setProjectsHubIntro(e.currentTarget.value)}
+            />
+          </FormField>
+          <FormField
+            label="Writing hub intro"
+            name="writingHubIntro"
+            hint="Shown at the top of /writing when set."
+          >
+            <FormTextarea
+              name="writingHubIntro"
+              rows={4}
+              value={writingHubIntro()}
+              onInput={(e) => setWritingHubIntro(e.currentTarget.value)}
             />
           </FormField>
           <FormField label="Favicon" name="favicon">
