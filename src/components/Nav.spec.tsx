@@ -42,14 +42,14 @@ describe("Nav", () => {
     }
   });
 
-  it("includes Contact links to about#contact", () => {
+  it("includes Contact links to /contact", () => {
     mockPathname = "/";
     render(() => <Nav />);
     const contactLinks = screen
       .getAllByRole("link", { name: "Contact" })
       .map((el) => el.getAttribute("href"));
     expect(contactLinks.length).toBeGreaterThanOrEqual(1);
-    expect(contactLinks.every((href) => href === "/about#contact")).toBe(true);
+    expect(contactLinks.every((href) => href === "/contact")).toBe(true);
   });
 
   it("locks body scroll when mobile menu is open and restores on close and unmount", () => {

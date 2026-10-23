@@ -11,6 +11,8 @@ export type ListMessagesParams = {
   isRead?: boolean;
   category?: string;
   q?: string;
+  from?: string;
+  to?: string;
   page?: number;
   limit?: number;
   excludeSpam?: boolean;
@@ -32,4 +34,9 @@ export const adminMessagesApi = {
     adminClient.patch<ContactMessageAdmin>(`/messages/${id}`, body),
 
   delete: (id: string) => adminClient.delete<null>(`/messages/${id}`),
+
+  bulkUpdate: (body: {
+    ids: string[];
+    patch: Pick<UpdateMessageBody, "status" | "isRead">;
+  }) => adminClient.post<{ updated: number }>("/messages/bulk", body),
 };

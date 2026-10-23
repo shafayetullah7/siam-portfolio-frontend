@@ -4,35 +4,7 @@ import { Title } from "@solidjs/meta";
 import AdminPageHeader from "~/components/admin/AdminPageHeader";
 import ResourceRequest from "~/components/ResourceRequest";
 import { adminClient } from "~/lib/api";
-
-interface DashboardCounts {
-  pages: { draft: number; published: number; scheduled: number; archived: number };
-  publications: {
-    draft: number;
-    published: number;
-    scheduled: number;
-    archived: number;
-  };
-  projects: {
-    draft: number;
-    published: number;
-    scheduled: number;
-    archived: number;
-  };
-  writing: {
-    draft: number;
-    published: number;
-    scheduled: number;
-    archived: number;
-  };
-  timeline: {
-    draft: number;
-    published: number;
-    scheduled: number;
-    archived: number;
-  };
-  media: number;
-}
+import type { DashboardCounts } from "~/lib/api/types/admin.types";
 
 export default function AdminHome() {
   const countsResource = createResource(() =>
@@ -102,6 +74,19 @@ export default function AdminHome() {
                 {counts.timeline.draft} draft
               </p>
             </A>
+            <A
+              href="/admin/messages?status=new"
+              class={`siam-card block p-4 no-underline transition-colors hover:border-primary ${counts.inbox.formEnabled ? "" : "opacity-80"}`}
+            >
+              <dt class="text-sm text-ink-muted">Unread messages</dt>
+              <dd class="text-2xl font-semibold text-ink">
+                {counts.inbox.unread}
+              </dd>
+              <p class="mt-1 text-xs text-ink-muted">
+                {counts.inbox.new} new
+                {!counts.inbox.formEnabled ? " · Contact form is off" : ""}
+              </p>
+            </A>
             <A href="/admin/media" class="siam-card block p-4 no-underline transition-colors hover:border-primary">
               <dt class="text-sm text-ink-muted">Media files</dt>
               <dd class="text-2xl font-semibold text-ink">{counts.media}</dd>
@@ -120,6 +105,9 @@ export default function AdminHome() {
             </A>
             <A href="/admin/achievements" class="siam-btn-secondary no-underline">
               Achievements & timeline
+            </A>
+            <A href="/admin/messages" class="siam-btn-secondary no-underline">
+              Messages
             </A>
             <A href="/admin/media" class="siam-btn-secondary no-underline">Media library</A>
           </div>

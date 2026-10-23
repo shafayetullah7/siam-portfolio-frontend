@@ -15,7 +15,7 @@ export const homeContent: HomePageContent = {
     statusBadge: "LIVE DISPATCH",
     contactEmail: "researcher@university.edu",
     primaryCta: { label: "Explore research", href: "/research" },
-    secondaryCta: { label: "Get in touch", href: "/about#contact" },
+    secondaryCta: { label: "Get in touch", href: "/contact" },
     ledger: {
       headerLabel: "Scholar ledger",
       metrics: [
@@ -60,8 +60,8 @@ export const homeContent: HomePageContent = {
     headline: "Interested in collaborating or exploring research partnerships?",
     body:
       "I welcome thoughtful conversations about interpretable ML foundations, applied research partnerships, and student mentorship—reach out with context on your goals.",
-    href: "/about#contact",
-    secondaryHref: "/about#contact",
+    href: "/contact",
+    secondaryHref: "/contact",
     secondaryLabel: "Schedule advisory chat",
     replyNote: "Typical reply: 48–72 hours",
   },

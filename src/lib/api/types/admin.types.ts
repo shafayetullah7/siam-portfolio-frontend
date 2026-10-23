@@ -36,6 +36,15 @@ export interface SiteSettingsAdmin {
   writingHubIntro: string | null;
   achievementsHubIntro: string | null;
   experienceHubIntro: string | null;
+  contactFormEnabled: boolean;
+  contactPageIntro: string | null;
+  contactCollaborationGuidance: string | null;
+  contactResponseTimeNote: string | null;
+  contactCategories: string[];
+  contactConsentText: string | null;
+  contactSuccessMessage: string | null;
+  contactPublicEmail: string | null;
+  contactShowEmailOnPage: boolean;
   faviconUrl: string | null;
   faviconMediaId: string | null;
   createdAt: string;
@@ -126,3 +135,26 @@ export interface MediaAdmin {
 }
 
 export type MediaListResponse = Paginated<MediaAdmin>;
+
+export type DashboardPublishStatusCounts = {
+  draft: number;
+  published: number;
+  scheduled: number;
+  archived: number;
+};
+
+export type DashboardInboxCounts = {
+  unread: number;
+  new: number;
+  formEnabled: boolean;
+};
+
+export type DashboardCounts = {
+  pages: DashboardPublishStatusCounts;
+  publications: DashboardPublishStatusCounts;
+  projects: DashboardPublishStatusCounts;
+  writing: DashboardPublishStatusCounts;
+  timeline: DashboardPublishStatusCounts;
+  media: number;
+  inbox: DashboardInboxCounts;
+};

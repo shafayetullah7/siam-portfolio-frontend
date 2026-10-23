@@ -7,7 +7,7 @@ import {
 } from "~/lib/site/primaryNav";
 import { usePublicSite } from "~/lib/site/PublicSiteProvider";
 
-const CONTACT_HREF = "/about#contact";
+const CONTACT_HREF = "/contact";
 
 export default function Nav() {
   const location = useLocation();

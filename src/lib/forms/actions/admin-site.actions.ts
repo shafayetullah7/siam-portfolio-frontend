@@ -2,6 +2,7 @@ import { action, revalidate } from "@solidjs/router";
 import { adminSiteApi } from "~/lib/api/endpoints/admin/site.api";
 import {
   getPublicAchievements,
+  getPublicContactConfig,
   getPublicExperience,
   getPublicHome,
   getPublicResearchThemes,
@@ -33,6 +34,23 @@ export const saveSiteSettingsAction = action(async (formData: FormData) => {
       ),
       faviconUrl: emptyToNull(fd.get("faviconUrl")?.toString()),
       faviconMediaId: emptyToNull(fd.get("faviconMediaId")?.toString()),
+      contactFormEnabled: parseCheckbox(fd, "contactFormEnabled"),
+      contactPageIntro: emptyToNull(fd.get("contactPageIntro")?.toString()),
+      contactCollaborationGuidance: emptyToNull(
+        fd.get("contactCollaborationGuidance")?.toString(),
+      ),
+      contactResponseTimeNote: emptyToNull(
+        fd.get("contactResponseTimeNote")?.toString(),
+      ),
+      contactCategories: fd
+        .getAll("contactCategory")
+        .map((v) => v.toString()),
+      contactConsentText: emptyToNull(fd.get("contactConsentText")?.toString()),
+      contactSuccessMessage: emptyToNull(
+        fd.get("contactSuccessMessage")?.toString(),
+      ),
+      contactPublicEmail: emptyToNull(fd.get("contactPublicEmail")?.toString()),
+      contactShowEmailOnPage: parseCheckbox(fd, "contactShowEmailOnPage"),
     }),
     adminSiteSettingsSchema,
   );
@@ -41,6 +59,7 @@ export const saveSiteSettingsAction = action(async (formData: FormData) => {
   try {
     await adminSiteApi.updateSettings(parsed.data);
     revalidate(getPublicSite.key);
+    revalidate(getPublicContactConfig.key);
     revalidate(getPublicHome.key);
     revalidate(getPublicResearchThemes.key);
     revalidate(getPublicAchievements.key);

@@ -2,6 +2,7 @@ import { useSubmission } from "@solidjs/router";
 import { Title } from "@solidjs/meta";
 import { createEffect, createSignal, For, onMount, Show } from "solid-js";
 import AdminPageHeader from "~/components/admin/AdminPageHeader";
+import ContactCategoriesEditor from "~/components/admin/site/ContactCategoriesEditor";
 import MediaPicker from "~/components/admin/media/MediaPicker";
 import type { MediaPickerSelection } from "~/components/admin/media/media-picker.types";
 import { adminPagesApi } from "~/lib/api/endpoints/admin/pages.api";
@@ -47,6 +48,18 @@ export default function AdminSiteSettings() {
   const [writingHubIntro, setWritingHubIntro] = createSignal("");
   const [achievementsHubIntro, setAchievementsHubIntro] = createSignal("");
   const [experienceHubIntro, setExperienceHubIntro] = createSignal("");
+  const [contactFormEnabled, setContactFormEnabled] = createSignal(true);
+  const [contactPageIntro, setContactPageIntro] = createSignal("");
+  const [contactCollaborationGuidance, setContactCollaborationGuidance] =
+    createSignal("");
+  const [contactResponseTimeNote, setContactResponseTimeNote] =
+    createSignal("");
+  const [contactCategories, setContactCategories] = createSignal<string[]>([]);
+  const [contactConsentText, setContactConsentText] = createSignal("");
+  const [contactSuccessMessage, setContactSuccessMessage] = createSignal("");
+  const [contactPublicEmail, setContactPublicEmail] = createSignal("");
+  const [contactShowEmailOnPage, setContactShowEmailOnPage] =
+    createSignal(false);
   const [faviconUrl, setFaviconUrl] = createSignal("");
   const [faviconMediaId, setFaviconMediaId] = createSignal<string | null>(null);
   const [faviconPickerOpen, setFaviconPickerOpen] = createSignal(false);
@@ -110,6 +123,21 @@ export default function AdminSiteSettings() {
       setWritingHubIntro(settings.writingHubIntro ?? "");
       setAchievementsHubIntro(settings.achievementsHubIntro ?? "");
       setExperienceHubIntro(settings.experienceHubIntro ?? "");
+      setContactFormEnabled(settings.contactFormEnabled);
+      setContactPageIntro(settings.contactPageIntro ?? "");
+      setContactCollaborationGuidance(
+        settings.contactCollaborationGuidance ?? "",
+      );
+      setContactResponseTimeNote(settings.contactResponseTimeNote ?? "");
+      setContactCategories(
+        settings.contactCategories?.length
+          ? [...settings.contactCategories]
+          : [],
+      );
+      setContactConsentText(settings.contactConsentText ?? "");
+      setContactSuccessMessage(settings.contactSuccessMessage ?? "");
+      setContactPublicEmail(settings.contactPublicEmail ?? "");
+      setContactShowEmailOnPage(settings.contactShowEmailOnPage);
       setFaviconUrl(settings.faviconUrl ?? "");
       setFaviconMediaId(settings.faviconMediaId ?? null);
       setNavItems(nav);
@@ -259,6 +287,118 @@ export default function AdminSiteSettings() {
               onInput={(e) => setExperienceHubIntro(e.currentTarget.value)}
             />
           </FormField>
+
+          <div class="border-t border-border pt-6">
+            <h3 class="text-base font-semibold text-ink">Contact page (P16)</h3>
+            <p class="mt-1 text-sm text-ink-muted">
+              Copy and form options for the public{" "}
+              <span class="font-mono text-xs">/contact</span> page.
+            </p>
+          </div>
+          <FormField label="Enable contact form" name="contactFormEnabled">
+            <label class="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="contactFormEnabled"
+                checked={contactFormEnabled()}
+                onChange={(e) => setContactFormEnabled(e.currentTarget.checked)}
+              />
+              Show inquiry form (when off, channels-only page)
+            </label>
+          </FormField>
+          <FormField
+            label="Contact page intro"
+            name="contactPageIntro"
+            error={settingsErrors().contactPageIntro}
+          >
+            <FormTextarea
+              name="contactPageIntro"
+              rows={4}
+              value={contactPageIntro()}
+              onInput={(e) => setContactPageIntro(e.currentTarget.value)}
+            />
+          </FormField>
+          <FormField
+            label="Collaboration guidance"
+            name="contactCollaborationGuidance"
+          >
+            <FormTextarea
+              name="contactCollaborationGuidance"
+              rows={3}
+              value={contactCollaborationGuidance()}
+              onInput={(e) =>
+                setContactCollaborationGuidance(e.currentTarget.value)
+              }
+            />
+          </FormField>
+          <FormField
+            label="Response time note"
+            name="contactResponseTimeNote"
+          >
+            <FormTextarea
+              name="contactResponseTimeNote"
+              rows={2}
+              value={contactResponseTimeNote()}
+              onInput={(e) => setContactResponseTimeNote(e.currentTarget.value)}
+            />
+          </FormField>
+          <FormField
+            label="Inquiry categories"
+            name="contactCategories"
+            error={settingsErrors().contactCategories}
+          >
+            <ContactCategoriesEditor
+              categories={contactCategories()}
+              onChange={setContactCategories}
+              onDirty={() => {
+                setDirty(true);
+                setSettingsSaved(false);
+              }}
+            />
+          </FormField>
+          <FormField label="Consent text" name="contactConsentText">
+            <FormTextarea
+              name="contactConsentText"
+              rows={3}
+              value={contactConsentText()}
+              onInput={(e) => setContactConsentText(e.currentTarget.value)}
+              hint="When set, submitters must accept this before sending."
+            />
+          </FormField>
+          <FormField label="Success message" name="contactSuccessMessage">
+            <FormTextarea
+              name="contactSuccessMessage"
+              rows={2}
+              value={contactSuccessMessage()}
+              onInput={(e) => setContactSuccessMessage(e.currentTarget.value)}
+            />
+          </FormField>
+          <FormField
+            label="Public contact email"
+            name="contactPublicEmail"
+            error={settingsErrors().contactPublicEmail}
+          >
+            <FormTextInput
+              name="contactPublicEmail"
+              type="email"
+              value={contactPublicEmail()}
+              onInput={(e) => setContactPublicEmail(e.currentTarget.value)}
+            />
+          </FormField>
+          <FormField label="Show email on page" name="contactShowEmailOnPage">
+            <label class="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="contactShowEmailOnPage"
+                checked={contactShowEmailOnPage()}
+                onChange={(e) =>
+                  setContactShowEmailOnPage(e.currentTarget.checked)
+                }
+              />
+              Display mailto link on /contact (spam tradeoff)
+            </label>
+          </FormField>
+
           <FormField label="Favicon" name="favicon">
             <div class="space-y-3">
               <Show when={faviconUrl()}>

@@ -1,38 +1,47 @@
-import { useNavigate } from "@solidjs/router";
+import { useNavigate, useSearchParams } from "@solidjs/router";
 import { Title } from "@solidjs/meta";
-import { createResource, createSignal, For, Show } from "solid-js";
+import {
+  createEffect,
+  createResource,
+  createSignal,
+  For,
+  Show,
+} from "solid-js";
 import AdminPageHeader from "~/components/admin/AdminPageHeader";
 import MessageStatusBadge from "~/components/admin/messages/MessageStatusBadge";
 import EmptyState from "~/components/EmptyState";
+import FormErrorAlert from "~/components/forms/FormErrorAlert";
 import ResourceRequest from "~/components/ResourceRequest";
-import {
-  adminMessagesApi,
-  type ListMessagesParams,
-} from "~/lib/api/endpoints/admin/messages.api";
+import { adminMessagesApi } from "~/lib/api/endpoints/admin/messages.api";
+import { getApiErrorMessage } from "~/lib/api/errors";
 import type { ContactMessageListItem } from "~/lib/api/types/contact.types";
+import {
+  applyMessageListFilters,
+  messageListFolder,
+  messageListSearchParamsToApi,
+  parseMessageListSearchParams,
+  setMessageListFolder,
+  setMessageListPage,
+  type MessageListFolder,
+} from "~/lib/messages/message-list-search-params";
 import { ChevronRight } from "~/icons";
-
-type InboxView = "inbox" | "spam" | "archived";
 
 function formatSubmitted(iso: string): string {
   const d = new Date(iso);
   return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
 }
 
-function viewToStatus(view: InboxView): ListMessagesParams["status"] | undefined {
-  if (view === "spam") return "spam";
-  if (view === "archived") return "archived";
-  return undefined;
-}
-
-function emptyCopy(view: InboxView): { title: string; description: string } {
-  if (view === "spam") {
+function emptyCopy(folder: MessageListFolder): {
+  title: string;
+  description: string;
+} {
+  if (folder === "spam") {
     return {
       title: "No spam",
       description: "Messages marked as spam appear here.",
     };
   }
-  if (view === "archived") {
+  if (folder === "archived") {
     return {
       title: "No archived messages",
       description: "Archived inquiries are stored here for reference.",
@@ -45,39 +54,52 @@ function emptyCopy(view: InboxView): { title: string; description: string } {
   };
 }
 
+function isReadSelectValue(isRead?: "true" | "false"): string {
+  if (isRead === "true") return "read";
+  if (isRead === "false") return "unread";
+  return "";
+}
+
 export default function AdminMessagesList() {
   const navigate = useNavigate();
-  const [view, setView] = createSignal<InboxView>("inbox");
-  const [page, setPage] = createSignal(1);
-  const [q, setQ] = createSignal("");
-  const [appliedQ, setAppliedQ] = createSignal("");
-  const [isReadFilter, setIsReadFilter] = createSignal("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const parsed = () =>
+    parseMessageListSearchParams(searchParams as Record<string, string>);
+  const folder = () => messageListFolder(parsed());
+
+  const [draftQ, setDraftQ] = createSignal("");
+  const [draftCategory, setDraftCategory] = createSignal("");
+  const [draftFrom, setDraftFrom] = createSignal("");
+  const [draftTo, setDraftTo] = createSignal("");
+  const [draftIsRead, setDraftIsRead] = createSignal("");
+  const [selected, setSelected] = createSignal<Set<string>>(new Set());
+  const [bulkError, setBulkError] = createSignal<string | null>(null);
+  const [bulkBusy, setBulkBusy] = createSignal(false);
+
+  createEffect(() => {
+    const p = parsed();
+    setDraftQ(p.q ?? "");
+    setDraftCategory(p.category ?? "");
+    setDraftFrom(p.from ?? "");
+    setDraftTo(p.to ?? "");
+    setDraftIsRead(isReadSelectValue(p.isRead));
+    setSelected(new Set());
+  });
 
   const messagesResource = createResource(
-    () => ({
-      status: viewToStatus(view()),
-      isRead:
-        isReadFilter() === "read"
-          ? true
-          : isReadFilter() === "unread"
-            ? false
-            : undefined,
-      q: appliedQ() || undefined,
-      page: page(),
-      limit: 24,
-    }),
+    () => messageListSearchParamsToApi(parsed()),
     (params) => adminMessagesApi.list(params),
   );
 
   function applyFilters(e: Event) {
     e.preventDefault();
-    setAppliedQ(q().trim());
-    setPage(1);
-  }
-
-  function switchView(next: InboxView) {
-    setView(next);
-    setPage(1);
+    applyMessageListFilters(setSearchParams, {
+      q: draftQ(),
+      category: draftCategory(),
+      from: draftFrom(),
+      to: draftTo(),
+      isRead: draftIsRead(),
+    });
   }
 
   const tabClass = (active: boolean) =>
@@ -87,6 +109,127 @@ export default function AdminMessagesList() {
         ? "bg-secondary-container text-on-secondary-container"
         : "text-ink-muted hover:bg-surface-container-lowest",
     ].join(" ");
+
+  const bulkEnabled = () => folder() !== "spam";
+
+  function toggleRow(id: string, checked: boolean) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  }
+
+  function toggleAllOnPage(items: ContactMessageListItem[], checked: boolean) {
+    if (!checked) {
+      setSelected(new Set());
+      return;
+    }
+    setSelected(new Set(items.map((row) => row.id)));
+  }
+
+  async function runBulk(
+    patch: { isRead?: boolean; status?: "archived" },
+  ) {
+    const ids = [...selected()];
+    if (ids.length === 0) return;
+    setBulkError(null);
+    setBulkBusy(true);
+    try {
+      await adminMessagesApi.bulkUpdate({ ids, patch });
+      setSelected(new Set());
+      void messagesResource[1].refetch();
+    } catch (error) {
+      setBulkError(getApiErrorMessage(error));
+    } finally {
+      setBulkBusy(false);
+    }
+  }
+
+  const tabs = (currentFolder: MessageListFolder) => (
+    <div class="mt-6 flex flex-wrap gap-2">
+      <button
+        type="button"
+        class={tabClass(currentFolder === "inbox")}
+        onClick={() => setMessageListFolder(setSearchParams, "inbox")}
+      >
+        Inbox
+      </button>
+      <button
+        type="button"
+        class={tabClass(currentFolder === "spam")}
+        onClick={() => setMessageListFolder(setSearchParams, "spam")}
+      >
+        Spam
+      </button>
+      <button
+        type="button"
+        class={tabClass(currentFolder === "archived")}
+        onClick={() => setMessageListFolder(setSearchParams, "archived")}
+      >
+        Archived
+      </button>
+    </div>
+  );
+
+  const filterForm = (
+    <form
+      class="mt-6 flex flex-wrap items-end gap-3"
+      onSubmit={applyFilters}
+    >
+      <label class="flex flex-col gap-1 text-sm text-ink-muted">
+        Search
+        <input
+          type="search"
+          class="siam-input min-w-[12rem] text-ink"
+          placeholder="Name, email, or message"
+          value={draftQ()}
+          onInput={(e) => setDraftQ(e.currentTarget.value)}
+        />
+      </label>
+      <label class="flex flex-col gap-1 text-sm text-ink-muted">
+        Category
+        <input
+          type="text"
+          class="siam-input min-w-[8rem] text-ink"
+          value={draftCategory()}
+          onInput={(e) => setDraftCategory(e.currentTarget.value)}
+        />
+      </label>
+      <label class="flex flex-col gap-1 text-sm text-ink-muted">
+        From
+        <input
+          type="date"
+          class="siam-input text-ink"
+          value={draftFrom()}
+          onInput={(e) => setDraftFrom(e.currentTarget.value)}
+        />
+      </label>
+      <label class="flex flex-col gap-1 text-sm text-ink-muted">
+        To
+        <input
+          type="date"
+          class="siam-input text-ink"
+          value={draftTo()}
+          onInput={(e) => setDraftTo(e.currentTarget.value)}
+        />
+      </label>
+      <label class="flex flex-col gap-1 text-sm text-ink-muted">
+        Read state
+        <select
+          class="siam-input text-ink"
+          value={draftIsRead()}
+          onChange={(e) => setDraftIsRead(e.currentTarget.value)}
+        >
+          <option value="">All</option>
+          <option value="unread">Unread</option>
+          <option value="read">Read</option>
+        </select>
+      </label>
+      <button type="submit" class="siam-btn-secondary">Apply</button>
+    </form>
+  );
 
   return (
     <ResourceRequest
@@ -99,21 +242,12 @@ export default function AdminMessagesList() {
             title="Messages"
             description="Contact inbox (A11). Triage inquiries from the public contact form."
           />
-          <div class="mt-6 flex flex-wrap gap-2">
-            <button type="button" class={tabClass(view() === "inbox")} onClick={() => switchView("inbox")}>
-              Inbox
-            </button>
-            <button type="button" class={tabClass(view() === "spam")} onClick={() => switchView("spam")}>
-              Spam
-            </button>
-            <button type="button" class={tabClass(view() === "archived")} onClick={() => switchView("archived")}>
-              Archived
-            </button>
-          </div>
+          {tabs(folder())}
+          {filterForm}
           <EmptyState
             variant="list"
-            title={emptyCopy(view()).title}
-            description={emptyCopy(view()).description}
+            title={emptyCopy(folder()).title}
+            description={emptyCopy(folder()).description}
           />
         </div>
       }
@@ -126,54 +260,53 @@ export default function AdminMessagesList() {
             description="Contact inbox (A11). Triage inquiries from the public contact form."
           />
 
-          <div class="mt-6 flex flex-wrap gap-2">
-            <button type="button" class={tabClass(view() === "inbox")} onClick={() => switchView("inbox")}>
-              Inbox
-            </button>
-            <button type="button" class={tabClass(view() === "spam")} onClick={() => switchView("spam")}>
-              Spam
-            </button>
-            <button type="button" class={tabClass(view() === "archived")} onClick={() => switchView("archived")}>
-              Archived
-            </button>
-          </div>
+          {tabs(folder())}
+          {filterForm}
 
-          <form
-            class="mt-6 flex flex-wrap items-end gap-3"
-            onSubmit={applyFilters}
-          >
-            <label class="flex flex-col gap-1 text-sm text-ink-muted">
-              Search
-              <input
-                type="search"
-                class="siam-input min-w-[12rem] text-ink"
-                placeholder="Name or email"
-                value={q()}
-                onInput={(e) => setQ(e.currentTarget.value)}
-              />
-            </label>
-            <label class="flex flex-col gap-1 text-sm text-ink-muted">
-              Read state
-              <select
-                class="siam-input text-ink"
-                value={isReadFilter()}
-                onChange={(e) => {
-                  setIsReadFilter(e.currentTarget.value);
-                  setPage(1);
-                }}
+          <Show when={bulkEnabled() && selected().size > 0}>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
+              <span class="text-sm text-ink-muted">
+                {selected().size} selected
+              </span>
+              <button
+                type="button"
+                class="siam-btn-secondary text-sm"
+                disabled={bulkBusy()}
+                onClick={() => runBulk({ isRead: true })}
               >
-                <option value="">All</option>
-                <option value="unread">Unread</option>
-                <option value="read">Read</option>
-              </select>
-            </label>
-            <button type="submit" class="siam-btn-secondary">Apply</button>
-          </form>
+                Mark read
+              </button>
+              <button
+                type="button"
+                class="siam-btn-secondary text-sm"
+                disabled={bulkBusy()}
+                onClick={() => runBulk({ status: "archived" })}
+              >
+                Archive
+              </button>
+            </div>
+          </Show>
+          <FormErrorAlert message={bulkError()} />
 
           <div class="mt-6 overflow-x-auto">
-            <table class="w-full min-w-[40rem] border-collapse text-left text-sm">
+            <table class="w-full min-w-[44rem] border-collapse text-left text-sm">
               <thead>
                 <tr class="border-b border-border text-ink-muted">
+                  <Show when={bulkEnabled()}>
+                    <th class="w-10 py-2 pr-2 font-medium">
+                      <input
+                        type="checkbox"
+                        aria-label="Select all on page"
+                        checked={
+                          data.items.length > 0 &&
+                          data.items.every((row) => selected().has(row.id))
+                        }
+                        onChange={(e) =>
+                          toggleAllOnPage(data.items, e.currentTarget.checked)
+                        }
+                      />
+                    </th>
+                  </Show>
                   <th class="py-2 pr-4 font-medium">Sender</th>
                   <th class="py-2 pr-4 font-medium">Email</th>
                   <th class="py-2 pr-4 font-medium">Category</th>
@@ -186,19 +319,34 @@ export default function AdminMessagesList() {
                 <For each={data.items}>
                   {(row: ContactMessageListItem) => (
                     <tr
-                      class="cursor-pointer border-b border-border transition-colors hover:bg-surface-container-lowest"
-                      tabIndex={0}
-                      role="link"
-                      aria-label={`View message from ${row.senderName}`}
-                      onClick={() => navigate(`/admin/messages/${row.id}`)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          navigate(`/admin/messages/${row.id}`);
-                        }
-                      }}
+                      class="border-b border-border transition-colors hover:bg-surface-container-lowest"
                     >
-                      <td class="py-3 pr-4 font-medium text-ink">
+                      <Show when={bulkEnabled()}>
+                        <td class="py-3 pr-2">
+                          <input
+                            type="checkbox"
+                            aria-label={`Select message from ${row.senderName}`}
+                            checked={selected().has(row.id)}
+                            onClick={(e) => e.stopPropagation()}
+                            onChange={(e) =>
+                              toggleRow(row.id, e.currentTarget.checked)
+                            }
+                          />
+                        </td>
+                      </Show>
+                      <td
+                        class="cursor-pointer py-3 pr-4 font-medium text-ink"
+                        tabIndex={0}
+                        role="link"
+                        aria-label={`View message from ${row.senderName}`}
+                        onClick={() => navigate(`/admin/messages/${row.id}`)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault();
+                            navigate(`/admin/messages/${row.id}`);
+                          }
+                        }}
+                      >
                         <span class="inline-flex items-center gap-2">
                           <Show when={!row.isRead}>
                             <span
@@ -209,18 +357,39 @@ export default function AdminMessagesList() {
                           {row.senderName}
                         </span>
                       </td>
-                      <td class="py-3 pr-4 text-ink-muted">{row.senderEmail}</td>
-                      <td class="py-3 pr-4 text-ink-muted">
+                      <td
+                        class="cursor-pointer py-3 pr-4 text-ink-muted"
+                        onClick={() => navigate(`/admin/messages/${row.id}`)}
+                      >
+                        {row.senderEmail}
+                      </td>
+                      <td
+                        class="cursor-pointer py-3 pr-4 text-ink-muted"
+                        onClick={() => navigate(`/admin/messages/${row.id}`)}
+                      >
                         {row.category ?? "—"}
                       </td>
-                      <td class="py-3 pr-4 text-ink-muted">
+                      <td
+                        class="cursor-pointer py-3 pr-4 text-ink-muted"
+                        onClick={() => navigate(`/admin/messages/${row.id}`)}
+                      >
                         {formatSubmitted(row.submittedAt)}
                       </td>
-                      <td class="py-3 pr-4">
+                      <td
+                        class="cursor-pointer py-3 pr-4"
+                        onClick={() => navigate(`/admin/messages/${row.id}`)}
+                      >
                         <MessageStatusBadge status={row.status} />
                       </td>
                       <td class="py-3 text-ink-muted">
-                        <ChevronRight class="size-4" aria-hidden="true" />
+                        <button
+                          type="button"
+                          class="text-ink-muted"
+                          aria-label={`View message from ${row.senderName}`}
+                          onClick={() => navigate(`/admin/messages/${row.id}`)}
+                        >
+                          <ChevronRight class="size-4" aria-hidden="true" />
+                        </button>
                       </td>
                     </tr>
                   )}
@@ -240,7 +409,9 @@ export default function AdminMessagesList() {
                   type="button"
                   class="siam-btn-secondary"
                   disabled={data.meta.page <= 1}
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  onClick={() =>
+                    setMessageListPage(setSearchParams, data.meta.page - 1)
+                  }
                 >
                   Previous
                 </button>
@@ -248,7 +419,9 @@ export default function AdminMessagesList() {
                   type="button"
                   class="siam-btn-secondary"
                   disabled={data.meta.page >= data.meta.totalPages}
-                  onClick={() => setPage((p) => p + 1)}
+                  onClick={() =>
+                    setMessageListPage(setSearchParams, data.meta.page + 1)
+                  }
                 >
                   Next
                 </button>
