@@ -53,6 +53,16 @@ describe("isAdminNavActive", () => {
     expect(isAdminNavActive("/admin/projects", writing)).toBe(false);
   });
 
+  it("matches achievements section and nested editor routes", () => {
+    const achievements = itemById("achievements");
+    expect(isAdminNavActive("/admin/achievements", achievements)).toBe(true);
+    expect(isAdminNavActive("/admin/achievements/abc", achievements)).toBe(true);
+    expect(isAdminNavActive("/admin/achievements/abc/edit", achievements)).toBe(
+      true,
+    );
+    expect(isAdminNavActive("/admin/writing", achievements)).toBe(false);
+  });
+
   it("does not match comingSoon items", () => {
     const home = itemById("home");
     expect(isAdminNavActive("/admin/home", home)).toBe(false);
@@ -84,6 +94,7 @@ describe("ADMIN_NAV_SECTIONS", () => {
   it("exposes active implemented routes", () => {
     const active = getActiveAdminNavItems();
     expect(active.map((i) => i.id).sort()).toEqual([
+      "achievements",
       "dashboard",
       "media",
       "pages",

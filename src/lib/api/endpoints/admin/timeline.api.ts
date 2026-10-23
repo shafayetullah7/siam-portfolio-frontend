@@ -3,6 +3,7 @@ import type { Paginated } from "../../types";
 import type {
   TimelineAdminDetail,
   TimelineAdminSummary,
+  TimelineReplaceMediaBody,
   TimelineWriteBody,
 } from "../../types/timeline.types";
 
@@ -27,4 +28,7 @@ export const adminTimelineApi = {
 
   update: (id: string, body: Partial<TimelineWriteBody>) =>
     adminClient.patch<TimelineAdminDetail>(`/timeline/${id}`, body),
+
+  replaceMedia: (id: string, body: TimelineReplaceMediaBody) =>
+    adminClient.put<TimelineAdminDetail>(`/timeline/${id}/media`, body),
 };

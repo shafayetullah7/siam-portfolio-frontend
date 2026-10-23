@@ -122,7 +122,7 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
         id: "achievements",
         label: "Achievements & timeline",
         href: "/admin/achievements",
-        status: "comingSoon",
+        status: "active",
         requirement: "A07",
       },
       {

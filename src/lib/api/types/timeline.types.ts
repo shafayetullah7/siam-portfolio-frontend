@@ -37,8 +37,18 @@ export type TimelinePublicCard = {
   endDate: string | null;
   isOngoing: boolean;
   featured: boolean;
+  proofUrl: string | null;
   images: TimelinePublicImage[];
   href?: string;
+};
+
+export type TimelinePublicSection = {
+  kind: TimelineEntryKind;
+  items: TimelinePublicCard[];
+};
+
+export type TimelinePublicGroupedList = {
+  sections: TimelinePublicSection[];
 };
 
 export type TimelinePublicDetail = TimelinePublicCard & {
@@ -73,6 +83,17 @@ export type TimelineMediaLinkAdmin = {
   imageRole: TimelineImageRole | null;
   url?: string;
   alt?: string | null;
+};
+
+export type TimelineReplaceMediaItem = {
+  mediaId: string;
+  sortOrder: number;
+  caption?: string | null;
+  imageRole?: TimelineImageRole | null;
+};
+
+export type TimelineReplaceMediaBody = {
+  items: TimelineReplaceMediaItem[];
 };
 
 export type TimelineAdminSummary = {
