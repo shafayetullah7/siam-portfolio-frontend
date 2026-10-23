@@ -35,6 +35,7 @@ export interface SiteSettingsAdmin {
   projectsHubIntro: string | null;
   writingHubIntro: string | null;
   achievementsHubIntro: string | null;
+  experienceHubIntro: string | null;
   faviconUrl: string | null;
   faviconMediaId: string | null;
   createdAt: string;

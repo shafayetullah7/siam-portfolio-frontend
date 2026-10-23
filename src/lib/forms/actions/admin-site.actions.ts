@@ -2,6 +2,7 @@ import { action, revalidate } from "@solidjs/router";
 import { adminSiteApi } from "~/lib/api/endpoints/admin/site.api";
 import {
   getPublicAchievements,
+  getPublicExperience,
   getPublicHome,
   getPublicResearchThemes,
   getPublicSite,
@@ -27,6 +28,9 @@ export const saveSiteSettingsAction = action(async (formData: FormData) => {
       achievementsHubIntro: emptyToNull(
         fd.get("achievementsHubIntro")?.toString(),
       ),
+      experienceHubIntro: emptyToNull(
+        fd.get("experienceHubIntro")?.toString(),
+      ),
       faviconUrl: emptyToNull(fd.get("faviconUrl")?.toString()),
       faviconMediaId: emptyToNull(fd.get("faviconMediaId")?.toString()),
     }),
@@ -40,6 +44,7 @@ export const saveSiteSettingsAction = action(async (formData: FormData) => {
     revalidate(getPublicHome.key);
     revalidate(getPublicResearchThemes.key);
     revalidate(getPublicAchievements.key);
+    revalidate(getPublicExperience.key);
     return formSuccess();
   } catch (error) {
     return mapAdminMutationErrorToResult(error);

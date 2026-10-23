@@ -7,7 +7,10 @@ import {
 } from "~/lib/timeline/format-timeline-dates";
 import { clearIncompatibleTimelineFields } from "~/lib/timeline/timeline-kind-fields";
 import { fieldFlagsForKind } from "~/lib/timeline/timeline-kind-fields";
-import { ALL_TIMELINE_KINDS } from "~/lib/timeline/timeline-kind-groups";
+import {
+  ALL_TIMELINE_KINDS,
+  isAchievementKind,
+} from "~/lib/timeline/timeline-kind-groups";
 import { timelineKindLabel } from "~/lib/timeline/timeline-kind-labels";
 import TimelineRelatedWorkFields from "./TimelineRelatedWorkFields";
 
@@ -266,14 +269,22 @@ export default function TimelineEntryForm(props: TimelineEntryFormProps) {
             }
           />
         </label>
-        <label class="flex items-center gap-2 text-sm pt-6">
-          <input
-            type="checkbox"
-            checked={props.draft.featured ?? false}
-            onChange={(e) => patch({ featured: e.currentTarget.checked })}
-          />
-          <span>Featured on achievements overview</span>
-        </label>
+        <Show when={isAchievementKind(props.draft.kind)}>
+          <label class="flex flex-col gap-1 text-sm pt-6">
+            <span class="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={props.draft.featured ?? false}
+                onChange={(e) => patch({ featured: e.currentTarget.checked })}
+              />
+              <span>Featured on achievements overview</span>
+            </span>
+            <span class="text-xs text-ink-muted">
+              Up to 3 published achievements can appear in the featured band on
+              /achievements.
+            </span>
+          </label>
+        </Show>
       </div>
 
       <label class="flex items-center gap-2 text-sm">

@@ -16,7 +16,12 @@ export type ListTimelineParams = {
   kinds?: string[];
   page?: number;
   limit?: number;
-  sort?: "startDateDesc" | "updatedAtDesc" | "titleAsc";
+  sort?: "startDateDesc" | "updatedAtDesc" | "titleAsc" | "sortOrderAsc";
+};
+
+export type ReorderTimelineBody = {
+  items: { id: string; sortOrder: number }[];
+  kinds?: string[];
 };
 
 export const adminTimelineApi = {
@@ -51,4 +56,7 @@ export const adminTimelineApi = {
 
   schedule: (id: string, body: { scheduledAt: string }) =>
     adminClient.post<TimelineAdminDetail>(`/timeline/${id}/schedule`, body),
+
+  reorder: (body: ReorderTimelineBody) =>
+    adminClient.post<{ ok: boolean }>("/timeline/reorder", body),
 };

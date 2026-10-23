@@ -1,7 +1,14 @@
 import { A, createAsync, type RouteDefinition } from "@solidjs/router";
 import { Title, Meta } from "@solidjs/meta";
+import { Show } from "solid-js";
 import { PUBLIC_PAGE_WIDE } from "~/components/layout/publicPageWidth";
-import { getPublicAbout, getPublicSite } from "~/lib/api/queries/public";
+import ExperienceTimelineSection from "~/components/timeline/ExperienceTimelineSection";
+import {
+  getPublicAbout,
+  getPublicExperience,
+  getPublicSite,
+} from "~/lib/api/queries/public";
+import { DEFAULT_EXPERIENCE_HUB_INTRO } from "~/lib/timeline/default-experience-hub-intro";
 import {
   ABOUT_CONTACT_SECTION_ID,
   SCROLL_MT_BELOW_PUBLIC_HEADER,
@@ -12,12 +19,23 @@ export const route = {
   preload: () => {
     void getPublicSite();
     void getPublicAbout();
+    void getPublicExperience({ sort: "sortOrderAsc" });
   },
 } satisfies RouteDefinition;
 
 export default function About() {
   const site = createAsync(() => getPublicSite(), { deferStream: true });
   const about = createAsync(() => getPublicAbout(), { deferStream: true });
+  const experience = createAsync(
+    () => getPublicExperience({ sort: "sortOrderAsc" }),
+    { deferStream: true },
+  );
+
+  const experienceIntro = () => {
+    const data = experience();
+    if (data?.intro?.trim()) return data.intro.trim();
+    return DEFAULT_EXPERIENCE_HUB_INTRO;
+  };
 
   const pageMeta = () => {
     const s = site();
@@ -48,6 +66,14 @@ export default function About() {
       {about()?.affiliation && (
         <p class="mt-4 text-sm text-ink-muted">{about()!.affiliation}</p>
       )}
+      <Show when={experience()}>
+        {(hub) => (
+          <ExperienceTimelineSection
+            sections={hub().sections}
+            intro={experienceIntro()}
+          />
+        )}
+      </Show>
       <section
         id={ABOUT_CONTACT_SECTION_ID}
         class={`mt-12 border-t border-border pt-10 ${SCROLL_MT_BELOW_PUBLIC_HEADER}`}

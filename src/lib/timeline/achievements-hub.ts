@@ -15,6 +15,10 @@ export function countAchievementItems(sections: TimelinePublicSection[]): number
   return flattenSections(sections).length;
 }
 
+export function countExperienceItems(sections: TimelinePublicSection[]): number {
+  return countAchievementItems(sections);
+}
+
 export function sectionsWithoutFeaturedIds(
   sections: TimelinePublicSection[],
   featuredIds: Set<string>,

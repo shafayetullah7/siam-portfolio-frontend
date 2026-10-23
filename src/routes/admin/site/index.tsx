@@ -46,6 +46,7 @@ export default function AdminSiteSettings() {
   const [projectsHubIntro, setProjectsHubIntro] = createSignal("");
   const [writingHubIntro, setWritingHubIntro] = createSignal("");
   const [achievementsHubIntro, setAchievementsHubIntro] = createSignal("");
+  const [experienceHubIntro, setExperienceHubIntro] = createSignal("");
   const [faviconUrl, setFaviconUrl] = createSignal("");
   const [faviconMediaId, setFaviconMediaId] = createSignal<string | null>(null);
   const [faviconPickerOpen, setFaviconPickerOpen] = createSignal(false);
@@ -108,6 +109,7 @@ export default function AdminSiteSettings() {
       setProjectsHubIntro(settings.projectsHubIntro ?? "");
       setWritingHubIntro(settings.writingHubIntro ?? "");
       setAchievementsHubIntro(settings.achievementsHubIntro ?? "");
+      setExperienceHubIntro(settings.experienceHubIntro ?? "");
       setFaviconUrl(settings.faviconUrl ?? "");
       setFaviconMediaId(settings.faviconMediaId ?? null);
       setNavItems(nav);
@@ -243,6 +245,18 @@ export default function AdminSiteSettings() {
               rows={4}
               value={achievementsHubIntro()}
               onInput={(e) => setAchievementsHubIntro(e.currentTarget.value)}
+            />
+          </FormField>
+          <FormField
+            label="Experience hub intro"
+            name="experienceHubIntro"
+            hint="Shown in the education & experience block on /about when set."
+          >
+            <FormTextarea
+              name="experienceHubIntro"
+              rows={4}
+              value={experienceHubIntro()}
+              onInput={(e) => setExperienceHubIntro(e.currentTarget.value)}
             />
           </FormField>
           <FormField label="Favicon" name="favicon">

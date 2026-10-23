@@ -17,3 +17,4 @@ export {
   getPublicAchievements,
   getPublicAchievementBySlug,
 } from "./achievements.queries";
+export { getPublicExperience } from "./experience.queries";

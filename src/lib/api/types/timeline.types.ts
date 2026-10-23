@@ -43,6 +43,8 @@ export type TimelinePublicCard = {
   images: TimelinePublicImage[];
   href?: string;
   expiresAt?: string | null;
+  summary?: string | null;
+  isCurrent?: boolean | null;
 };
 
 export type TimelinePublicSection = {

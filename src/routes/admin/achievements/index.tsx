@@ -29,8 +29,14 @@ export default function AdminAchievementsList() {
   const [appliedQ, setAppliedQ] = createSignal("");
   const [publishStatus, setPublishStatus] = createSignal("");
   const [sort, setSort] = createSignal<
-    "updatedAtDesc" | "startDateDesc" | "titleAsc"
+    "updatedAtDesc" | "startDateDesc" | "titleAsc" | "sortOrderAsc"
   >("updatedAtDesc");
+  const [reorderError, setReorderError] = createSignal<string | null>(null);
+
+  const tabKinds = () =>
+    tab() === "achievements" ? [...ACHIEVEMENT_KINDS] : [...EXPERIENCE_KINDS];
+
+  const isManualOrder = () => sort() === "sortOrderAsc";
 
   const listResource = createResource(
     () => ({
@@ -49,9 +55,31 @@ export default function AdminAchievementsList() {
         publishStatus: params.publishStatus,
         sort: params.sort,
         page: 1,
-        limit: 24,
+        limit: params.sort === "sortOrderAsc" ? 100 : 24,
       }),
   );
+
+  async function moveRow(index: number, direction: -1 | 1) {
+    const data = listResource[0]();
+    if (!data) return;
+    const target = index + direction;
+    if (target < 0 || target >= data.items.length) return;
+    setReorderError(null);
+    const items = [...data.items];
+    const [removed] = items.splice(index, 1);
+    items.splice(target, 0, removed);
+    try {
+      await adminTimelineApi.reorder({
+        items: items.map((row, i) => ({ id: row.id, sortOrder: i })),
+        kinds: tabKinds(),
+      });
+      await listResource[1].refetch();
+    } catch (e) {
+      setReorderError(
+        e instanceof Error ? e.message : "Could not save order. Try again.",
+      );
+    }
+  }
 
   function applyFilters(e: Event) {
     e.preventDefault();
@@ -133,17 +161,23 @@ export default function AdminAchievementsList() {
                 e.currentTarget.value as
                   | "updatedAtDesc"
                   | "startDateDesc"
-                  | "titleAsc",
+                  | "titleAsc"
+                  | "sortOrderAsc",
               )
             }
           >
             <option value="updatedAtDesc">Recently updated</option>
             <option value="startDateDesc">Start date</option>
             <option value="titleAsc">Title</option>
+            <option value="sortOrderAsc">Manual order (sort order)</option>
           </select>
         </label>
         <button type="submit" class="siam-btn-secondary">Apply</button>
       </form>
+
+      <Show when={reorderError()}>
+        <p class="mt-4 text-sm text-error" role="alert">{reorderError()}</p>
+      </Show>
 
       <ResourceRequest
         resource={listResource}
@@ -167,11 +201,39 @@ export default function AdminAchievementsList() {
         {(data) => (
           <ul class="mt-6 divide-y divide-border rounded-lg border border-border bg-surface-container-lowest">
             <For each={data.items}>
-              {(row: TimelineAdminSummary) => (
-                <li>
+              {(row: TimelineAdminSummary, index) => (
+                <li class="flex items-stretch">
+                  <Show when={isManualOrder()}>
+                    <div class="flex flex-col justify-center gap-1 border-r border-border px-2">
+                      <button
+                        type="button"
+                        class="siam-btn-secondary px-2 py-1 text-xs"
+                        disabled={index() === 0}
+                        aria-label={`Move ${row.title} up`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void moveRow(index(), -1);
+                        }}
+                      >
+                        Up
+                      </button>
+                      <button
+                        type="button"
+                        class="siam-btn-secondary px-2 py-1 text-xs"
+                        disabled={index() === data.items.length - 1}
+                        aria-label={`Move ${row.title} down`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void moveRow(index(), 1);
+                        }}
+                      >
+                        Down
+                      </button>
+                    </div>
+                  </Show>
                   <button
                     type="button"
-                    class="flex w-full items-center gap-4 px-4 py-3 text-left hover:bg-surface-container-low"
+                    class="flex min-w-0 flex-1 items-center gap-4 px-4 py-3 text-left hover:bg-surface-container-low"
                     onClick={() => navigate(`/admin/achievements/${row.id}`)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
