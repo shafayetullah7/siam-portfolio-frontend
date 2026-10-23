@@ -96,7 +96,7 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
         id: "messages",
         label: "Messages",
         href: "/admin/messages",
-        status: "comingSoon",
+        status: "active",
         requirement: "A11",
       },
     ],

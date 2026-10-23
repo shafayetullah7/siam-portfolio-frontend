@@ -1,3 +1,4 @@
+export { getPublicContactConfig } from "./contact.queries";
 export { getPublicAbout, getPublicHome, getPublicSite } from "./site.queries";
 export {
   getPublicResearchTheme,

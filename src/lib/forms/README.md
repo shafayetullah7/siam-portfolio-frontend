@@ -31,18 +31,19 @@ Actions return [`FormActionResult`](./types.ts): `{ ok: true }` or `{ ok: false,
 | `parseFormData.ts` | `FormData` → values + `parseWithSchema` |
 | `useUnsavedChanges.ts` | `beforeunload` when dirty |
 
-## Future public contact (P16)
+## Public contact (P16 / MSG4)
 
-When `POST /public/contact` ships:
+Route: [`/contact`](../../routes/(public)/contact.tsx). Form UI: [`ContactForm`](../../components/contact/ContactForm.tsx).
 
 ```ts
-// action (client) or route handler
 const parsed = contactInquirySchema.safeParse(values);
-if (!parsed.success) return formFailure("…", mapZodErrors(parsed.error));
-await publicClient.post("/contact", parsed.data);
-return formSuccess();
+if (!parsed.success) {
+  setFieldErrors(mapZodErrors(parsed.error));
+  return;
+}
+await contactPublicApi.submit(parsed.data);
 ```
 
-Schema: [`contact-inquiry.schema.ts`](./schemas/contact-inquiry.schema.ts).
+Schema: [`contact-inquiry.schema.ts`](./schemas/contact-inquiry.schema.ts). Config: `getPublicContactConfig()` in [`contact.queries.ts`](../api/queries/public/contact.queries.ts).
 
 Spec: [api-convention.md](../../docs/api-convention.md) §10.

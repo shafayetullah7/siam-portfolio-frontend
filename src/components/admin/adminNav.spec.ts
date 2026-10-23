@@ -73,6 +73,13 @@ describe("isAdminNavActive", () => {
     expect(isAdminNavActive("/admin/media", media)).toBe(true);
     expect(isAdminNavActive("/admin/pages", media)).toBe(false);
   });
+
+  it("matches messages inbox and detail routes", () => {
+    const messages = itemById("messages");
+    expect(isAdminNavActive("/admin/messages", messages)).toBe(true);
+    expect(isAdminNavActive("/admin/messages/abc", messages)).toBe(true);
+    expect(isAdminNavActive("/admin/media", messages)).toBe(false);
+  });
 });
 
 describe("ADMIN_NAV_SECTIONS", () => {
@@ -97,6 +104,7 @@ describe("ADMIN_NAV_SECTIONS", () => {
       "achievements",
       "dashboard",
       "media",
+      "messages",
       "pages",
       "projects",
       "publications",

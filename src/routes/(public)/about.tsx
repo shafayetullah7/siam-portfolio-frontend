@@ -83,8 +83,12 @@ export default function About() {
           Contact
         </h2>
         <p class="siam-prose mt-3 max-w-prose text-ink-muted">
-          Reach out for collaborations, speaking, or student inquiries. Replace this block with
-          CMS contact details when the content packet is approved.
+          Reach out for collaborations, speaking, or student inquiries.
+        </p>
+        <p class="mt-4">
+          <A href="/contact" class="text-link font-medium no-underline hover:underline">
+            Go to the contact page
+          </A>
         </p>
       </section>
       <p class="mt-6">

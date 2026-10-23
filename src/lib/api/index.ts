@@ -10,4 +10,9 @@ export {
 } from "./errors";
 export type { AuthFormErrorResult } from "./errors";
 export * from "./endpoints";
-export { getPublicAbout, getPublicHome, getPublicSite } from "./queries/public";
+export {
+  getPublicAbout,
+  getPublicContactConfig,
+  getPublicHome,
+  getPublicSite,
+} from "./queries/public";

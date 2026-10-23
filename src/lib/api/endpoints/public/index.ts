@@ -1,3 +1,4 @@
+export { contactPublicApi } from "./contact.api";
 export { healthPublicApi } from "./health.api";
 export { pagesPublicApi } from "./pages.api";
 export { publicationsPublicApi } from "./publications.api";
