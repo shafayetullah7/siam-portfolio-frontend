@@ -21,6 +21,7 @@ export const saveSiteSettingsAction = action(async (formData: FormData) => {
       ),
       footerText: emptyToNull(fd.get("footerText")?.toString()),
       researchHubIntro: emptyToNull(fd.get("researchHubIntro")?.toString()),
+      projectsHubIntro: emptyToNull(fd.get("projectsHubIntro")?.toString()),
       faviconUrl: emptyToNull(fd.get("faviconUrl")?.toString()),
       faviconMediaId: emptyToNull(fd.get("faviconMediaId")?.toString()),
     }),

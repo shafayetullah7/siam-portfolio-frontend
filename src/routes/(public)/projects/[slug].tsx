@@ -1,32 +1,41 @@
 import { A, createAsync, useParams, type RouteDefinition } from "@solidjs/router";
 import { Title, Meta } from "@solidjs/meta";
 import { Show } from "solid-js";
-import DetailStubLayout from "~/components/catalog/DetailStubLayout";
-import { getProject } from "~/content";
-import { getPublicSite } from "~/lib/api/queries/public";
+import ProjectPublicDetailView from "~/components/projects/ProjectPublicDetailView";
+import {
+  getPublicProjectBySlug,
+  getPublicSite,
+} from "~/lib/api/queries/public";
 import { buildPageMeta } from "~/lib/meta/buildPageMeta";
 
 export const route = {
-  preload: () => {
+  preload: ({ params }) => {
     void getPublicSite();
+    void getPublicProjectBySlug(params.slug);
   },
 } satisfies RouteDefinition;
 
 export default function ProjectDetail() {
   const params = useParams();
   const slug = () => params.slug ?? "";
-  const project = () => getProject(slug());
+  const detail = createAsync(() => getPublicProjectBySlug(slug()), {
+    deferStream: true,
+  });
   const site = createAsync(() => getPublicSite(), { deferStream: true });
 
   const pageMeta = () => {
-    const p = project();
+    const d = detail();
     const s = site();
-    if (!p || !s) return null;
+    if (!d || !s) return null;
+    const firstSection = d.sections
+      .slice()
+      .sort((a, b) => a.sortOrder - b.sortOrder)[0];
     return buildPageMeta(
       {
-        title: p.title,
-        seoDescription: p.summary,
-        body: p.body ?? p.summary,
+        title: d.title,
+        seoTitle: d.seoTitle,
+        seoDescription: d.seoDescription,
+        body: firstSection?.body ?? d.summary,
       },
       { siteName: s.siteName, defaultMetaDescription: s.defaultMetaDescription },
     );
@@ -34,59 +43,41 @@ export default function ProjectDetail() {
 
   return (
     <>
-      <Show
-        when={project()}
-        fallback={
-          <div class="siam-container py-12">
-            <Title>Project not found</Title>
-            <h1 class="text-2xl font-semibold text-brand-deep">Project not found</h1>
-            <p class="mt-4 text-secondary">
-              No project matches <code class="font-mono text-sm">{slug()}</code>.
-            </p>
-            <p class="mt-6">
-              <A href="/projects" class="text-link font-medium no-underline hover:underline">
-                ← All projects
-              </A>
-            </p>
-          </div>
-        }
-      >
-        {(pAccessor) => {
-          const p = pAccessor();
-          const tags = p.tags;
+      <Show when={detail() === undefined}>
+        <div class="siam-container py-12 text-ink-muted">Loading…</div>
+      </Show>
+      <Show when={detail() === null}>
+        <div class="siam-container py-12">
+          <Title>Project not found</Title>
+          <h1 class="text-2xl font-semibold text-brand-deep">Project not found</h1>
+          <p class="mt-4 text-secondary">
+            No project matches <code class="font-mono text-sm">{slug()}</code>.
+          </p>
+          <p class="mt-6">
+            <A href="/projects" class="text-link font-medium no-underline hover:underline">
+              ← All projects
+            </A>
+          </p>
+        </div>
+      </Show>
+      <Show when={detail()}>
+        {(dAccessor) => {
+          const d = dAccessor();
           return (
-          <>
-            <Title>{pageMeta()?.title ?? p.title}</Title>
-            <Meta name="description" content={pageMeta()?.description ?? ""} />
-            <Meta property="og:title" content={pageMeta()?.ogTitle ?? p.title} />
-            <Meta property="og:description" content={pageMeta()?.ogDescription ?? ""} />
-            <DetailStubLayout
-              title={p.title}
-              backHref="/projects"
-              backLabel="All projects"
-              metaLines={
-                tags && tags.length > 0 ? [tags.join(" · ")] : undefined
-              }
-            >
-              <p>{p.summary}</p>
-              {p.body && <p class="mt-4">{p.body}</p>}
-              {p.href && (
-                <p class="mt-8">
-                  <A
-                    href={p.href}
-                    class="text-link font-medium no-underline hover:underline"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    External repository / demo
-                  </A>
-                </p>
-              )}
-              <p class="mt-8 text-sm text-on-surface-variant">
-                Full project page (P08) will add evaluation, contributors, and artifacts.
-              </p>
-            </DetailStubLayout>
-          </>
+            <>
+              <Title>{pageMeta()?.title ?? d.title}</Title>
+              <Meta name="description" content={pageMeta()?.description ?? ""} />
+              <Meta property="og:title" content={pageMeta()?.ogTitle ?? d.title} />
+              <Meta
+                property="og:description"
+                content={pageMeta()?.ogDescription ?? ""}
+              />
+              <ProjectPublicDetailView
+                detail={d}
+                backHref="/projects"
+                backLabel="All projects"
+              />
+            </>
           );
         }}
       </Show>

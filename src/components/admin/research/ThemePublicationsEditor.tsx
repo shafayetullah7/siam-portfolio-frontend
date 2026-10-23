@@ -9,6 +9,8 @@ export type ThemePublicationsEditorProps = {
   links: ResearchThemePublicationLink[];
   onChange: (links: ResearchThemePublicationLink[]) => void;
   onDirty: () => void;
+  /** When true, search only lists published papers (project related outputs). */
+  publishedOnly?: boolean;
 };
 
 export default function ThemePublicationsEditor(
@@ -69,7 +71,10 @@ export default function ThemePublicationsEditor(
       const rows = await adminPublicationsApi.list(
         q ? { q, limit: 25 } : { limit: 25 },
       );
-      setSearchResults(rows);
+      const filtered = props.publishedOnly
+        ? rows.filter((row) => row.publishStatus === "published")
+        : rows;
+      setSearchResults(filtered);
     } catch (error) {
       setSearchError(getApiErrorMessage(error));
       setSearchResults([]);

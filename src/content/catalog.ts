@@ -80,11 +80,7 @@ export function listFeaturedProjectsForHome(): HomeProjectHighlight[] {
 
 /** Static hub paths for sitemap.xml fallback; detail URLs come from API (see sitemap.xml.ts). */
 export function listCatalogSitemapPaths(): string[] {
-  const paths = ["/research", "/publications", "/projects"];
-  for (const p of projectsCatalog) {
-    paths.push(`/projects/${p.slug}`);
-  }
-  return paths;
+  return ["/research", "/publications", "/projects"];
 }
 
 export function validateCatalogFeaturedBounds(): string[] {

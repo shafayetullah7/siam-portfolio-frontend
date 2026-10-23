@@ -365,6 +365,7 @@ Helpers in [`src/lib/api/errors.ts`](../src/lib/api/errors.ts):
 | Public `/research` | `getPublicResearchThemes` → `{ intro, items }` (intro from site settings; fallback in `default-research-hub-intro.ts`) |
 | Home research focus | `getPublicHome().researchFocus` from API (3–6 visible per `home.validation`); static `homeContent` no longer seeds `researchFocus` |
 | Home publication highlights | `getPublicHome().selectedPublications` from API (0 or 2–4 published + `featuredOnHome`); static catalog fallback when API empty |
+| Home project highlights | `getPublicHome().selectedProjects` from API (0 or 2–3 published + `featuredOnHome`); no static catalog fallback |
 | Sitemap publications | `getPublicSite().sitemapPaths` + `publicationsPublicApi.list` fallback in `sitemap.xml.ts` — not static catalog slugs |
 | Public SSR | 404 → `RouteErrorFallback` (F3) |
 | `adminClient` 401 on protected routes | Refresh → `forceLogout` → login with `session_expired` |

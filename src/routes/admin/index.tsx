@@ -13,6 +13,12 @@ interface DashboardCounts {
     scheduled: number;
     archived: number;
   };
+  projects: {
+    draft: number;
+    published: number;
+    scheduled: number;
+    archived: number;
+  };
   media: number;
 }
 
@@ -48,6 +54,18 @@ export default function AdminHome() {
                 {counts.publications.draft} draft
               </p>
             </A>
+            <A
+              href="/admin/projects"
+              class="siam-card block p-4 no-underline transition-colors hover:border-primary"
+            >
+              <dt class="text-sm text-ink-muted">Published projects</dt>
+              <dd class="text-2xl font-semibold text-ink">
+                {counts.projects.published}
+              </dd>
+              <p class="mt-1 text-xs text-ink-muted">
+                {counts.projects.draft} draft
+              </p>
+            </A>
             <A href="/admin/media" class="siam-card block p-4 no-underline transition-colors hover:border-primary">
               <dt class="text-sm text-ink-muted">Media files</dt>
               <dd class="text-2xl font-semibold text-ink">{counts.media}</dd>
@@ -57,6 +75,9 @@ export default function AdminHome() {
             <A href="/admin/pages" class="siam-btn-primary no-underline">Manage pages</A>
             <A href="/admin/publications" class="siam-btn-secondary no-underline">
               Publications
+            </A>
+            <A href="/admin/projects" class="siam-btn-secondary no-underline">
+              Projects
             </A>
             <A href="/admin/media" class="siam-btn-secondary no-underline">Media library</A>
           </div>

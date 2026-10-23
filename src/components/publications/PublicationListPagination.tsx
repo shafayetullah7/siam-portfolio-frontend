@@ -3,6 +3,7 @@ import type { PaginationMeta } from "~/lib/api/types";
 export type PublicationListPaginationProps = {
   meta: PaginationMeta;
   onPageChange: (page: number) => void;
+  ariaLabel?: string;
 };
 
 export default function PublicationListPagination(
@@ -19,7 +20,7 @@ export default function PublicationListPagination(
   return (
     <nav
       class="flex flex-col gap-3 border-t border-border pt-4 sm:flex-row sm:items-center sm:justify-between"
-      aria-label="Publications pagination"
+      aria-label={props.ariaLabel ?? "Publications pagination"}
     >
       <p class="font-mono text-xs text-on-surface-variant">
         Showing {rangeStart()}–{rangeEnd()} of {props.meta.total}

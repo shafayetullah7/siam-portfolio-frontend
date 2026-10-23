@@ -1,11 +1,8 @@
 /**
  * PLACEHOLDER — replace before public launch.
- * Research / publications / projects on home come from catalogs (featuredOnHome).
+ * Research, publications, and featured projects on `/` come from getPublicHome() when the API returns them.
  */
-import {
-  listFeaturedProjectsForHome,
-  listFeaturedPublicationsForHome,
-} from "./catalog";
+import { listFeaturedPublicationsForHome } from "./catalog";
 import type { HomePageContent } from "./home.types";
 
 export const homeContent: HomePageContent = {
@@ -35,7 +32,6 @@ export const homeContent: HomePageContent = {
     location: "[City, Country]",
   },
   selectedPublications: listFeaturedPublicationsForHome(),
-  featuredProjects: listFeaturedProjectsForHome(),
   highlights: [
     {
       badge: "INVITED TALK",

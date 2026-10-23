@@ -43,6 +43,7 @@ export default function AdminSiteSettings() {
   const [defaultMetaDescription, setDefaultMetaDescription] = createSignal("");
   const [footerText, setFooterText] = createSignal("");
   const [researchHubIntro, setResearchHubIntro] = createSignal("");
+  const [projectsHubIntro, setProjectsHubIntro] = createSignal("");
   const [faviconUrl, setFaviconUrl] = createSignal("");
   const [faviconMediaId, setFaviconMediaId] = createSignal<string | null>(null);
   const [faviconPickerOpen, setFaviconPickerOpen] = createSignal(false);
@@ -102,6 +103,7 @@ export default function AdminSiteSettings() {
       setDefaultMetaDescription(settings.defaultMetaDescription ?? "");
       setFooterText(settings.footerText ?? "");
       setResearchHubIntro(settings.researchHubIntro ?? "");
+      setProjectsHubIntro(settings.projectsHubIntro ?? "");
       setFaviconUrl(settings.faviconUrl ?? "");
       setFaviconMediaId(settings.faviconMediaId ?? null);
       setNavItems(nav);
@@ -201,6 +203,18 @@ export default function AdminSiteSettings() {
               rows={4}
               value={researchHubIntro()}
               onInput={(e) => setResearchHubIntro(e.currentTarget.value)}
+            />
+          </FormField>
+          <FormField
+            label="Projects hub intro"
+            name="projectsHubIntro"
+            hint="Shown at the top of /projects when set."
+          >
+            <FormTextarea
+              name="projectsHubIntro"
+              rows={4}
+              value={projectsHubIntro()}
+              onInput={(e) => setProjectsHubIntro(e.currentTarget.value)}
             />
           </FormField>
           <FormField label="Favicon" name="favicon">

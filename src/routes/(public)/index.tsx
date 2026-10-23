@@ -5,9 +5,24 @@ import ApiStatus from "~/components/ApiStatus";
 import LandingPage from "~/components/landing/LandingPage";
 import { homeContent } from "~/content";
 import type { HomePageContent } from "~/content/home.types";
+import type { PublicHomeProjectHighlight } from "~/lib/api/endpoints/public/site.api";
 import { getPublicHome, getPublicSite } from "~/lib/api/queries/public";
+import type { HomeProjectHighlight } from "~/content/home.types";
 import { buildPageMeta } from "~/lib/meta/buildPageMeta";
 import { getSiteOrigin } from "~/lib/site/siteOrigin";
+
+function mapHomeProjectHighlight(
+  item: PublicHomeProjectHighlight,
+): HomeProjectHighlight {
+  const alt = item.coverAlt?.trim() ?? "";
+  return {
+    title: item.title,
+    summary: item.summary,
+    href: item.href,
+    ...(item.tags?.length ? { tags: item.tags } : {}),
+    ...(item.coverUrl && alt ? { image: { src: item.coverUrl, alt } } : {}),
+  };
+}
 
 export const route = {
   preload: () => {
@@ -24,11 +39,15 @@ export default function Home() {
     const api = homeApi();
     const focus = api?.researchFocus;
     const pubs = api?.selectedPublications;
-    if (!focus?.length && !pubs?.length) return homeContent;
+    const projects = api?.selectedProjects;
+    if (!focus?.length && !pubs?.length && !projects?.length) return homeContent;
     return {
       ...homeContent,
       ...(focus?.length ? { researchFocus: focus } : {}),
       ...(pubs?.length ? { selectedPublications: pubs } : {}),
+      ...(projects?.length
+        ? { featuredProjects: projects.map(mapHomeProjectHighlight) }
+        : {}),
     };
   };
 

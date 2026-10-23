@@ -8,3 +8,7 @@ export {
   getPublicPublicationBySlug,
   getPublicPublications,
 } from "./publications.queries";
+export {
+  getPublicProjectBySlug,
+  getPublicProjects,
+} from "./projects.queries";

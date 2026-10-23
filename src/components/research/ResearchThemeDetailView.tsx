@@ -32,8 +32,10 @@ export default function ResearchThemeDetailView(props: ResearchThemeDetailViewPr
       backLabel={props.backLabel}
       metaLines={metaLines()}
       metaFirstLineClass="capitalize"
+      detailSlugBase="/research"
       prevSlug={theme().prevSlug}
       nextSlug={theme().nextSlug}
+      detailNavAriaLabel="Theme navigation"
       relatedLinks={[
         { label: "Publications", href: "/publications" },
         { label: "Projects", href: "/projects" },

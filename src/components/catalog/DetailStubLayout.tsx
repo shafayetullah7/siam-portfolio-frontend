@@ -14,16 +14,21 @@ export type DetailStubLayoutProps = {
   relatedLinks?: readonly { label: string; href: string }[];
   prevSlug?: string;
   nextSlug?: string;
+  /** Base path for prev/next links, e.g. `/research` or `/projects`. */
+  detailSlugBase?: string;
   themeNavPrevLabel?: string;
   themeNavNextLabel?: string;
+  detailNavAriaLabel?: string;
 };
 
 export default function DetailStubLayout(props: DetailStubLayoutProps) {
   const metaLines = () => [...(props.metaLines ?? [])];
   const firstLineClass = () => props.metaFirstLineClass ?? "";
   const showThemeNav = () => Boolean(props.prevSlug || props.nextSlug);
+  const slugBase = () => props.detailSlugBase ?? "/research";
   const prevLabel = () => props.themeNavPrevLabel ?? "Previous theme";
   const nextLabel = () => props.themeNavNextLabel ?? "Next theme";
+  const detailNavLabel = () => props.detailNavAriaLabel ?? "Theme navigation";
 
   return (
     <div class={PUBLIC_PAGE_WIDE}>
@@ -59,7 +64,7 @@ export default function DetailStubLayout(props: DetailStubLayoutProps) {
       <Show when={showThemeNav()}>
         <nav
           class="mt-12 flex flex-col gap-3 border-t border-border pt-8 sm:flex-row sm:justify-between"
-          aria-label="Theme navigation"
+          aria-label={detailNavLabel()}
         >
           <Show
             when={props.prevSlug}
@@ -67,7 +72,7 @@ export default function DetailStubLayout(props: DetailStubLayoutProps) {
           >
             {(slug) => (
               <A
-                href={`/research/${slug()}`}
+                href={`${slugBase()}/${slug()}`}
                 class="text-link text-sm font-medium no-underline hover:underline"
               >
                 ← {prevLabel()}
@@ -77,7 +82,7 @@ export default function DetailStubLayout(props: DetailStubLayoutProps) {
           <Show when={props.nextSlug}>
             {(slug) => (
               <A
-                href={`/research/${slug()}`}
+                href={`${slugBase()}/${slug()}`}
                 class="text-link text-sm font-medium no-underline hover:underline sm:text-right"
               >
                 {nextLabel()} →

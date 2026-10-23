@@ -32,6 +32,7 @@ export interface SiteSettingsAdmin {
   defaultMetaDescription: string | null;
   footerText: string | null;
   researchHubIntro: string | null;
+  projectsHubIntro: string | null;
   faviconUrl: string | null;
   faviconMediaId: string | null;
   createdAt: string;

@@ -28,11 +28,21 @@ export interface PublicHomePublicationHighlight {
   featured?: boolean;
 }
 
+export interface PublicHomeProjectHighlight {
+  title: string;
+  summary: string;
+  href: string;
+  tags?: string[];
+  coverUrl?: string | null;
+  coverAlt?: string | null;
+}
+
 export interface PublicHomePayload {
   heroTitle: string | null;
   heroSubtitle: string | null;
   researchFocus: PublicHomeResearchFocusItem[];
   selectedPublications?: PublicHomePublicationHighlight[];
+  selectedProjects?: PublicHomeProjectHighlight[];
 }
 
 export interface PublicAboutPayload {
