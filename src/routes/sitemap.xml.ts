@@ -1,5 +1,6 @@
 import type { APIEvent } from "@solidjs/start/server";
 import { listCatalogSitemapPaths } from "~/content/catalog";
+import { publicationsPublicApi } from "~/lib/api/endpoints/public/publications.api";
 import { researchPublicApi } from "~/lib/api/endpoints/public/research.api";
 import { sitePublicApi } from "~/lib/api/endpoints/public/site.api";
 import { getSiteOrigin } from "~/lib/site/siteOrigin";
@@ -24,6 +25,18 @@ export async function GET(_event: APIEvent) {
     ];
   } catch {
     // omit research slugs when API offline
+  }
+  try {
+    const pubs = await publicationsPublicApi.list({ limit: 100 });
+    paths = [
+      ...new Set([
+        ...paths,
+        "/publications",
+        ...pubs.items.map((p) => `/publications/${p.slug}`),
+      ]),
+    ];
+  } catch {
+    // omit publication slugs when API offline
   }
   const origin = getSiteOrigin();
   const urls = paths

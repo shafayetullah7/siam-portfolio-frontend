@@ -35,6 +35,16 @@ describe("isAdminNavActive", () => {
     expect(isAdminNavActive("/admin/pages", research)).toBe(false);
   });
 
+  it("matches publications section and nested editor routes", () => {
+    const publications = itemById("publications");
+    expect(isAdminNavActive("/admin/publications", publications)).toBe(true);
+    expect(isAdminNavActive("/admin/publications/abc", publications)).toBe(true);
+    expect(isAdminNavActive("/admin/publications/abc/edit", publications)).toBe(
+      true,
+    );
+    expect(isAdminNavActive("/admin/research", publications)).toBe(false);
+  });
+
   it("does not match comingSoon items", () => {
     const home = itemById("home");
     expect(isAdminNavActive("/admin/home", home)).toBe(false);
@@ -69,6 +79,7 @@ describe("ADMIN_NAV_SECTIONS", () => {
       "dashboard",
       "media",
       "pages",
+      "publications",
       "research",
       "site-settings",
     ]);

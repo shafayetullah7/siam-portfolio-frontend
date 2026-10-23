@@ -5,7 +5,7 @@ Until Phases 10–12 ship public APIs and admin CRUD, the frontend keeps a **sin
 | Module | Types | Route |
 |--------|--------|--------|
 | `research.catalog.ts` | `ResearchTheme` | **Seed / home only** — public `/research` uses `GET /public/research-themes` |
-| `publications.catalog.ts` | `PublicationRecord` | `/publications`, `/publications/:slug` |
+| `publications.catalog.ts` | `PublicationRecord` | **Seed / validation only** — public `/publications` uses `GET /public/publications` |
 | `projects.catalog.ts` | `ProjectRecord` | `/projects`, `/projects/:slug` |
 
 Helpers live in `catalog.ts` (`list*`, `get*`, `*ToHomeItem`, `listFeatured*ForHome`, `listCatalogSitemapPaths`).
@@ -14,7 +14,9 @@ Helpers live in `catalog.ts` (`list*`, `get*`, `*ToHomeItem`, `listFeatured*ForH
 
 `researchFocus` on `/` comes from **`getPublicHome().researchFocus`** (API: published themes with `featuredOnHome`). Static catalog `featuredOnHome` is used only for `validateCatalogFeaturedBounds()` and dev seed alignment.
 
-`home.content.ts` still builds `selectedPublications` and `featuredProjects` from catalog entries with `featuredOnHome: true`. Bounds (3–6 / 2–4 / 2–3) are enforced in `home.validation.ts` and `validateCatalogFeaturedBounds()`.
+`selectedPublications` on `/` comes from **`getPublicHome().selectedPublications`** when the API returns published rows with `featuredOnHome` (max 4). Static catalog remains a fallback when the API returns none. `featuredProjects` still come from catalog until M7 ships.
+
+Publication detail URLs in `sitemap.xml` come from **`getPublicSite().sitemapPaths`** and `GET /public/publications` (not static catalog slugs). Bounds (3–6 / 2–4 / 2–3) are enforced in `home.validation.ts` and `validateCatalogFeaturedBounds()`.
 
 ## Future CMS / API mapping
 
@@ -28,6 +30,6 @@ Planned public endpoints (names illustrative):
 
 When routes are live in production, extend API `sitemapPaths` and nav seed to include `/research`, `/publications`, `/projects` (see `filterPublicNav`). Hub links are already in the public header via `buildPrimaryNavItems`; redundant CMS nav rows for those paths are ignored by dedupe.
 
-## Stub detail pages
+## Public routes
 
-`[slug]` routes are **stubs** (P04/P06/P08 not implemented). Unknown slugs render an in-page not-found UI.
+`/publications` and `/publications/[slug]` load from the public publications API. Unknown slugs render an in-page not-found UI. `/projects` detail routes remain catalog-backed until M7.

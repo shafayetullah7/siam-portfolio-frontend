@@ -41,7 +41,7 @@ VITE_SITE_ORIGIN=http://localhost:5001
 
 ### Static home (P01, LP0–LP6)
 
-Until full CMS homepage (LP7 / Phase 9), `/` body sections are mostly static `homeContent`, except **`researchFocus`** from `getPublicHome()` (R11):
+Until full CMS homepage (LP7 / Phase 9), `/` body sections are mostly static `homeContent`, except **`researchFocus`** and **`selectedPublications`** from `getPublicHome()` when the API returns them (R11 / PUB15):
 
 | Layer | Location |
 |--------|----------|
@@ -171,6 +171,7 @@ Same tokens; more `bg-surface` + tables with `border-border`; accents only for s
 | **`adminClient`** | `/admin` | `include` + CSRF on writes | `POST /auth/refresh` once → retry → else `forceLogout()` |
 
 - **Paths:** `publicClient.get('/publications')` → `/api/v1/public/publications`.
+- **Publications:** Admin draft CRUD via `adminPublicationsApi.create` / `update` (PUB2); publish routes pending PUB5.
 - **Wrappers:** `lib/api/endpoints/{public,admin}/*.api.ts` — only place with path strings.
 - **Queries:** `query` + `"use server"` calls **endpoints**, not UI → `fetch`.
 - **Responses:** TypeScript types + optional `unwrap` of `{ success, data }` — **no Zod** on API JSON.
@@ -363,6 +364,8 @@ Helpers in [`src/lib/api/errors.ts`](../src/lib/api/errors.ts):
 | Research list sort order | Inline **Order** input on [`admin/research`](../src/routes/admin/research/index.tsx) → `PATCH` `{ sortOrder }` |
 | Public `/research` | `getPublicResearchThemes` → `{ intro, items }` (intro from site settings; fallback in `default-research-hub-intro.ts`) |
 | Home research focus | `getPublicHome().researchFocus` from API (3–6 visible per `home.validation`); static `homeContent` no longer seeds `researchFocus` |
+| Home publication highlights | `getPublicHome().selectedPublications` from API (0 or 2–4 published + `featuredOnHome`); static catalog fallback when API empty |
+| Sitemap publications | `getPublicSite().sitemapPaths` + `publicationsPublicApi.list` fallback in `sitemap.xml.ts` — not static catalog slugs |
 | Public SSR | 404 → `RouteErrorFallback` (F3) |
 | `adminClient` 401 on protected routes | Refresh → `forceLogout` → login with `session_expired` |
 | `publicClient` | Never `forceLogout` |

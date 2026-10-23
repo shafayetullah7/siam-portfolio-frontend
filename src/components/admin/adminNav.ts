@@ -56,7 +56,7 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
         id: "publications",
         label: "Publications",
         href: "/admin/publications",
-        status: "comingSoon",
+        status: "active",
         requirement: "A05",
       },
       {

@@ -78,13 +78,9 @@ export function listFeaturedProjectsForHome(): HomeProjectHighlight[] {
   return projectsCatalog.filter((p) => p.featuredOnHome).map(projectToHomeItem);
 }
 
-/** Static paths for sitemap.xml until API owns discovery. */
+/** Static hub paths for sitemap.xml fallback; detail URLs come from API (see sitemap.xml.ts). */
 export function listCatalogSitemapPaths(): string[] {
   const paths = ["/research", "/publications", "/projects"];
-  // Research theme detail URLs come from GET /public/research-themes (see sitemap.xml.ts).
-  for (const p of publicationsCatalog) {
-    paths.push(`/publications/${p.slug}`);
-  }
   for (const p of projectsCatalog) {
     paths.push(`/projects/${p.slug}`);
   }

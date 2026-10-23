@@ -62,6 +62,10 @@ export type HomePublicationHighlight = {
   venue: string;
   significance: string;
   href: string;
+  featured?: boolean;
+  publicationType?: string;
+  availability?: import("~/lib/api/types/publication.types").PublicationAvailabilityLabel;
+  pdfHref?: string;
 };
 
 export type HomeProjectHighlight = {

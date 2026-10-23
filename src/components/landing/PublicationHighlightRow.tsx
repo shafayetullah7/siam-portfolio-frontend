@@ -1,4 +1,6 @@
+import { Show } from "solid-js";
 import type { HomePublicationHighlight } from "~/content";
+import { publicationAvailabilityLabel } from "~/lib/publications/publication-availability";
 import LandingContentLink from "./LandingContentLink";
 
 export type PublicationHighlightRowProps = {
@@ -18,6 +20,27 @@ export default function PublicationHighlightRow(props: PublicationHighlightRowPr
           <span class="rounded bg-primary px-2 py-0.5 font-mono text-xs font-semibold text-primary-foreground">
             {item.venue} &apos;{yearShort()}
           </span>
+          <Show when={item.publicationType}>
+            <span
+              class="rounded bg-surface-container px-2 py-0.5 font-mono text-xs font-medium text-ink-muted"
+            >
+              {item.publicationType}
+            </span>
+          </Show>
+          <Show when={item.featured}>
+            <span
+              class="rounded bg-secondary/15 px-2 py-0.5 font-mono text-xs font-semibold text-secondary"
+            >
+              Featured
+            </span>
+          </Show>
+          <Show when={item.availability}>
+            <span
+              class="rounded bg-surface-container px-2 py-0.5 font-mono text-xs text-ink-muted"
+            >
+              {publicationAvailabilityLabel(item.availability!)}
+            </span>
+          </Show>
         </div>
         <h3 class="siam-headline-md mb-2 leading-snug font-medium text-brand-deep">
           <LandingContentLink
@@ -36,15 +59,19 @@ export default function PublicationHighlightRow(props: PublicationHighlightRowPr
           <span>{item.significance}</span>
         </div>
       </div>
-      <div class="flex shrink-0 flex-wrap items-center gap-2 lg:flex-col lg:items-end">
-        <LandingContentLink
-          href={item.href}
-          ariaLabel={`PDF for ${item.title}`}
-          class="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-1.5 font-mono text-xs text-primary-foreground no-underline transition-colors hover:bg-primary-hover"
-        >
-          PDF
-        </LandingContentLink>
-      </div>
+      <Show when={item.pdfHref}>
+        <div class="flex shrink-0 flex-wrap items-center gap-2 lg:flex-col lg:items-end">
+          <a
+            href={item.pdfHref}
+            aria-label={`PDF for ${item.title}`}
+            class="inline-flex items-center gap-1 rounded-lg bg-primary px-3 py-1.5 font-mono text-xs text-primary-foreground no-underline transition-colors hover:bg-primary-hover"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            PDF
+          </a>
+        </div>
+      </Show>
     </article>
   );
 }

@@ -21,9 +21,15 @@ export default function Home() {
   const homeApi = createAsync(() => getPublicHome(), { deferStream: true });
 
   const landingContent = (): HomePageContent => {
-    const focus = homeApi()?.researchFocus;
-    if (!focus?.length) return homeContent;
-    return { ...homeContent, researchFocus: focus };
+    const api = homeApi();
+    const focus = api?.researchFocus;
+    const pubs = api?.selectedPublications;
+    if (!focus?.length && !pubs?.length) return homeContent;
+    return {
+      ...homeContent,
+      ...(focus?.length ? { researchFocus: focus } : {}),
+      ...(pubs?.length ? { selectedPublications: pubs } : {}),
+    };
   };
 
   const pageMeta = () => {

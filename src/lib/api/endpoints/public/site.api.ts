@@ -18,10 +18,21 @@ export interface PublicHomeResearchFocusItem {
   coverAlt?: string | null;
 }
 
+export interface PublicHomePublicationHighlight {
+  title: string;
+  authorsShort: string;
+  year: number;
+  venue: string;
+  significance: string;
+  href: string;
+  featured?: boolean;
+}
+
 export interface PublicHomePayload {
   heroTitle: string | null;
   heroSubtitle: string | null;
   researchFocus: PublicHomeResearchFocusItem[];
+  selectedPublications?: PublicHomePublicationHighlight[];
 }
 
 export interface PublicAboutPayload {
