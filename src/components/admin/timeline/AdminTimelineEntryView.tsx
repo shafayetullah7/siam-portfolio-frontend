@@ -2,12 +2,14 @@ import { A } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import AdminPageHeader from "~/components/admin/AdminPageHeader";
 import PublishStatusBadge from "~/components/admin/PublishStatusBadge";
+import TimelinePublishControls from "~/components/admin/timeline/TimelinePublishControls";
 import type { TimelineAdminDetail } from "~/lib/api/types/timeline.types";
 import { formatTimelineDateRange } from "~/lib/timeline/format-timeline-dates";
 import { timelineKindLabel } from "~/lib/timeline/timeline-kind-labels";
 
 export type AdminTimelineEntryViewProps = {
   entry: TimelineAdminDetail;
+  onEntryUpdated?: (entry: TimelineAdminDetail) => void;
 };
 
 function formatWhen(iso: string | null): string | null {
@@ -33,6 +35,18 @@ export default function AdminTimelineEntryView(
         >
           Edit
         </A>
+        <A
+          href={`/admin/achievements/${e().id}/preview`}
+          class="siam-btn-secondary no-underline"
+        >
+          Public preview
+        </A>
+        <TimelinePublishControls
+          entryId={e().id}
+          publishStatus={e().publishStatus}
+          variant="bar"
+          onUpdated={props.onEntryUpdated}
+        />
         <A href="/admin/achievements" class="siam-btn-secondary no-underline">
           Back to list
         </A>
@@ -104,10 +118,6 @@ export default function AdminTimelineEntryView(
           </p>
         </Show>
       </div>
-
-      <p class="mt-4 rounded-md border border-dashed border-border bg-surface-container-lowest px-4 py-3 text-sm text-ink-muted">
-        Publish controls will be available in a later release.
-      </p>
 
       <div class="mt-6 space-y-4">
         <Show when={e().organization}>

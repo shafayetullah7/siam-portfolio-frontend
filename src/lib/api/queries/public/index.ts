@@ -13,3 +13,7 @@ export {
   getPublicProjects,
 } from "./projects.queries";
 export { getPublicWriting, getPublicWritingBySlug } from "./writing.queries";
+export {
+  getPublicAchievements,
+  getPublicAchievementBySlug,
+} from "./achievements.queries";

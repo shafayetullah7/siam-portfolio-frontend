@@ -1,3 +1,5 @@
+import type { PublishChecklistItem } from "./research.types";
+
 export type TimelineEntryKind =
   | "award"
   | "competition"
@@ -40,6 +42,7 @@ export type TimelinePublicCard = {
   proofUrl: string | null;
   images: TimelinePublicImage[];
   href?: string;
+  expiresAt?: string | null;
 };
 
 export type TimelinePublicSection = {
@@ -48,6 +51,7 @@ export type TimelinePublicSection = {
 };
 
 export type TimelinePublicGroupedList = {
+  intro?: string | null;
   sections: TimelinePublicSection[];
 };
 
@@ -94,6 +98,11 @@ export type TimelineReplaceMediaItem = {
 
 export type TimelineReplaceMediaBody = {
   items: TimelineReplaceMediaItem[];
+};
+
+export type TimelinePublishChecklist = {
+  errors: PublishChecklistItem[];
+  warnings: PublishChecklistItem[];
 };
 
 export type TimelineAdminSummary = {

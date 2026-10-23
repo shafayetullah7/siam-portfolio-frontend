@@ -1,6 +1,7 @@
 import { action, revalidate } from "@solidjs/router";
 import { adminSiteApi } from "~/lib/api/endpoints/admin/site.api";
 import {
+  getPublicAchievements,
   getPublicHome,
   getPublicResearchThemes,
   getPublicSite,
@@ -23,6 +24,9 @@ export const saveSiteSettingsAction = action(async (formData: FormData) => {
       researchHubIntro: emptyToNull(fd.get("researchHubIntro")?.toString()),
       projectsHubIntro: emptyToNull(fd.get("projectsHubIntro")?.toString()),
       writingHubIntro: emptyToNull(fd.get("writingHubIntro")?.toString()),
+      achievementsHubIntro: emptyToNull(
+        fd.get("achievementsHubIntro")?.toString(),
+      ),
       faviconUrl: emptyToNull(fd.get("faviconUrl")?.toString()),
       faviconMediaId: emptyToNull(fd.get("faviconMediaId")?.toString()),
     }),
@@ -35,6 +39,7 @@ export const saveSiteSettingsAction = action(async (formData: FormData) => {
     revalidate(getPublicSite.key);
     revalidate(getPublicHome.key);
     revalidate(getPublicResearchThemes.key);
+    revalidate(getPublicAchievements.key);
     return formSuccess();
   } catch (error) {
     return mapAdminMutationErrorToResult(error);

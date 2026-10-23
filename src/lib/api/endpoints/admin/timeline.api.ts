@@ -3,6 +3,8 @@ import type { Paginated } from "../../types";
 import type {
   TimelineAdminDetail,
   TimelineAdminSummary,
+  TimelinePublicDetail,
+  TimelinePublishChecklist,
   TimelineReplaceMediaBody,
   TimelineWriteBody,
 } from "../../types/timeline.types";
@@ -31,4 +33,22 @@ export const adminTimelineApi = {
 
   replaceMedia: (id: string, body: TimelineReplaceMediaBody) =>
     adminClient.put<TimelineAdminDetail>(`/timeline/${id}/media`, body),
+
+  preview: (id: string) =>
+    adminClient.get<TimelinePublicDetail>(`/timeline/${id}/preview`),
+
+  getPublishCheck: (id: string) =>
+    adminClient.get<TimelinePublishChecklist>(`/timeline/${id}/publish-check`),
+
+  publish: (id: string, body?: { confirmWarnings?: boolean }) =>
+    adminClient.post<TimelineAdminDetail>(`/timeline/${id}/publish`, body ?? {}),
+
+  unpublish: (id: string) =>
+    adminClient.post<TimelineAdminDetail>(`/timeline/${id}/unpublish`),
+
+  archive: (id: string) =>
+    adminClient.post<TimelineAdminDetail>(`/timeline/${id}/archive`),
+
+  schedule: (id: string, body: { scheduledAt: string }) =>
+    adminClient.post<TimelineAdminDetail>(`/timeline/${id}/schedule`, body),
 };

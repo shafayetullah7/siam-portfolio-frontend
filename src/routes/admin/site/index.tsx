@@ -45,6 +45,7 @@ export default function AdminSiteSettings() {
   const [researchHubIntro, setResearchHubIntro] = createSignal("");
   const [projectsHubIntro, setProjectsHubIntro] = createSignal("");
   const [writingHubIntro, setWritingHubIntro] = createSignal("");
+  const [achievementsHubIntro, setAchievementsHubIntro] = createSignal("");
   const [faviconUrl, setFaviconUrl] = createSignal("");
   const [faviconMediaId, setFaviconMediaId] = createSignal<string | null>(null);
   const [faviconPickerOpen, setFaviconPickerOpen] = createSignal(false);
@@ -106,6 +107,7 @@ export default function AdminSiteSettings() {
       setResearchHubIntro(settings.researchHubIntro ?? "");
       setProjectsHubIntro(settings.projectsHubIntro ?? "");
       setWritingHubIntro(settings.writingHubIntro ?? "");
+      setAchievementsHubIntro(settings.achievementsHubIntro ?? "");
       setFaviconUrl(settings.faviconUrl ?? "");
       setFaviconMediaId(settings.faviconMediaId ?? null);
       setNavItems(nav);
@@ -229,6 +231,18 @@ export default function AdminSiteSettings() {
               rows={4}
               value={writingHubIntro()}
               onInput={(e) => setWritingHubIntro(e.currentTarget.value)}
+            />
+          </FormField>
+          <FormField
+            label="Achievements hub intro"
+            name="achievementsHubIntro"
+            hint="Shown at the top of /achievements when set."
+          >
+            <FormTextarea
+              name="achievementsHubIntro"
+              rows={4}
+              value={achievementsHubIntro()}
+              onInput={(e) => setAchievementsHubIntro(e.currentTarget.value)}
             />
           </FormField>
           <FormField label="Favicon" name="favicon">

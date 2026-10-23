@@ -55,7 +55,12 @@ export default function AdminAchievementsViewPage() {
         <FormErrorAlert message={loadError()} />
       </Show>
       <Show when={entry()}>
-        {(row) => <AdminTimelineEntryView entry={row()} />}
+        {(row) => (
+          <AdminTimelineEntryView
+            entry={row()}
+            onEntryUpdated={setEntry}
+          />
+        )}
       </Show>
     </Show>
   );
