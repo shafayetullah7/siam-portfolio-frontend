@@ -1,11 +1,6 @@
-import { fireEvent, render, screen, waitFor } from "@solidjs/testing-library";
+import { fireEvent, render, screen } from "@solidjs/testing-library";
 import { describe, expect, it, vi } from "vitest";
 import PublicationEditorForm from "./PublicationEditorForm";
-
-const { navigate, create } = vi.hoisted(() => ({
-  navigate: vi.fn(),
-  create: vi.fn(),
-}));
 
 vi.mock("@solidjs/router", async () => {
   const actual = await vi.importActual<typeof import("@solidjs/router")>(
@@ -13,82 +8,64 @@ vi.mock("@solidjs/router", async () => {
   );
   return {
     ...actual,
-    useNavigate: () => navigate,
+    useSubmission: () => ({
+      pending: false,
+      result: undefined,
+      error: undefined,
+    }),
     A: (props: { href: string; children?: unknown }) => (
       <a href={props.href}>{props.children}</a>
     ),
   };
 });
 
-vi.mock("~/lib/api/endpoints/admin/publications.api", () => ({
-  adminPublicationsApi: {
-    create,
-    update: vi.fn(),
-  },
+vi.mock("~/lib/forms/actions/admin-publications.actions", () => ({
+  savePublicationAction: Object.assign(vi.fn(), {
+    with: (id: string) => `/actions/save-publication/${id}`,
+  }),
 }));
 
+async function goToReviewStep() {
+  fireEvent.click(screen.getByRole("button", { name: "Next" }));
+  fireEvent.click(screen.getByRole("button", { name: "Next" }));
+}
+
 describe("PublicationEditorForm", () => {
-  it("submits create with required fields", async () => {
-    create.mockResolvedValue({
-      id: "pub-1",
-      slug: "my-paper",
-      title: "My Paper",
-      authorsShort: "Author A",
-      authors: [{ sortOrder: 0, name: "Author A" }],
-      year: 2024,
-      venue: "NeurIPS",
-      publicationType: "conference",
-      peerReviewed: false,
-      featured: false,
-      featuredOnHome: false,
-      hideFromSearch: false,
-      publishStatus: "draft",
-      significance: null,
-      abstract: null,
-      doi: null,
-      publisherUrl: null,
-      seoTitle: null,
-      seoDescription: null,
-      ownerContribution: null,
-      correctionNotice: null,
-      publishedAt: null,
-      scheduledAt: null,
-      archivedAt: null,
-      createdAt: "2026-10-01T00:00:00Z",
-      updatedAt: "2026-10-01T00:00:00Z",
+  it("blocks save on review when basics are incomplete", async () => {
+    render(() => <PublicationEditorForm />);
+    await goToReviewStep();
+
+    expect(screen.getByText(/Complete all required fields on/i)).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "Save draft" }).hasAttribute("disabled"),
+    ).toBe(true);
+  });
+
+  it("posts draft JSON to the save action when valid", async () => {
+    render(() => <PublicationEditorForm />);
+
+    fireEvent.input(document.querySelector('input[name="title"]')!, {
+      target: { value: "My Paper" },
+    });
+    fireEvent.input(document.querySelector('input[name="author-name-0"]')!, {
+      target: { value: "Author A" },
+    });
+    fireEvent.input(document.querySelector('input[name="venue"]')!, {
+      target: { value: "NeurIPS" },
     });
 
-    render(() => <PublicationEditorForm mode="create" />);
+    await goToReviewStep();
 
-    const titleInput = document.querySelector(
-      'input[name="title"]',
+    const form = document.getElementById(
+      "publication-wizard-form",
+    ) as HTMLFormElement;
+    expect(form.getAttribute("action")).toBe("/actions/save-publication/new");
+
+    const hidden = form.querySelector(
+      'input[name="publicationDraftJson"]',
     ) as HTMLInputElement;
-    const authorsInput = document.querySelector(
-      'input[name="author-name-0"]',
-    ) as HTMLInputElement;
-    const venueInput = document.querySelector(
-      'input[name="venue"]',
-    ) as HTMLInputElement;
-
-    fireEvent.input(titleInput, { target: { value: "My Paper" } });
-    fireEvent.input(authorsInput, { target: { value: "Author A" } });
-    fireEvent.input(venueInput, { target: { value: "NeurIPS" } });
-
-    fireEvent.click(screen.getByRole("button", { name: "Save draft" }));
-
-    await waitFor(() => {
-      expect(create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: "My Paper",
-          authors: [{ name: "Author A", affiliation: null, orcid: null }],
-          venue: "NeurIPS",
-          slug: "my-paper",
-        }),
-      );
-    });
-
-    await waitFor(() => {
-      expect(navigate).toHaveBeenCalledWith("/admin/publications/pub-1");
-    });
+    const payload = JSON.parse(hidden.value) as { title: string; slug: string };
+    expect(payload.title).toBe("My Paper");
+    expect(payload.slug).toBe("my-paper");
   });
 });

@@ -5,7 +5,7 @@ export default function AdminPublicationNew() {
   return (
     <>
       <Title>New publication — SIAM Admin</Title>
-      <PublicationEditorForm mode="create" />
+      <PublicationEditorForm />
     </>
   );
 }
