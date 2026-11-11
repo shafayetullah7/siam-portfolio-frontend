@@ -1,44 +1,45 @@
 import { useSubmission } from "@solidjs/router";
 import { Title } from "@solidjs/meta";
-import { createEffect, createSignal, For, onMount, Show } from "solid-js";
+import { createEffect, createSignal, onMount, Show } from "solid-js";
 import AdminPageHeader from "~/components/admin/AdminPageHeader";
-import ContactCategoriesEditor from "~/components/admin/site/ContactCategoriesEditor";
-import MediaPicker from "~/components/admin/media/MediaPicker";
-import type { MediaPickerSelection } from "~/components/admin/media/media-picker.types";
+import AdminSiteContactPanel from "~/components/admin/site/AdminSiteContactPanel";
+import AdminSiteContextCallout from "~/components/admin/site/AdminSiteContextCallout";
+import AdminSiteGlobalPanel from "~/components/admin/site/AdminSiteGlobalPanel";
+import AdminSiteHubIntrosPanel from "~/components/admin/site/AdminSiteHubIntrosPanel";
+import AdminSiteNavigationPanel from "~/components/admin/site/AdminSiteNavigationPanel";
 import { adminPagesApi } from "~/lib/api/endpoints/admin/pages.api";
 import { adminSiteApi } from "~/lib/api/endpoints/admin/site.api";
 import type { NavItemAdmin } from "~/lib/api/types/admin.types";
 import { getAuthFormErrorMessage } from "~/lib/api/errors";
 import FormErrorAlert from "~/components/forms/FormErrorAlert";
-import FormField from "~/components/forms/FormField";
-import FormSuccessNotice from "~/components/forms/FormSuccessNotice";
-import FormTextInput from "~/components/forms/FormTextInput";
-import FormTextarea from "~/components/forms/FormTextarea";
 import {
   addNavItemAction,
   saveNavRowAction,
-  saveSiteSettingsAction,
 } from "~/lib/forms/actions/admin-site.actions";
 import type { FormActionResult } from "~/lib/forms/types";
 import { useUnsavedChanges } from "~/lib/forms/useUnsavedChanges";
-import { navPathPublishWarning } from "~/lib/site/navPathWarning";
 
-function resultMessage(result: FormActionResult | undefined): string | null {
-  if (result && !result.ok) return result.formMessage;
-  return null;
-}
+type SiteTabId = "global" | "hubs" | "contact" | "navigation";
 
-function resultFieldErrors(
-  result: FormActionResult | undefined,
-): Record<string, string> {
-  if (result && !result.ok && result.fieldErrors) return result.fieldErrors;
-  return {};
+function tabClass(active: boolean) {
+  return `px-4 py-2 text-sm font-medium border-b-2 -mb-px ${
+    active
+      ? "border-primary text-ink"
+      : "border-transparent text-ink-muted hover:text-ink"
+  }`;
 }
 
 export default function AdminSiteSettings() {
-  const settingsSubmission = useSubmission(saveSiteSettingsAction);
   const addNavSubmission = useSubmission(addNavItemAction);
   const navRowSubmission = useSubmission(saveNavRowAction);
+
+  const [tab, setTab] = createSignal<SiteTabId>("global");
+  const [loading, setLoading] = createSignal(true);
+  const [loadError, setLoadError] = createSignal<string | null>(null);
+
+  const [dirtyGlobal, setDirtyGlobal] = createSignal(false);
+  const [dirtyHubs, setDirtyHubs] = createSignal(false);
+  const [dirtyContact, setDirtyContact] = createSignal(false);
 
   const [siteName, setSiteName] = createSignal("");
   const [defaultMetaDescription, setDefaultMetaDescription] = createSignal("");
@@ -67,46 +68,14 @@ export default function AdminSiteSettings() {
     createSignal(false);
   const [faviconUrl, setFaviconUrl] = createSignal("");
   const [faviconMediaId, setFaviconMediaId] = createSignal<string | null>(null);
-  const [faviconPickerOpen, setFaviconPickerOpen] = createSignal(false);
-  const [dirty, setDirty] = createSignal(false);
-  const [settingsSaved, setSettingsSaved] = createSignal(false);
 
   const [navItems, setNavItems] = createSignal<NavItemAdmin[]>([]);
   const [publishedSlugs, setPublishedSlugs] = createSignal<Set<string>>(
     new Set(),
   );
-  const [loadError, setLoadError] = createSignal<string | null>(null);
 
+  const dirty = () => dirtyGlobal() || dirtyHubs() || dirtyContact();
   useUnsavedChanges(dirty);
-
-  const settingsErrors = () =>
-    resultFieldErrors(settingsSubmission.result as FormActionResult | undefined);
-  const settingsMessage = () => {
-    const fromResult = resultMessage(
-      settingsSubmission.result as FormActionResult | undefined,
-    );
-    if (fromResult) return fromResult;
-    if (settingsSubmission.error) return settingsSubmission.error.message;
-    return null;
-  };
-
-  const addNavMessage = () => {
-    const fromResult = resultMessage(
-      addNavSubmission.result as FormActionResult | undefined,
-    );
-    if (fromResult) return fromResult;
-    if (addNavSubmission.error) return addNavSubmission.error.message;
-    return null;
-  };
-
-  const navRowMessage = () => {
-    const fromResult = resultMessage(
-      navRowSubmission.result as FormActionResult | undefined,
-    );
-    if (fromResult) return fromResult;
-    if (navRowSubmission.error) return navRowSubmission.error.message;
-    return null;
-  };
 
   async function reloadNav() {
     const nav = await adminSiteApi.listNav();
@@ -114,6 +83,8 @@ export default function AdminSiteSettings() {
   }
 
   onMount(async () => {
+    setLoading(true);
+    setLoadError(null);
     try {
       const [settings, nav, pages] = await Promise.all([
         adminSiteApi.getSettings(),
@@ -158,14 +129,8 @@ export default function AdminSiteSettings() {
       );
     } catch (e) {
       setLoadError(getAuthFormErrorMessage(e).formMessage);
-    }
-  });
-
-  createEffect(() => {
-    const r = settingsSubmission.result as FormActionResult | undefined;
-    if (r?.ok) {
-      setDirty(false);
-      setSettingsSaved(true);
+    } finally {
+      setLoading(false);
     }
   });
 
@@ -183,485 +148,138 @@ export default function AdminSiteSettings() {
     }
   });
 
-  const slugs = () => publishedSlugs();
+  const clearGlobalDirty = () => setDirtyGlobal(false);
+  const clearHubsDirty = () => setDirtyHubs(false);
+  const clearContactDirty = () => setDirtyContact(false);
 
   return (
-    <div class="max-w-3xl space-y-12">
+    <div class="max-w-4xl space-y-8">
       <Title>Site settings — SIAM Admin</Title>
       <AdminPageHeader
         title="Site settings"
-        description="Brand, metadata, and primary navigation."
+        description="Global brand, navigation, listing-page intros, and contact page."
       />
+      <AdminSiteContextCallout />
       <Show when={loadError()}>
         <FormErrorAlert message={loadError()} />
       </Show>
-
-      <section>
-        <h2 class="text-lg font-semibold text-ink">Brand &amp; metadata</h2>
-        <form
-          class="mt-4 space-y-4"
-          action={saveSiteSettingsAction}
-          method="post"
-          onInput={() => {
-            setDirty(true);
-            setSettingsSaved(false);
-          }}
+      <Show when={!loading() && !loadError()}>
+        <div
+          class="border-b border-border"
+          role="tablist"
+          aria-label="Site settings sections"
         >
-          <FormField
-            label="Site name"
-            name="siteName"
-            error={settingsErrors().siteName}
-          >
-            <FormTextInput
-              name="siteName"
-              value={siteName()}
-              onInput={(e) => setSiteName(e.currentTarget.value)}
-              error={settingsErrors().siteName}
-            />
-          </FormField>
-          <FormField label="Default meta description" name="defaultMetaDescription">
-            <FormTextarea
-              name="defaultMetaDescription"
-              rows={2}
-              value={defaultMetaDescription()}
-              onInput={(e) => setDefaultMetaDescription(e.currentTarget.value)}
-            />
-          </FormField>
-          <FormField label="Footer text" name="footerText">
-            <FormTextarea
-              name="footerText"
-              rows={2}
-              value={footerText()}
-              onInput={(e) => setFooterText(e.currentTarget.value)}
-            />
-          </FormField>
-          <FormField
-            label="Research hub intro"
-            name="researchHubIntro"
-            hint="Shown at the top of /research when set."
-          >
-            <FormTextarea
-              name="researchHubIntro"
-              rows={4}
-              value={researchHubIntro()}
-              onInput={(e) => setResearchHubIntro(e.currentTarget.value)}
-            />
-          </FormField>
-          <FormField
-            label="Projects hub intro"
-            name="projectsHubIntro"
-            hint="Shown at the top of /projects when set."
-          >
-            <FormTextarea
-              name="projectsHubIntro"
-              rows={4}
-              value={projectsHubIntro()}
-              onInput={(e) => setProjectsHubIntro(e.currentTarget.value)}
-            />
-          </FormField>
-          <FormField
-            label="Writing hub intro"
-            name="writingHubIntro"
-            hint="Shown at the top of /writing when set."
-          >
-            <FormTextarea
-              name="writingHubIntro"
-              rows={4}
-              value={writingHubIntro()}
-              onInput={(e) => setWritingHubIntro(e.currentTarget.value)}
-            />
-          </FormField>
-          <FormField
-            label="Talks hub intro"
-            name="talksHubIntro"
-            hint="Shown at the top of /talks when set."
-          >
-            <FormTextarea
-              name="talksHubIntro"
-              rows={4}
-              value={talksHubIntro()}
-              onInput={(e) => setTalksHubIntro(e.currentTarget.value)}
-            />
-          </FormField>
-          <div class="border-t border-border pt-6">
-            <h3 class="text-base font-semibold text-ink">
-              Collaborations page (P14)
-            </h3>
-            <p class="mt-1 text-sm text-ink-muted">
-              Optional public{" "}
-              <span class="font-mono text-xs">/collaborations</span> page when
-              enabled and published rows exist.
-            </p>
+          <div class="flex flex-wrap gap-1">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab() === "global"}
+              class={tabClass(tab() === "global")}
+              onClick={() => setTab("global")}
+            >
+              Global
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab() === "hubs"}
+              class={tabClass(tab() === "hubs")}
+              onClick={() => setTab("hubs")}
+            >
+              Page intros
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab() === "contact"}
+              class={tabClass(tab() === "contact")}
+              onClick={() => setTab("contact")}
+            >
+              Contact
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={tab() === "navigation"}
+              class={tabClass(tab() === "navigation")}
+              onClick={() => setTab("navigation")}
+            >
+              Navigation
+            </button>
           </div>
-          <FormField
-            label="Enable collaborations page"
-            name="collaborationsPageEnabled"
-          >
-            <label class="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                name="collaborationsPageEnabled"
-                checked={collaborationsPageEnabled()}
-                onChange={(e) =>
-                  setCollaborationsPageEnabled(e.currentTarget.checked)
-                }
-              />
-              Show public collaborations page
-            </label>
-          </FormField>
-          <FormField
-            label="Collaborations page intro"
-            name="collaborationsPageIntro"
-            hint="Shown at the top of /collaborations when set."
-          >
-            <FormTextarea
-              name="collaborationsPageIntro"
-              rows={4}
-              value={collaborationsPageIntro()}
-              onInput={(e) =>
-                setCollaborationsPageIntro(e.currentTarget.value)
-              }
+        </div>
+        <div class="pt-6">
+          <Show when={tab() === "global"}>
+            <AdminSiteGlobalPanel
+              siteName={siteName()}
+              setSiteName={setSiteName}
+              defaultMetaDescription={defaultMetaDescription()}
+              setDefaultMetaDescription={setDefaultMetaDescription}
+              footerText={footerText()}
+              setFooterText={setFooterText}
+              faviconUrl={faviconUrl()}
+              setFaviconUrl={setFaviconUrl}
+              faviconMediaId={faviconMediaId()}
+              setFaviconMediaId={setFaviconMediaId}
+              onDirty={() => setDirtyGlobal(true)}
+              onSaved={clearGlobalDirty}
             />
-          </FormField>
-          <FormField
-            label="Achievements hub intro"
-            name="achievementsHubIntro"
-            hint="Shown at the top of /achievements when set."
-          >
-            <FormTextarea
-              name="achievementsHubIntro"
-              rows={4}
-              value={achievementsHubIntro()}
-              onInput={(e) => setAchievementsHubIntro(e.currentTarget.value)}
+          </Show>
+          <Show when={tab() === "hubs"}>
+            <AdminSiteHubIntrosPanel
+              researchHubIntro={researchHubIntro()}
+              setResearchHubIntro={setResearchHubIntro}
+              projectsHubIntro={projectsHubIntro()}
+              setProjectsHubIntro={setProjectsHubIntro}
+              writingHubIntro={writingHubIntro()}
+              setWritingHubIntro={setWritingHubIntro}
+              talksHubIntro={talksHubIntro()}
+              setTalksHubIntro={setTalksHubIntro}
+              collaborationsPageIntro={collaborationsPageIntro()}
+              setCollaborationsPageIntro={setCollaborationsPageIntro}
+              collaborationsPageEnabled={collaborationsPageEnabled()}
+              setCollaborationsPageEnabled={setCollaborationsPageEnabled}
+              achievementsHubIntro={achievementsHubIntro()}
+              setAchievementsHubIntro={setAchievementsHubIntro}
+              experienceHubIntro={experienceHubIntro()}
+              setExperienceHubIntro={setExperienceHubIntro}
+              onDirty={() => setDirtyHubs(true)}
+              onSaved={clearHubsDirty}
             />
-          </FormField>
-          <FormField
-            label="Experience hub intro"
-            name="experienceHubIntro"
-            hint="Shown in the education & experience block on /about when set."
-          >
-            <FormTextarea
-              name="experienceHubIntro"
-              rows={4}
-              value={experienceHubIntro()}
-              onInput={(e) => setExperienceHubIntro(e.currentTarget.value)}
+          </Show>
+          <Show when={tab() === "contact"}>
+            <AdminSiteContactPanel
+              contactFormEnabled={contactFormEnabled()}
+              setContactFormEnabled={setContactFormEnabled}
+              contactPageIntro={contactPageIntro()}
+              setContactPageIntro={setContactPageIntro}
+              contactCollaborationGuidance={contactCollaborationGuidance()}
+              setContactCollaborationGuidance={setContactCollaborationGuidance}
+              contactResponseTimeNote={contactResponseTimeNote()}
+              setContactResponseTimeNote={setContactResponseTimeNote}
+              contactCategories={contactCategories()}
+              setContactCategories={setContactCategories}
+              contactConsentText={contactConsentText()}
+              setContactConsentText={setContactConsentText}
+              contactSuccessMessage={contactSuccessMessage()}
+              setContactSuccessMessage={setContactSuccessMessage}
+              contactPublicEmail={contactPublicEmail()}
+              setContactPublicEmail={setContactPublicEmail}
+              contactShowEmailOnPage={contactShowEmailOnPage()}
+              setContactShowEmailOnPage={setContactShowEmailOnPage}
+              onDirty={() => setDirtyContact(true)}
+              onSaved={clearContactDirty}
             />
-          </FormField>
-
-          <div class="border-t border-border pt-6">
-            <h3 class="text-base font-semibold text-ink">Contact page (P16)</h3>
-            <p class="mt-1 text-sm text-ink-muted">
-              Copy and form options for the public{" "}
-              <span class="font-mono text-xs">/contact</span> page.
-            </p>
-          </div>
-          <FormField label="Enable contact form" name="contactFormEnabled">
-            <label class="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                name="contactFormEnabled"
-                checked={contactFormEnabled()}
-                onChange={(e) => setContactFormEnabled(e.currentTarget.checked)}
-              />
-              Show inquiry form (when off, channels-only page)
-            </label>
-          </FormField>
-          <FormField
-            label="Contact page intro"
-            name="contactPageIntro"
-            error={settingsErrors().contactPageIntro}
-          >
-            <FormTextarea
-              name="contactPageIntro"
-              rows={4}
-              value={contactPageIntro()}
-              onInput={(e) => setContactPageIntro(e.currentTarget.value)}
+          </Show>
+          <Show when={tab() === "navigation"}>
+            <AdminSiteNavigationPanel
+              navItems={navItems()}
+              setNavItems={setNavItems}
+              publishedSlugs={publishedSlugs()}
             />
-          </FormField>
-          <FormField
-            label="Collaboration guidance"
-            name="contactCollaborationGuidance"
-          >
-            <FormTextarea
-              name="contactCollaborationGuidance"
-              rows={3}
-              value={contactCollaborationGuidance()}
-              onInput={(e) =>
-                setContactCollaborationGuidance(e.currentTarget.value)
-              }
-            />
-          </FormField>
-          <FormField
-            label="Response time note"
-            name="contactResponseTimeNote"
-          >
-            <FormTextarea
-              name="contactResponseTimeNote"
-              rows={2}
-              value={contactResponseTimeNote()}
-              onInput={(e) => setContactResponseTimeNote(e.currentTarget.value)}
-            />
-          </FormField>
-          <FormField
-            label="Inquiry categories"
-            name="contactCategories"
-            error={settingsErrors().contactCategories}
-          >
-            <ContactCategoriesEditor
-              categories={contactCategories()}
-              onChange={setContactCategories}
-              onDirty={() => {
-                setDirty(true);
-                setSettingsSaved(false);
-              }}
-            />
-          </FormField>
-          <FormField label="Consent text" name="contactConsentText">
-            <FormTextarea
-              name="contactConsentText"
-              rows={3}
-              value={contactConsentText()}
-              onInput={(e) => setContactConsentText(e.currentTarget.value)}
-              hint="When set, submitters must accept this before sending."
-            />
-          </FormField>
-          <FormField label="Success message" name="contactSuccessMessage">
-            <FormTextarea
-              name="contactSuccessMessage"
-              rows={2}
-              value={contactSuccessMessage()}
-              onInput={(e) => setContactSuccessMessage(e.currentTarget.value)}
-            />
-          </FormField>
-          <FormField
-            label="Public contact email"
-            name="contactPublicEmail"
-            error={settingsErrors().contactPublicEmail}
-          >
-            <FormTextInput
-              name="contactPublicEmail"
-              type="email"
-              value={contactPublicEmail()}
-              onInput={(e) => setContactPublicEmail(e.currentTarget.value)}
-            />
-          </FormField>
-          <FormField label="Show email on page" name="contactShowEmailOnPage">
-            <label class="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                name="contactShowEmailOnPage"
-                checked={contactShowEmailOnPage()}
-                onChange={(e) =>
-                  setContactShowEmailOnPage(e.currentTarget.checked)
-                }
-              />
-              Display mailto link on /contact (spam tradeoff)
-            </label>
-          </FormField>
-
-          <FormField label="Favicon" name="favicon">
-            <div class="space-y-3">
-              <Show when={faviconUrl()}>
-                <img
-                  src={faviconUrl()!}
-                  alt=""
-                  class="h-10 w-10 rounded border border-border object-contain bg-surface"
-                />
-              </Show>
-              <div class="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  class="siam-btn-secondary text-sm"
-                  onClick={() => setFaviconPickerOpen(true)}
-                >
-                  Choose from library
-                </button>
-                <Show when={faviconMediaId()}>
-                  <button
-                    type="button"
-                    class="siam-btn-secondary text-sm"
-                    onClick={() => {
-                      setFaviconMediaId(null);
-                      setDirty(true);
-                      setSettingsSaved(false);
-                    }}
-                  >
-                    Clear library pick
-                  </button>
-                </Show>
-              </div>
-              <input
-                type="hidden"
-                name="faviconMediaId"
-                value={faviconMediaId() ?? ""}
-              />
-              <details class="text-sm">
-                <summary class="cursor-pointer text-ink-muted">
-                  External favicon URL (optional)
-                </summary>
-                <div class="mt-2">
-                  <FormTextInput
-                    name="faviconUrl"
-                    value={faviconUrl()}
-                    onInput={(e) => {
-                      setFaviconUrl(e.currentTarget.value);
-                      setFaviconMediaId(null);
-                    }}
-                  />
-                  <p class="mt-1 text-xs text-ink-muted">
-                    Used when no library image is selected. Library pick overrides
-                    this on save.
-                  </p>
-                </div>
-              </details>
-            </div>
-          </FormField>
-          <MediaPicker
-            open={faviconPickerOpen()}
-            imagesOnly
-            onClose={() => setFaviconPickerOpen(false)}
-            onSelect={(selection: MediaPickerSelection) => {
-              setFaviconMediaId(selection.id);
-              setFaviconUrl(selection.url);
-              setFaviconPickerOpen(false);
-              setDirty(true);
-              setSettingsSaved(false);
-            }}
-          />
-          <FormErrorAlert message={settingsMessage()} />
-          <FormSuccessNotice
-            message={settingsSaved() ? "Settings saved." : null}
-          />
-          <button
-            type="submit"
-            class="siam-btn-primary"
-            disabled={settingsSubmission.pending}
-          >
-            {settingsSubmission.pending ? "Saving…" : "Save settings"}
-          </button>
-        </form>
-      </section>
-
-      <section>
-        <h2 class="text-lg font-semibold text-ink">Navigation</h2>
-        <p class="mt-1 text-sm text-ink-muted">
-          Public header/footer only show links whose path appears in the live sitemap.
-        </p>
-        <FormErrorAlert message={navRowMessage()} />
-        <ul class="mt-4 space-y-4">
-          <For each={navItems()}>
-            {(item) => {
-              const warning = () =>
-                navPathPublishWarning(item.path, slugs());
-              return (
-                <li>
-                  <form
-                    class="siam-card space-y-2 p-4"
-                    action={saveNavRowAction.with(item.id)}
-                    method="post"
-                  >
-                    <div class="grid gap-2 sm:grid-cols-2">
-                      <FormTextInput
-                        name="label"
-                        value={item.label}
-                        onInput={(e) =>
-                          setNavItems((prev) =>
-                            prev.map((n) =>
-                              n.id === item.id
-                                ? { ...n, label: e.currentTarget.value }
-                                : n,
-                            ),
-                          )}
-                      />
-                      <FormTextInput
-                        name="path"
-                        value={item.path}
-                        onInput={(e) =>
-                          setNavItems((prev) =>
-                            prev.map((n) =>
-                              n.id === item.id
-                                ? { ...n, path: e.currentTarget.value }
-                                : n,
-                            ),
-                          )}
-                      />
-                    </div>
-                    <div class="flex flex-wrap items-center gap-4">
-                      <label class="flex items-center gap-2 text-sm">
-                        Sort
-                        <FormTextInput
-                          type="number"
-                          name="sortOrder"
-                          class="w-20"
-                          value={String(item.sortOrder)}
-                          onInput={(e) =>
-                            setNavItems((prev) =>
-                              prev.map((n) =>
-                                n.id === item.id
-                                  ? {
-                                      ...n,
-                                      sortOrder: Number(e.currentTarget.value),
-                                    }
-                                  : n,
-                              ),
-                            )}
-                        />
-                      </label>
-                      <label class="flex items-center gap-2 text-sm">
-                        <input
-                          type="checkbox"
-                          name="visible"
-                          checked={item.visible}
-                          onChange={(e) =>
-                            setNavItems((prev) =>
-                              prev.map((n) =>
-                                n.id === item.id
-                                  ? { ...n, visible: e.currentTarget.checked }
-                                  : n,
-                              ),
-                            )}
-                        />
-                        Visible
-                      </label>
-                      <button
-                        type="submit"
-                        class="siam-btn-secondary text-sm"
-                        disabled={navRowSubmission.pending}
-                      >
-                        Save row
-                      </button>
-                    </div>
-                    <Show when={warning()}>
-                      <p class="text-sm text-amber-700" role="status">
-                        {warning()}
-                      </p>
-                    </Show>
-                  </form>
-                </li>
-              );
-            }}
-          </For>
-        </ul>
-
-        <form
-          class="mt-6 siam-card space-y-3 p-4"
-          action={addNavItemAction}
-          method="post"
-        >
-          <p class="text-sm font-medium text-ink">Add nav item</p>
-          <FormTextInput name="label" placeholder="Label" />
-          <FormTextInput name="path" placeholder="/about" />
-          <input type="hidden" name="sortOrder" value="0" />
-          <FormErrorAlert message={addNavMessage()} />
-          <button
-            type="submit"
-            class="siam-btn-primary"
-            disabled={addNavSubmission.pending}
-          >
-            {addNavSubmission.pending ? "Adding…" : "Add"}
-          </button>
-        </form>
-      </section>
+          </Show>
+        </div>
+      </Show>
     </div>
   );
 }

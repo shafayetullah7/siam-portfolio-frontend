@@ -160,6 +160,8 @@ Same tokens; more `bg-surface` + tables with `border-border`; accents only for s
 
 **Split scroll:** authenticated shell is viewport-locked (`h-dvh`); sidebar nav and `main#main` scroll independently (`AdminAppShell`).
 
+**Site settings (`/admin/site`):** Tabbed like `/admin/home` — **Global** (name, SEO default, footer, favicon), **Page intros** (hub blurbs per public route), **Contact** (P16 copy and form options), **Navigation** (custom nav rows; core hubs are code-owned). Global/intro/contact tabs PATCH partial settings via [`saveSiteSettingsPanel`](../src/lib/admin/site/saveSiteSettingsPanel.ts); nav rows still use form actions.
+
 **Hydration:** CMS chrome is gated until `onMount` `bootstrap()` in [`admin.tsx`](../src/routes/admin.tsx). Root `app.tsx` wraps file routes in `Suspense` so lazy route modules stream into the HTML.
 
 ### 3.6 Adding a new color

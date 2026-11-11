@@ -1,15 +1,7 @@
 import { action, revalidate } from "@solidjs/router";
 import { adminSiteApi } from "~/lib/api/endpoints/admin/site.api";
-import {
-  getPublicAchievements,
-  getPublicCollaborationsPage,
-  getPublicContactConfig,
-  getPublicExperience,
-  getPublicHome,
-  getPublicResearchThemes,
-  getPublicSite,
-  getPublicTalks,
-} from "~/lib/api/queries/public";
+import { revalidateAfterSiteSettingsSave } from "~/lib/admin/site/saveSiteSettingsPanel";
+import { getPublicSite } from "~/lib/api/queries/public";
 import { mapAdminMutationErrorToResult } from "~/lib/forms/mapAdminMutationError";
 import { emptyToNull, parseCheckbox, parseWithSchema } from "~/lib/forms/parseFormData";
 import { adminNavItemSchema } from "~/lib/forms/schemas/admin-nav-item.schema";
@@ -65,14 +57,7 @@ export const saveSiteSettingsAction = action(async (formData: FormData) => {
 
   try {
     await adminSiteApi.updateSettings(parsed.data);
-    revalidate(getPublicSite.key);
-    revalidate(getPublicContactConfig.key);
-    revalidate(getPublicHome.key);
-    revalidate(getPublicResearchThemes.key);
-    revalidate(getPublicAchievements.key);
-    revalidate(getPublicExperience.key);
-    revalidate(getPublicTalks.key);
-    revalidate(getPublicCollaborationsPage.key);
+    revalidateAfterSiteSettingsSave();
     return formSuccess();
   } catch (error) {
     return mapAdminMutationErrorToResult(error);
