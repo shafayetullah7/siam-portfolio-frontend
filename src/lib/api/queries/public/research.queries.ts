@@ -7,6 +7,8 @@ export const getPublicResearchThemes = query(
   "public-research-themes",
 );
 
+getPublicResearchThemes.keyFor = () => "public-research-themes";
+
 export const getPublicResearchTheme = query(
   async (slug: string) => {
     try {
@@ -20,3 +22,6 @@ export const getPublicResearchTheme = query(
   },
   "public-research-theme",
 );
+
+getPublicResearchTheme.keyFor = (slug: string) =>
+  `public-research-theme:${slug}`;

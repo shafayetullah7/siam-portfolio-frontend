@@ -5,6 +5,8 @@ import { publicationsPublicApi } from "~/lib/api/endpoints/public/publications.a
 import { researchPublicApi } from "~/lib/api/endpoints/public/research.api";
 import { timelinePublicApi } from "~/lib/api/endpoints/public/timeline.api";
 import { writingPublicApi } from "~/lib/api/endpoints/public/writing.api";
+import { talksPublicApi } from "~/lib/api/endpoints/public/talks.api";
+import { collaborationsPublicApi } from "~/lib/api/endpoints/public/collaborations.api";
 import { sitePublicApi } from "~/lib/api/endpoints/public/site.api";
 import { getSiteOrigin } from "~/lib/site/siteOrigin";
 
@@ -83,6 +85,32 @@ export async function GET(_event: APIEvent) {
     }
   } catch {
     // omit achievement slugs when API offline
+  }
+  try {
+    const talks = await talksPublicApi.hub();
+    const talkSlugs = [...talks.upcoming, ...talks.past].map((t) => t.slug);
+    if (talkSlugs.length > 0) {
+      paths = [
+        ...new Set([
+          ...paths,
+          "/talks",
+          ...talkSlugs.map((s) => `/talks/${s}`),
+        ]),
+      ];
+    }
+  } catch {
+    // omit talk slugs when API offline
+  }
+  try {
+    const collab = await collaborationsPublicApi.getPage();
+    if (
+      collab.pageEnabled &&
+      (collab.collaborations.length > 0 || collab.service.length > 0)
+    ) {
+      paths = [...new Set([...paths, "/collaborations"])];
+    }
+  } catch {
+    // omit collaborations when API offline
   }
   const origin = getSiteOrigin();
   const urls = paths

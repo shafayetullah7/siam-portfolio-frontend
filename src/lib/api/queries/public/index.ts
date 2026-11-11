@@ -19,3 +19,5 @@ export {
   getPublicAchievementBySlug,
 } from "./achievements.queries";
 export { getPublicExperience } from "./experience.queries";
+export { getPublicTalks, getPublicTalkBySlug } from "./talks.queries";
+export { getPublicCollaborationsPage } from "./collaborations.queries";

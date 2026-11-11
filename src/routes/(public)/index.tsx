@@ -4,25 +4,10 @@ import { Show } from "solid-js";
 import ApiStatus from "~/components/ApiStatus";
 import LandingPage from "~/components/landing/LandingPage";
 import { homeContent } from "~/content";
-import type { HomePageContent } from "~/content/home.types";
-import type { PublicHomeProjectHighlight } from "~/lib/api/endpoints/public/site.api";
+import { mapPublicHomeToContent } from "~/lib/api/public/mapPublicHomeToContent";
 import { getPublicHome, getPublicSite } from "~/lib/api/queries/public";
-import type { HomeProjectHighlight } from "~/content/home.types";
 import { buildPageMeta } from "~/lib/meta/buildPageMeta";
 import { getSiteOrigin } from "~/lib/site/siteOrigin";
-
-function mapHomeProjectHighlight(
-  item: PublicHomeProjectHighlight,
-): HomeProjectHighlight {
-  const alt = item.coverAlt?.trim() ?? "";
-  return {
-    title: item.title,
-    summary: item.summary,
-    href: item.href,
-    ...(item.tags?.length ? { tags: item.tags } : {}),
-    ...(item.coverUrl && alt ? { image: { src: item.coverUrl, alt } } : {}),
-  };
-}
 
 export const route = {
   preload: () => {
@@ -35,44 +20,47 @@ export default function Home() {
   const site = createAsync(() => getPublicSite(), { deferStream: true });
   const homeApi = createAsync(() => getPublicHome(), { deferStream: true });
 
-  const landingContent = (): HomePageContent => {
-    const api = homeApi();
-    const focus = api?.researchFocus;
-    const pubs = api?.selectedPublications;
-    const projects = api?.selectedProjects;
-    if (!focus?.length && !pubs?.length && !projects?.length) return homeContent;
-    return {
-      ...homeContent,
-      ...(focus?.length ? { researchFocus: focus } : {}),
-      ...(pubs?.length ? { selectedPublications: pubs } : {}),
-      ...(projects?.length
-        ? { featuredProjects: projects.map(mapHomeProjectHighlight) }
-        : {}),
-    };
-  };
+  const landingContent = () =>
+    mapPublicHomeToContent(homeApi(), homeContent);
 
   const pageMeta = () => {
     const s = site();
+    const api = homeApi();
     if (!s) return null;
-    const seo = homeContent.seo;
+    const published = Boolean(api?.published);
+    const seo =
+      published && api?.seo ? api.seo : homeContent.seo;
+    const fallbackTitle = published
+      ? landingContent().hero.name
+      : s.siteName;
+    const fallbackBody = published
+      ? landingContent().hero.positioning
+      : s.defaultMetaDescription;
     return buildPageMeta(
       {
-        title: seo?.title?.trim() || homeContent.hero.name,
+        title: seo?.title?.trim() || fallbackTitle,
         seoTitle: seo?.title,
         seoDescription: seo?.description,
-        body: seo?.description?.trim() || homeContent.hero.positioning,
+        body: seo?.description?.trim() || fallbackBody,
       },
       { siteName: s.siteName, defaultMetaDescription: s.defaultMetaDescription },
     );
+  };
+
+  const metaFallbackTitle = () => {
+    const s = site();
+    return homeApi()?.published
+      ? landingContent().hero.name
+      : (s?.siteName ?? "Home");
   };
 
   const canonicalUrl = () => `${getSiteOrigin()}/`;
 
   return (
     <>
-      <Title>{pageMeta()?.title ?? homeContent.hero.name}</Title>
+      <Title>{pageMeta()?.title ?? metaFallbackTitle()}</Title>
       <Meta name="description" content={pageMeta()?.description ?? ""} />
-      <Meta property="og:title" content={pageMeta()?.ogTitle ?? homeContent.hero.name} />
+      <Meta property="og:title" content={pageMeta()?.ogTitle ?? metaFallbackTitle()} />
       <Meta
         property="og:description"
         content={pageMeta()?.ogDescription ?? pageMeta()?.description ?? ""}

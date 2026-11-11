@@ -42,7 +42,7 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
         id: "home",
         label: "Home",
         href: "/admin/home",
-        status: "comingSoon",
+        status: "active",
         requirement: "A03",
       },
       {
@@ -129,7 +129,7 @@ export const ADMIN_NAV_SECTIONS: AdminNavSection[] = [
         id: "talks",
         label: "Talks & service",
         href: "/admin/talks",
-        status: "comingSoon",
+        status: "active",
         requirement: "A09",
       },
     ],

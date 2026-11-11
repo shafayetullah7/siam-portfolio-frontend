@@ -16,6 +16,7 @@ vi.mock("~/lib/api", () => ({
       publications: { draft: 0, published: 0, scheduled: 0, archived: 0 },
       projects: { draft: 0, published: 0, scheduled: 0, archived: 0 },
       writing: { draft: 0, published: 0, scheduled: 0, archived: 0 },
+      talks: { draft: 0, published: 3, scheduled: 0, archived: 0 },
       timeline: { draft: 0, published: 0, scheduled: 0, archived: 0 },
       media: 0,
       inbox: { unread: 4, new: 2, formEnabled: true },
@@ -24,6 +25,17 @@ vi.mock("~/lib/api", () => ({
 }));
 
 describe("AdminHome", () => {
+  it("links Edit home to the home editor", async () => {
+    render(() => (
+      <MetaProvider>
+        <AdminHome />
+      </MetaProvider>
+    ));
+    await screen.findByText("4");
+    const link = screen.getByRole("link", { name: "Edit home" });
+    expect(link.getAttribute("href")).toBe("/admin/home");
+  });
+
   it("links messages card to filtered inbox", async () => {
     render(() => (
       <MetaProvider>

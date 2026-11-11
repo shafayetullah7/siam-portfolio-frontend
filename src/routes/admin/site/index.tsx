@@ -46,6 +46,11 @@ export default function AdminSiteSettings() {
   const [researchHubIntro, setResearchHubIntro] = createSignal("");
   const [projectsHubIntro, setProjectsHubIntro] = createSignal("");
   const [writingHubIntro, setWritingHubIntro] = createSignal("");
+  const [talksHubIntro, setTalksHubIntro] = createSignal("");
+  const [collaborationsPageIntro, setCollaborationsPageIntro] =
+    createSignal("");
+  const [collaborationsPageEnabled, setCollaborationsPageEnabled] =
+    createSignal(false);
   const [achievementsHubIntro, setAchievementsHubIntro] = createSignal("");
   const [experienceHubIntro, setExperienceHubIntro] = createSignal("");
   const [contactFormEnabled, setContactFormEnabled] = createSignal(true);
@@ -121,6 +126,9 @@ export default function AdminSiteSettings() {
       setResearchHubIntro(settings.researchHubIntro ?? "");
       setProjectsHubIntro(settings.projectsHubIntro ?? "");
       setWritingHubIntro(settings.writingHubIntro ?? "");
+      setTalksHubIntro(settings.talksHubIntro ?? "");
+      setCollaborationsPageIntro(settings.collaborationsPageIntro ?? "");
+      setCollaborationsPageEnabled(settings.collaborationsPageEnabled ?? false);
       setAchievementsHubIntro(settings.achievementsHubIntro ?? "");
       setExperienceHubIntro(settings.experienceHubIntro ?? "");
       setContactFormEnabled(settings.contactFormEnabled);
@@ -261,6 +269,58 @@ export default function AdminSiteSettings() {
               rows={4}
               value={writingHubIntro()}
               onInput={(e) => setWritingHubIntro(e.currentTarget.value)}
+            />
+          </FormField>
+          <FormField
+            label="Talks hub intro"
+            name="talksHubIntro"
+            hint="Shown at the top of /talks when set."
+          >
+            <FormTextarea
+              name="talksHubIntro"
+              rows={4}
+              value={talksHubIntro()}
+              onInput={(e) => setTalksHubIntro(e.currentTarget.value)}
+            />
+          </FormField>
+          <div class="border-t border-border pt-6">
+            <h3 class="text-base font-semibold text-ink">
+              Collaborations page (P14)
+            </h3>
+            <p class="mt-1 text-sm text-ink-muted">
+              Optional public{" "}
+              <span class="font-mono text-xs">/collaborations</span> page when
+              enabled and published rows exist.
+            </p>
+          </div>
+          <FormField
+            label="Enable collaborations page"
+            name="collaborationsPageEnabled"
+          >
+            <label class="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                name="collaborationsPageEnabled"
+                checked={collaborationsPageEnabled()}
+                onChange={(e) =>
+                  setCollaborationsPageEnabled(e.currentTarget.checked)
+                }
+              />
+              Show public collaborations page
+            </label>
+          </FormField>
+          <FormField
+            label="Collaborations page intro"
+            name="collaborationsPageIntro"
+            hint="Shown at the top of /collaborations when set."
+          >
+            <FormTextarea
+              name="collaborationsPageIntro"
+              rows={4}
+              value={collaborationsPageIntro()}
+              onInput={(e) =>
+                setCollaborationsPageIntro(e.currentTarget.value)
+              }
             />
           </FormField>
           <FormField

@@ -4,6 +4,7 @@ import type { HomePageContent } from "./home.types";
 import {
   assertHomeContentBounds,
   hasValidMetricClaim,
+  listVisibleSectionIds,
   validateHomeContentBounds,
 } from "./home.validation";
 
@@ -38,6 +39,45 @@ describe("home.validation", () => {
         asOfDate: "2026-10-01",
       }),
     ).toBe(true);
+  });
+
+  it("listVisibleSectionIds respects cmsSectionIds order and skips empty sections", () => {
+    const cms: HomePageContent = {
+      ...homeContent,
+      cmsSectionIds: [
+        "hero",
+        "featuredProjects",
+        "researchFocus",
+        "highlights",
+      ],
+      featuredProjects: [
+        { title: "P1", summary: "s", href: "/projects/p1" },
+        { title: "P2", summary: "s", href: "/projects/p2" },
+      ],
+      researchFocus: [
+        { title: "A", description: "a", href: "/r/a" },
+        { title: "B", description: "b", href: "/r/b" },
+        { title: "C", description: "c", href: "/r/c" },
+      ],
+      highlights: undefined,
+    };
+    const ids = listVisibleSectionIds(cms);
+    expect(ids).toEqual(["hero", "featuredProjects", "researchFocus"]);
+    expect(ids.includes("highlights")).toBe(false);
+  });
+
+  it("cms layout omits section even when static data exists on content", () => {
+    const cms: HomePageContent = {
+      ...homeContent,
+      cmsSectionIds: ["hero", "researchFocus"],
+      researchFocus: [
+        { title: "A", description: "a", href: "/r/a" },
+        { title: "B", description: "b", href: "/r/b" },
+        { title: "C", description: "c", href: "/r/c" },
+      ],
+      highlights: [{ text: "Sample highlight for layout test" }],
+    };
+    expect(listVisibleSectionIds(cms)).toEqual(["hero", "researchFocus"]);
   });
 
   it("flags invalid highlights in content bounds", () => {

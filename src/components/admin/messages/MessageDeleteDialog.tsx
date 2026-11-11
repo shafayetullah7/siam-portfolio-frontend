@@ -14,6 +14,7 @@ export default function MessageDeleteDialog(props: MessageDeleteDialogProps) {
     <AdminDialog
       open={props.open}
       title="Delete message permanently?"
+      iconClose
       onClose={props.onClose}
       footer={
         <div class="flex justify-end gap-2">

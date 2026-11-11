@@ -63,6 +63,22 @@ export default function AdminHome() {
               </p>
             </A>
             <A
+              href={
+                counts.talks.draft > 0
+                  ? "/admin/talks?publishStatus=draft"
+                  : "/admin/talks"
+              }
+              class="siam-card block p-4 no-underline transition-colors hover:border-primary"
+            >
+              <dt class="text-sm text-ink-muted">Published talks</dt>
+              <dd class="text-2xl font-semibold text-ink">
+                {counts.talks.published}
+              </dd>
+              <p class="mt-1 text-xs text-ink-muted">
+                {counts.talks.draft} draft
+              </p>
+            </A>
+            <A
               href="/admin/achievements"
               class="siam-card block p-4 no-underline transition-colors hover:border-primary"
             >
@@ -93,7 +109,8 @@ export default function AdminHome() {
             </A>
           </dl>
           <div class="mt-8 flex flex-wrap gap-3">
-            <A href="/admin/pages" class="siam-btn-primary no-underline">Manage pages</A>
+            <A href="/admin/home" class="siam-btn-primary no-underline">Edit home</A>
+            <A href="/admin/pages" class="siam-btn-secondary no-underline">Manage pages</A>
             <A href="/admin/publications" class="siam-btn-secondary no-underline">
               Publications
             </A>
@@ -102,6 +119,9 @@ export default function AdminHome() {
             </A>
             <A href="/admin/writing" class="siam-btn-secondary no-underline">
               Writing
+            </A>
+            <A href="/admin/talks" class="siam-btn-secondary no-underline">
+              Talks & service
             </A>
             <A href="/admin/achievements" class="siam-btn-secondary no-underline">
               Achievements & timeline

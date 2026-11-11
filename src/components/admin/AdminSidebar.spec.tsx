@@ -46,10 +46,10 @@ describe("AdminSidebar", () => {
     expect(pages.getAttribute("aria-current")).toBe("page");
   });
 
-  it("shows coming soon rows without links", () => {
+  it("links to the home editor", () => {
     render(() => <AdminSidebar />);
     const nav = screen.getByRole("navigation", { name: "Admin" });
-    expect(within(nav).queryByRole("link", { name: "Home" })).toBeNull();
-    expect(within(nav).getAllByText("Soon").length).toBeGreaterThan(0);
+    const home = within(nav).getByRole("link", { name: "Home" });
+    expect(home.getAttribute("href")).toBe("/admin/home");
   });
 });

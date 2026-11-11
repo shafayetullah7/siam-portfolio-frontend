@@ -13,10 +13,26 @@ const mockSite = {
 };
 
 const mockAbout = {
+  published: true,
   headline: "About me",
-  shortBio: "Short",
-  longBio: "Long bio",
+  displayName: "Ada Lovelace",
+  professionalTitle: "ML researcher",
+  shortBio: "Short published bio",
+  longBio: null,
   affiliation: null,
+  affiliationRole: "Researcher",
+  affiliationOrganization: "Example Lab",
+  affiliationLocation: null,
+  researchStatement: "## Motivation\n\nTrustworthy ML.",
+  expertise: {
+    domains: ["Interpretable learning"],
+    methodologies: [],
+    tooling: [],
+    practices: [],
+  },
+  scholarlyProfiles: [{ label: "ORCID", href: "https://orcid.org/0000" }],
+  collaborationInterests: "Open to funded collaborations.",
+  contactEmail: "ada@example.edu",
 };
 
 const mockExperience = {
@@ -68,16 +84,28 @@ vi.mock("~/lib/api/queries/public", () => ({
 }));
 
 describe("About route", () => {
-  it("renders experience section heading and entry from API", () => {
+  it("renders published profile sections and experience from API", () => {
     render(() => (
       <MetaProvider>
         <About />
       </MetaProvider>
     ));
     expect(
+      screen.getByRole("heading", { level: 1, name: "Ada Lovelace" }),
+    ).toBeTruthy();
+    expect(screen.getByText("Short published bio")).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: /Research statement/i }),
+    ).toBeTruthy();
+    expect(screen.getByText("Interpretable learning")).toBeTruthy();
+    expect(screen.getByRole("link", { name: "ORCID" })).toBeTruthy();
+    expect(screen.getByText("Open to funded collaborations.")).toBeTruthy();
+    expect(
+      screen.queryByText(/Content from the CMS will appear here/i),
+    ).toBeNull();
+    expect(
       screen.getByRole("heading", { name: /Education & experience/i }),
     ).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "Education" })).toBeTruthy();
     expect(screen.getByText("Published degree")).toBeTruthy();
   });
 });

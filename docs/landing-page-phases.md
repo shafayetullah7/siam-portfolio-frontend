@@ -1,6 +1,6 @@
 # Landing page (P01) — phased plan (static content)
 
-Phased delivery for a **robust, polished public home** at `/` using **static content in the repo** first. This unblocks design and engineering before [portfolio Phase 9 — A03 CMS homepage editor](../../docs/portfolio-delivery-phases.md) (owner-controlled sections and featured pickers).
+Phased delivery for a **robust, polished public home** at `/`. **LP0–LP6** used static content in-repo; **LP7 is shipped** (HOME6/HOME9) — published `/` is API-first via `getPublicHome`. This doc remains the historical checklist for sections and UX.
 
 **Requirements source:** [P01 — Home](../../AI_ML_Portfolio_Page_by_Page_Content_UX_Requirements.md#p01--home)  
 **Visual system:** [design-tokens.md](../../docs/design-tokens.md), [tailwind.md](./tailwind.md), [frontend-developer-guide.md](./frontend-developer-guide.md) §3  
@@ -15,8 +15,8 @@ Phased delivery for a **robust, polished public home** at `/` using **static con
 | **Static content first** | Ship a complete P01-shaped page without waiting for homepage CMS, featured pickers, or publication/project APIs on the home aggregate. |
 | **Single content module** | One typed file (e.g. `src/content/home.ts`) — copy from [content-packet](../../docs/content-packet/README.md) when ready; no fabricated metrics. |
 | **Presentational sections** | `components/landing/*` — pure props, no `fetch` inside section components. |
-| **Defer API home for this track** | Stop relying on `getPublicHome()` for body sections until LP6 or CMS handoff; keep `getPublicSite()` for nav/footer/meta site name if already wired. |
-| **Later: CMS parity** | Map static shape → future `GET /public/home` aggregate (Phase 9 / A03) so migration is mostly data, not layout. |
+| **Defer API home for this track** | LP0–LP6 only — **superseded by LP7 (HOME6/HOME9)**; published `/` now uses `getPublicHome()`. |
+| **Later: CMS parity** | **Shipped (LP7)** — `GET /public/home` + `mapPublicHomeToContent`; static file is unpublished fallback only. |
 
 ```mermaid
 flowchart LR
@@ -190,20 +190,21 @@ flowchart LR
 
 ---
 
-## Phase LP7 — Handoff to CMS (future, Phase 9)
+## Phase LP7 — Handoff to CMS (shipped — HOME6/HOME9)
 
-**Objective:** Replace static import with API without redesigning components.
+**Objective:** Replace static marketing placeholder with API without redesigning components.
 
-**Deliverables**
+**Deliverables (done)**
 
-1. Extend API `GET /public/home` aggregate to match `HomePageContent` (or adapter `apiHome → HomePageContent`).
-2. `createAsync(() => getPublicHome())` in `index.tsx` with static fallback during migration.
-3. A03 admin: section order, show/hide, featured pickers write the same shape.
+1. [x] `GET /public/home` aggregate + [`mapPublicHomeToContent`](../src/lib/api/public/mapPublicHomeToContent.ts) → `HomePageContent`.
+2. [x] [`(public)/index.tsx`](../src/routes/(public)/index.tsx) — `createAsync(getPublicHome)`; minimal [`home.content.ts`](../src/content/home.content.ts) only when homepage is unpublished.
+3. [x] A03: `/admin/home` — composition, identity, publish, preview, featured summary (HOME8).
 
 **Exit criteria**
 
-- [ ] Parity checklist: static page and CMS-driven page render identical for same data snapshot.
-- [ ] Portfolio Phase 9 exit criteria for P01/A03 tracked in [portfolio-delivery-phases.md](../../docs/portfolio-delivery-phases.md).
+- [x] Published `/` is API-first (see [`index.spec.tsx`](../src/routes/(public)/index.spec.tsx), mapper specs).
+- [x] Unpublished `/` uses dev shell fallback only (HOME9).
+- [ ] Full M5 sign-off — [home-profile-module-requirements.md](../../docs/home-profile-module-requirements.md) §10 (HOME11/12).
 
 ---
 

@@ -34,6 +34,9 @@ export interface SiteSettingsAdmin {
   researchHubIntro: string | null;
   projectsHubIntro: string | null;
   writingHubIntro: string | null;
+  talksHubIntro: string | null;
+  collaborationsPageIntro: string | null;
+  collaborationsPageEnabled: boolean;
   achievementsHubIntro: string | null;
   experienceHubIntro: string | null;
   contactFormEnabled: boolean;
@@ -155,6 +158,7 @@ export type DashboardCounts = {
   projects: DashboardPublishStatusCounts;
   writing: DashboardPublishStatusCounts;
   timeline: DashboardPublishStatusCounts;
+  talks: DashboardPublishStatusCounts;
   media: number;
   inbox: DashboardInboxCounts;
 };

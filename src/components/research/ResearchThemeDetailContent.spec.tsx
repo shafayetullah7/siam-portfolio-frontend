@@ -1,5 +1,12 @@
 import { render, screen } from "@solidjs/testing-library";
-import { describe, expect, it } from "vitest";
+import type { JSX } from "solid-js";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("@solidjs/router", () => ({
+  A: (props: { href: string; children?: JSX.Element }) => (
+    <a href={props.href}>{props.children}</a>
+  ),
+}));
 import ResearchThemeDetailContent from "./ResearchThemeDetailContent";
 import type { ResearchThemeDetailPublic } from "~/lib/api/types/research.types";
 
@@ -47,5 +54,34 @@ describe("ResearchThemeDetailContent", () => {
   it("hides resources section when empty", () => {
     render(() => <ResearchThemeDetailContent theme={baseTheme} />);
     expect(screen.queryByRole("heading", { name: "Resources" })).toBeNull();
+  });
+
+  it("renders related talks with links to talk detail", () => {
+    render(() => (
+      <ResearchThemeDetailContent
+        theme={{
+          ...baseTheme,
+          related: {
+            publications: [],
+            projects: [],
+            talks: [
+              {
+                slug: "my-talk",
+                title: "My Talk",
+                eventName: "Conf 2026",
+                startsAt: "2026-06-15T14:30:00.000Z",
+                talkType: "invited_talk",
+              },
+            ],
+          },
+        }}
+      />
+    ));
+    expect(
+      screen.getByRole("heading", { name: "Related talks" }),
+    ).toBeTruthy();
+    const link = screen.getByRole("link", { name: "My Talk" });
+    expect(link.getAttribute("href")).toBe("/talks/my-talk");
+    expect(screen.getByText("Conf 2026")).toBeTruthy();
   });
 });

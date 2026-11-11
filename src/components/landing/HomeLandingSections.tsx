@@ -43,15 +43,19 @@ export default function HomeLandingSections(props: HomeLandingSectionsProps) {
           return null;
         }
         if (id === "researchFocus") {
-          return reveal(<ResearchFocusSection items={props.content.researchFocus!} />);
+          const items = props.content.researchFocus;
+          if (!items?.length) return null;
+          return reveal(<ResearchFocusSection items={items} />);
         }
         if (id === "selectedPublications") {
-          return reveal(
-            <SelectedPublicationsSection items={props.content.selectedPublications!} />,
-          );
+          const items = props.content.selectedPublications;
+          if (!items?.length) return null;
+          return reveal(<SelectedPublicationsSection items={items} />);
         }
         if (id === "featuredProjects") {
-          return reveal(<FeaturedProjectsSection items={props.content.featuredProjects!} />);
+          const items = props.content.featuredProjects;
+          if (!items?.length) return null;
+          return reveal(<FeaturedProjectsSection items={items} />);
         }
         if (id === "highlights") {
           if (!showInsights()) return null;
@@ -67,7 +71,9 @@ export default function HomeLandingSections(props: HomeLandingSectionsProps) {
           return null;
         }
         if (id === "collaborationCta") {
-          return reveal(<CollaborationCta cta={props.content.collaborationCta!} />);
+          const cta = props.content.collaborationCta;
+          if (!cta?.headline?.trim()) return null;
+          return reveal(<CollaborationCta cta={cta} />);
         }
         return null;
       })}

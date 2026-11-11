@@ -1,6 +1,8 @@
 import { A, createAsync, type RouteDefinition } from "@solidjs/router";
 import { Title, Meta } from "@solidjs/meta";
 import { Show } from "solid-js";
+import AboutCollaborationSection from "~/components/about/AboutCollaborationSection";
+import AboutPublishedContent from "~/components/about/AboutPublishedContent";
 import { PUBLIC_PAGE_WIDE } from "~/components/layout/publicPageWidth";
 import ExperienceTimelineSection from "~/components/timeline/ExperienceTimelineSection";
 import {
@@ -8,11 +10,8 @@ import {
   getPublicExperience,
   getPublicSite,
 } from "~/lib/api/queries/public";
+import { mapPublicAboutToViewModel } from "~/lib/api/public/mapPublicAboutToViewModel";
 import { DEFAULT_EXPERIENCE_HUB_INTRO } from "~/lib/timeline/default-experience-hub-intro";
-import {
-  ABOUT_CONTACT_SECTION_ID,
-  SCROLL_MT_BELOW_PUBLIC_HEADER,
-} from "~/lib/site/homeSectionIds";
 import { buildPageMeta } from "~/lib/meta/buildPageMeta";
 
 export const route = {
@@ -25,11 +24,13 @@ export const route = {
 
 export default function About() {
   const site = createAsync(() => getPublicSite(), { deferStream: true });
-  const about = createAsync(() => getPublicAbout(), { deferStream: true });
+  const aboutApi = createAsync(() => getPublicAbout(), { deferStream: true });
   const experience = createAsync(
     () => getPublicExperience({ sort: "sortOrderAsc" }),
     { deferStream: true },
   );
+
+  const viewModel = () => mapPublicAboutToViewModel(aboutApi());
 
   const experienceIntro = () => {
     const data = experience();
@@ -39,17 +40,35 @@ export default function About() {
 
   const pageMeta = () => {
     const s = site();
-    const a = about();
-    if (!s || !a) return null;
+    const vm = viewModel();
+    if (!s) return null;
+  if (vm.published) {
+    return buildPageMeta(
+      {
+        title: vm.title,
+        seoDescription: vm.shortBio ?? undefined,
+        body: vm.longBio ?? vm.shortBio ?? "",
+      },
+      { siteName: s.siteName, defaultMetaDescription: s.defaultMetaDescription },
+    );
+  }
     return buildPageMeta(
       {
         title: "About",
-        seoDescription: a.shortBio,
-        body: a.longBio ?? "",
+        seoDescription: s.defaultMetaDescription,
+        body: "",
       },
       { siteName: s.siteName, defaultMetaDescription: s.defaultMetaDescription },
     );
   };
+
+  const contactFooterModel = () => ({
+    ...viewModel(),
+    published: true,
+    showCollaboration: true,
+    collaborationInterests: null,
+    contactEmail: null,
+  });
 
   return (
     <div class={PUBLIC_PAGE_WIDE}>
@@ -57,15 +76,7 @@ export default function About() {
       <Meta name="description" content={pageMeta()?.description ?? ""} />
       <Meta property="og:title" content={pageMeta()?.ogTitle ?? "About"} />
       <Meta property="og:description" content={pageMeta()?.ogDescription ?? ""} />
-      <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
-        {about()?.headline ?? "About"}
-      </h1>
-      <p class="siam-prose mt-4 text-ink-muted">
-        {about()?.longBio ?? about()?.shortBio ?? "Content from the CMS will appear here."}
-      </p>
-      {about()?.affiliation && (
-        <p class="mt-4 text-sm text-ink-muted">{about()!.affiliation}</p>
-      )}
+      <AboutPublishedContent model={viewModel()} />
       <Show when={experience()}>
         {(hub) => (
           <ExperienceTimelineSection
@@ -74,23 +85,9 @@ export default function About() {
           />
         )}
       </Show>
-      <section
-        id={ABOUT_CONTACT_SECTION_ID}
-        class={`mt-12 border-t border-border pt-10 ${SCROLL_MT_BELOW_PUBLIC_HEADER}`}
-        aria-labelledby="about-contact-heading"
-      >
-        <h2 id="about-contact-heading" class="siam-headline-md text-brand-deep">
-          Contact
-        </h2>
-        <p class="siam-prose mt-3 max-w-prose text-ink-muted">
-          Reach out for collaborations, speaking, or student inquiries.
-        </p>
-        <p class="mt-4">
-          <A href="/contact" class="text-link font-medium no-underline hover:underline">
-            Go to the contact page
-          </A>
-        </p>
-      </section>
+      <Show when={!viewModel().published || !viewModel().showCollaboration}>
+        <AboutCollaborationSection model={contactFooterModel()} />
+      </Show>
       <p class="mt-6">
         <A href="/" class="text-link font-medium no-underline hover:underline">← Home</A>
       </p>

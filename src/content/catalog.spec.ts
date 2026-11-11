@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { FEATURED_ON_HOME_CAPS } from "~/lib/home/featured-on-home-caps";
 import {
   getProject,
   getPublication,
@@ -8,6 +9,14 @@ import {
 } from "./catalog";
 
 describe("catalog", () => {
+  it("featured caps align with API (HOME8/HOME9)", () => {
+    expect(FEATURED_ON_HOME_CAPS).toEqual({
+      research: 6,
+      publications: 4,
+      projects: 3,
+    });
+  });
+
   it("returns undefined for unknown slugs", () => {
     expect(getResearchTheme("not-a-theme")).toBeUndefined();
     expect(getPublication("not-a-paper")).toBeUndefined();

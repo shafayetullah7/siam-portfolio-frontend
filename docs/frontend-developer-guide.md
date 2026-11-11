@@ -21,7 +21,7 @@ Single entry point for building **`siam-frontend`**: structure, **theme**, **API
 |--------|--------|
 | UI | SolidJS 1.9 + SolidStart 2 + `@solidjs/router` |
 | Styles | Tailwind v4 + SIAM tokens (`src/styles/tokens.css`, `src/app.css`) |
-| Public site | Routes under `src/routes/` (not `/admin`); static home until CMS (LP7) — see **Static home** below |
+| Public site | Routes under `src/routes/` (not `/admin`); **API-first home** when published (LP7 / HOME6) — see **Home** below |
 | CMS | Routes under `src/routes/admin/` (or `admin.tsx` layout group per Start file routing) |
 | API | `siam-api` — **`/api/v1/public/*`**, **`/api/v1/admin/*`** |
 | Auth | HttpOnly cookies + readable `xsrf-token`; no JWT in `localStorage` |
@@ -39,17 +39,28 @@ VITE_API_BASE=http://localhost:5000/api/v1
 VITE_SITE_ORIGIN=http://localhost:5001
 ```
 
-### Static home (P01, LP0–LP6)
+### Home (P01, LP7 / HOME6–HOME10)
 
-Until full CMS homepage (LP7 / Phase 9), `/` body sections are mostly static `homeContent`, except **`researchFocus`** and **`selectedPublications`** from `getPublicHome()` when the API returns them (R11 / PUB15):
+**Published:** `getPublicHome()` + [`mapPublicHomeToContent`](../src/lib/api/public/mapPublicHomeToContent.ts) — full `HomePageContent` from the API only (no static body bleed). Section **order and visibility** use `cmsSectionIds` / [`listVisibleSectionIds`](../src/content/home.validation.ts).
+
+**Hero image (HOME10):** Identity **portrait** or Composition **hero image** (hero overrides portrait). Public `hero.portrait` requires library **alt** text; otherwise typography-only hero (no Scholar ledger). Pickers: [`AdminHomeMediaField`](../src/components/admin/home/AdminHomeMediaField.tsx) on [`/admin/home`](../src/routes/admin/home/index.tsx). Publish checklists block missing alt when a media id is set.
+
+**Unpublished:** minimal [`homeContent`](../src/content/home.content.ts) dev shell (hero + CTAs only)—not the old marketing placeholder packet.
+
+Admin preview uses the same mapper with `treatAsPublished: true` ([`/admin/home/preview`](../src/routes/admin/home/preview.tsx)). LP7 handoff is complete; see [landing-page-phases.md](./landing-page-phases.md) § LP7.
 
 | Layer | Location |
 |--------|----------|
 | Copy & validation | [`src/content/`](../src/content/) — `home.content.ts`, `home.types.ts`, `home.validation.ts`; import via `~/content` |
 | Sections UI | [`src/components/landing/`](../src/components/landing/) |
-| Route | [`src/routes/(public)/index.tsx`](../src/routes/(public)/index.tsx) — `LandingPage`, meta + `getPublicSite()` for site name |
+| Route | [`src/routes/(public)/index.tsx`](../src/routes/(public)/index.tsx) — `LandingPage`, `getPublicHome()` + mapper, meta + `getPublicSite()` |
+| Featured caps (HOME8) | API `FEATURED_ON_HOME_CAPS` (6/4/3); Composition tab [`HomeFeaturedSummaryPanel`](../src/components/admin/home/HomeFeaturedSummaryPanel.tsx) via `adminHomeApi.featuredSummary()` — read-only, links to module editors |
 
 See [landing-page-phases.md](./landing-page-phases.md) and per-phase checklists (`landing-page-lp*-checklist.md`).
+
+### About (P02, HOME7)
+
+Public [`/about`](../src/routes/(public)/about.tsx) combines **`getPublicAbout()`** (profile publish-gated) and **`getPublicExperience()`** (M9 timeline preview). [`mapPublicAboutToViewModel`](../src/lib/api/public/mapPublicAboutToViewModel.ts) drives section visibility; UI lives under [`src/components/about/`](../src/components/about/). Identity edits (including expertise line groups and collaboration interests) are on the **Identity** tab of [`/admin/home`](../src/routes/admin/home/index.tsx). When profile is **unpublished**, identity blocks are omitted—timeline and a minimal contact footer still render.
 
 ---
 

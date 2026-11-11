@@ -6,3 +6,5 @@ export { researchPublicApi } from "./research.api";
 export { sitePublicApi } from "./site.api";
 export { timelinePublicApi } from "./timeline.api";
 export { writingPublicApi } from "./writing.api";
+export { talksPublicApi } from "./talks.api";
+export { collaborationsPublicApi } from "./collaborations.api";

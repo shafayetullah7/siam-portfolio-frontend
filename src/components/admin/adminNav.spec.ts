@@ -63,9 +63,10 @@ describe("isAdminNavActive", () => {
     expect(isAdminNavActive("/admin/writing", achievements)).toBe(false);
   });
 
-  it("does not match comingSoon items", () => {
+  it("matches home editor route", () => {
     const home = itemById("home");
-    expect(isAdminNavActive("/admin/home", home)).toBe(false);
+    expect(isAdminNavActive("/admin/home", home)).toBe(true);
+    expect(isAdminNavActive("/admin/research", home)).toBe(false);
   });
 
   it("matches media library route", () => {
@@ -79,6 +80,14 @@ describe("isAdminNavActive", () => {
     expect(isAdminNavActive("/admin/messages", messages)).toBe(true);
     expect(isAdminNavActive("/admin/messages/abc", messages)).toBe(true);
     expect(isAdminNavActive("/admin/media", messages)).toBe(false);
+  });
+
+  it("matches talks section and nested routes", () => {
+    const talks = itemById("talks");
+    expect(isAdminNavActive("/admin/talks", talks)).toBe(true);
+    expect(isAdminNavActive("/admin/talks/collaborations", talks)).toBe(true);
+    expect(isAdminNavActive("/admin/talks/service/abc/edit", talks)).toBe(true);
+    expect(isAdminNavActive("/admin/writing", talks)).toBe(false);
   });
 });
 
@@ -103,6 +112,7 @@ describe("ADMIN_NAV_SECTIONS", () => {
     expect(active.map((i) => i.id).sort()).toEqual([
       "achievements",
       "dashboard",
+      "home",
       "media",
       "messages",
       "pages",
@@ -110,6 +120,7 @@ describe("ADMIN_NAV_SECTIONS", () => {
       "publications",
       "research",
       "site-settings",
+      "talks",
       "writing",
     ]);
   });

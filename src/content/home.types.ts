@@ -115,6 +115,8 @@ export type HomePageSeo = {
 
 export type HomePageContent = {
   hero: HomeHero;
+  /** From API `visibleSectionIds` when homepage is published (CMS order). */
+  cmsSectionIds?: readonly HomeSectionId[];
   affiliation?: HomeAffiliation;
   researchFocus?: readonly HomeResearchFocusItem[];
   selectedPublications?: readonly HomePublicationHighlight[];

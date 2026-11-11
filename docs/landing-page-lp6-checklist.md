@@ -25,4 +25,4 @@ Use with [landing-page-phases.md](./landing-page-phases.md) § LP6.
 
 ## Next
 
-- LP7 — CMS handoff (`getPublicHome`) ([landing-page-phases.md](./landing-page-phases.md) § LP7).
+- [x] LP7 — CMS handoff shipped (HOME6/HOME9) — [landing-page-phases.md](./landing-page-phases.md) § LP7.

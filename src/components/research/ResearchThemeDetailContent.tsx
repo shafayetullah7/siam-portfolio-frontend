@@ -1,6 +1,8 @@
 import { A } from "@solidjs/router";
 import { For, Show } from "solid-js";
 import type { ResearchThemeDetailPublic } from "~/lib/api/types/research.types";
+import { formatTalkDateTimePreview } from "~/lib/talks/formatTalkDateTime";
+import { TALK_TYPE_LABELS } from "~/lib/talks/talkLabels";
 
 export type ResearchThemeDetailContentProps = {
   theme: ResearchThemeDetailPublic;
@@ -127,6 +129,38 @@ export default function ResearchThemeDetailContent(
                     {project.tags!.join(" · ")}
                   </p>
                 </Show>
+              </li>
+            )}
+          </For>
+        </ul>
+      </Show>
+      <Show
+        when={theme().related?.talks && theme().related!.talks.length > 0}
+      >
+        <h2 class="siam-headline-md mt-8 text-brand-deep">Related talks</h2>
+        <ul class="list-none space-y-4 pl-0">
+          <For each={theme().related!.talks}>
+            {(talk) => (
+              <li class="rounded-lg border border-border p-4">
+                <A
+                  href={`/talks/${talk.slug}`}
+                  class="text-link font-medium no-underline"
+                >
+                  {talk.title}
+                </A>
+                <p class="mt-1 text-sm text-ink-muted">{talk.eventName}</p>
+                <p class="mt-2 text-sm text-on-surface-variant">
+                  <span class="font-mono text-xs text-primary">
+                    {TALK_TYPE_LABELS[talk.talkType]}
+                  </span>
+                  <Show
+                    when={formatTalkDateTimePreview(talk.startsAt, "UTC")}
+                  >
+                    {(when) => (
+                      <span class="ml-2 text-ink-muted">{when()} (UTC)</span>
+                    )}
+                  </Show>
+                </p>
               </li>
             )}
           </For>

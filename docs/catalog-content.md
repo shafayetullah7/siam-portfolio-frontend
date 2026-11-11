@@ -14,13 +14,13 @@ Helpers live in `catalog.ts` (`list*`, `get*`, `*ToHomeItem`, `listFeatured*ForH
 
 ## Home page (P01)
 
-`researchFocus` on `/` comes from **`getPublicHome().researchFocus`** (API: published themes with `featuredOnHome`). Static catalog `featuredOnHome` is used only for `validateCatalogFeaturedBounds()` and dev seed alignment.
+When the homepage is **published**, `/` body sections come only from **`getPublicHome()`** via `mapPublicHomeToContent` (no static `homeContent` merge). Static catalog `featuredOnHome` flags remain for `validateCatalogFeaturedBounds()` and dev seed alignment—not for rendering a published home.
 
-`selectedPublications` on `/` comes from **`getPublicHome().selectedPublications`** when the API returns published rows with `featuredOnHome` (max 4). Static catalog remains a fallback when the API returns none.
+When the homepage is **unpublished**, `/` still uses placeholder **`homeContent`** until the CMS aggregate is published.
 
-`featuredProjects` on `/` comes from **`getPublicHome().selectedProjects`** when the API returns published rows with `featuredOnHome` (max 3, cover when media alt is set). No static catalog fallback on the home page.
+Publication, project, and writing detail URLs in `sitemap.xml` come from **`getPublicSite().sitemapPaths`** and public list API fallbacks (`publicationsPublicApi`, `projectsPublicApi`, `writingPublicApi`) — not static catalog slugs.
 
-Publication, project, and writing detail URLs in `sitemap.xml` come from **`getPublicSite().sitemapPaths`** and public list API fallbacks (`publicationsPublicApi`, `projectsPublicApi`, `writingPublicApi`) — not static catalog slugs. Bounds (3–6 / 2–4 / 2–3) are enforced in `home.validation.ts` and `validateCatalogFeaturedBounds()`.
+**Featured-on-home limits:** Max flags match [`FEATURED_ON_HOME_CAPS`](../src/lib/home/featured-on-home-caps.ts) (6 / 4 / 3), kept in sync with the API. P01 minimum counts (3 / 2 / 2 when any flags are set) are enforced in `validateCatalogFeaturedBounds()` and `home.validation.ts`. Catalog flags are for seed/validation only—not used on a published `/`.
 
 ## Future CMS / API mapping
 

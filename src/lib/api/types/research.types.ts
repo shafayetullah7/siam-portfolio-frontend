@@ -1,3 +1,5 @@
+import type { TalkType } from "./talks.types";
+
 export type PublishChecklistItem = {
   code: string;
   message: string;
@@ -26,6 +28,14 @@ export interface ResearchThemeCardPublic {
   href: string;
   relatedCounts?: { publications: number; projects: number };
 }
+
+export type TalkThemeRelatedCard = {
+  slug: string;
+  title: string;
+  eventName: string;
+  startsAt: string;
+  talkType: TalkType;
+};
 
 export type ResearchPublicationCardPublic = {
   slug: string;
@@ -97,7 +107,7 @@ export interface ResearchThemeDetailPublic {
   related?: {
     publications: ResearchPublicationCardPublic[];
     projects: ResearchProjectCardPublic[];
-    talks: { slug: string }[];
+    talks: TalkThemeRelatedCard[];
   };
   seo: { title: string; description: string };
   updatedAt?: string;

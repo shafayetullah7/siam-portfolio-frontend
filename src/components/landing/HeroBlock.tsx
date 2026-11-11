@@ -29,6 +29,8 @@ export default function HeroBlock(props: HeroBlockProps) {
   const [copied, setCopied] = createSignal(false);
   const showPortrait = () =>
     hero.portrait != null && hero.portrait.alt.trim() !== "";
+  const showLedger = () => hero.ledger != null;
+  const showRightColumn = () => showPortrait() || showLedger();
 
   const copyEmail = async () => {
     const email = hero.contactEmail?.trim();
@@ -41,7 +43,9 @@ export default function HeroBlock(props: HeroBlockProps) {
   return (
     <section aria-labelledby="home-hero-heading">
       <div class="grid grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-10">
-        <div class="flex flex-col lg:col-span-7 xl:col-span-8">
+        <div
+          class={`flex flex-col ${showRightColumn() ? "lg:col-span-7 xl:col-span-8" : "lg:col-span-12"}`}
+        >
           <div class="mb-3 flex flex-wrap items-center gap-2">
             <Show when={hero.statusBadge?.trim()}>
               <span
@@ -92,11 +96,13 @@ export default function HeroBlock(props: HeroBlockProps) {
           </div>
         </div>
 
-        <div class="w-full lg:col-span-5 xl:col-span-4">
-          <Show when={showPortrait()} fallback={<HeroScholarLedger ledger={hero.ledger} />}>
-            <HeroPortrait portrait={hero.portrait!} />
-          </Show>
-        </div>
+        <Show when={showRightColumn()}>
+          <div class="w-full lg:col-span-5 xl:col-span-4">
+            <Show when={showPortrait()} fallback={<HeroScholarLedger ledger={hero.ledger} />}>
+              <HeroPortrait portrait={hero.portrait!} />
+            </Show>
+          </div>
+        </Show>
       </div>
     </section>
   );

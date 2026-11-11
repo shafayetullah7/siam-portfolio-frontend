@@ -24,7 +24,7 @@ export default function Home() {
 }
 ```
 
-Home body is static (`~/content`) until LP7/CMS; `getPublicHome` remains in the API layer for future parity.
+Published home body comes from `getPublicHome()` + `mapPublicHomeToContent`; unpublished `/` uses minimal `homeContent` in `~/content` (HOME9).
 
 After admin mutations, invalidate cached public data:
 

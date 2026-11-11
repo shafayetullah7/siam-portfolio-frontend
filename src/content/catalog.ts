@@ -1,3 +1,7 @@
+import {
+  FEATURED_ON_HOME_CAPS,
+  FEATURED_ON_HOME_MIN,
+} from "~/lib/home/featured-on-home-caps";
 import type {
   HomeProjectHighlight,
   HomePublicationHighlight,
@@ -86,16 +90,34 @@ export function listCatalogSitemapPaths(): string[] {
 export function validateCatalogFeaturedBounds(): string[] {
   const errors: string[] = [];
   const focus = listFeaturedResearchForHome().length;
-  if (focus > 0 && (focus < 3 || focus > 6)) {
-    errors.push(`featured research themes for home must be 0 or 3–6 (got ${focus})`);
+  if (focus > FEATURED_ON_HOME_CAPS.research) {
+    errors.push(
+      `featured research themes for home: at most ${FEATURED_ON_HOME_CAPS.research} (got ${focus})`,
+    );
+  } else if (focus > 0 && focus < FEATURED_ON_HOME_MIN.research) {
+    errors.push(
+      `featured research themes for home must be 0 or ${FEATURED_ON_HOME_MIN.research}–${FEATURED_ON_HOME_CAPS.research} (got ${focus})`,
+    );
   }
   const pubs = listFeaturedPublicationsForHome().length;
-  if (pubs > 0 && (pubs < 2 || pubs > 4)) {
-    errors.push(`featured publications for home must be 0 or 2–4 (got ${pubs})`);
+  if (pubs > FEATURED_ON_HOME_CAPS.publications) {
+    errors.push(
+      `featured publications for home: at most ${FEATURED_ON_HOME_CAPS.publications} (got ${pubs})`,
+    );
+  } else if (pubs > 0 && pubs < FEATURED_ON_HOME_MIN.publications) {
+    errors.push(
+      `featured publications for home must be 0 or ${FEATURED_ON_HOME_MIN.publications}–${FEATURED_ON_HOME_CAPS.publications} (got ${pubs})`,
+    );
   }
   const proj = listFeaturedProjectsForHome().length;
-  if (proj > 0 && (proj < 2 || proj > 3)) {
-    errors.push(`featured projects for home must be 0 or 2–3 (got ${proj})`);
+  if (proj > FEATURED_ON_HOME_CAPS.projects) {
+    errors.push(
+      `featured projects for home: at most ${FEATURED_ON_HOME_CAPS.projects} (got ${proj})`,
+    );
+  } else if (proj > 0 && proj < FEATURED_ON_HOME_MIN.projects) {
+    errors.push(
+      `featured projects for home must be 0 or ${FEATURED_ON_HOME_MIN.projects}–${FEATURED_ON_HOME_CAPS.projects} (got ${proj})`,
+    );
   }
   return errors;
 }

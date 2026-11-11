@@ -2,11 +2,13 @@ import { action, revalidate } from "@solidjs/router";
 import { adminSiteApi } from "~/lib/api/endpoints/admin/site.api";
 import {
   getPublicAchievements,
+  getPublicCollaborationsPage,
   getPublicContactConfig,
   getPublicExperience,
   getPublicHome,
   getPublicResearchThemes,
   getPublicSite,
+  getPublicTalks,
 } from "~/lib/api/queries/public";
 import { mapAdminMutationErrorToResult } from "~/lib/forms/mapAdminMutationError";
 import { emptyToNull, parseCheckbox, parseWithSchema } from "~/lib/forms/parseFormData";
@@ -26,6 +28,11 @@ export const saveSiteSettingsAction = action(async (formData: FormData) => {
       researchHubIntro: emptyToNull(fd.get("researchHubIntro")?.toString()),
       projectsHubIntro: emptyToNull(fd.get("projectsHubIntro")?.toString()),
       writingHubIntro: emptyToNull(fd.get("writingHubIntro")?.toString()),
+      talksHubIntro: emptyToNull(fd.get("talksHubIntro")?.toString()),
+      collaborationsPageIntro: emptyToNull(
+        fd.get("collaborationsPageIntro")?.toString(),
+      ),
+      collaborationsPageEnabled: parseCheckbox(fd, "collaborationsPageEnabled"),
       achievementsHubIntro: emptyToNull(
         fd.get("achievementsHubIntro")?.toString(),
       ),
@@ -64,6 +71,8 @@ export const saveSiteSettingsAction = action(async (formData: FormData) => {
     revalidate(getPublicResearchThemes.key);
     revalidate(getPublicAchievements.key);
     revalidate(getPublicExperience.key);
+    revalidate(getPublicTalks.key);
+    revalidate(getPublicCollaborationsPage.key);
     return formSuccess();
   } catch (error) {
     return mapAdminMutationErrorToResult(error);

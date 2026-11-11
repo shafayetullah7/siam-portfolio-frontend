@@ -79,7 +79,44 @@ const SECTION_ORDER: HomeSectionId[] = [
   "collaborationCta",
 ];
 
+function sectionHasRenderableData(
+  content: HomePageContent,
+  id: HomeSectionId,
+): boolean {
+  switch (id) {
+    case "hero":
+      return true;
+    case "affiliation":
+      return Boolean(
+        content.affiliation?.role?.trim() &&
+          content.affiliation.organization?.trim(),
+      );
+    case "researchFocus":
+      return isNonEmptySection(content.researchFocus);
+    case "selectedPublications":
+      return isNonEmptySection(content.selectedPublications);
+    case "featuredProjects":
+      return isNonEmptySection(content.featuredProjects);
+    case "highlights":
+      return isNonEmptySection(content.highlights);
+    case "currentlyWorkingOn":
+      return Boolean(content.currentlyWorkingOn?.text?.trim());
+    case "profiles":
+      return isNonEmptySection(content.profiles);
+    case "collaborationCta":
+      return Boolean(content.collaborationCta?.headline?.trim());
+    default:
+      return false;
+  }
+}
+
 export function listVisibleSectionIds(content: HomePageContent): HomeSectionId[] {
+  if (content.cmsSectionIds?.length) {
+    return content.cmsSectionIds.filter((id) =>
+      sectionHasRenderableData(content, id),
+    );
+  }
+
   const visible: HomeSectionId[] = ["hero"];
 
   if (content.affiliation?.role && content.affiliation.organization) {
